@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.paint.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="../Controller/LoginController.java">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
+      <AnchorPane layoutX="361.0" layoutY="121.0" prefHeight="527.0" prefWidth="645.0" style="-fx-background-color: f4f4f4;">
+         <effect>
+            <Blend />
+         </effect>
+         <children>
+            <Label layoutX="230.0" layoutY="71.0" text="Safe Driving Simulator" textFill="#43515e">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Label>
+            <JFXTextField id="usernameField" fx:id="usernameField" focusColor="#34495e" layoutX="184.0" layoutY="209.0" prefHeight="34.0" prefWidth="277.0" promptText="Username">
+               <font>
+                  <Font name="Segoe UI" size="17.0" />
+               </font>
+            </JFXTextField>
+            <JFXPasswordField id="passwordField" fx:id="passwordField" focusColor="#34495e" layoutX="184.0" layoutY="265.0" prefHeight="34.0" prefWidth="277.0" promptText="Password">
+               <font>
+                  <Font name="Segoe UI" size="17.0" />
+               </font>
+            </JFXPasswordField>
+            <JFXButton id="loginButton" layoutX="156.0" layoutY="396.0" onMouseClicked="#handleLogin" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Log In" textFill="WHITE">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </JFXButton>
+            <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="158.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@traffic.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
