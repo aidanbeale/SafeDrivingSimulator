@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.paint.*?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.effect.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.LoginController">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
+      <AnchorPane layoutX="88.0" layoutY="120.0" prefHeight="527.0" prefWidth="1182.0" style="-fx-background-color: f4f4f4;">
+         <effect>
+            <Blend />
+         </effect>
+         <children>
+            <Label layoutX="105.0" layoutY="40.0" text="Safe Driving Simulator" textFill="#43515e">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="33.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@traffic.png" />
+               </image>
+            </ImageView>
+            <JFXTextField id="termsConditionsText" fx:id="termsConditionsText" layoutX="-1.0" layoutY="80.0" prefHeight="445.0" prefWidth="1186.0" />
+         </children>
+      </AnchorPane>
+      <JFXButton id="loginButton" layoutX="537.0" layoutY="662.0" onMouseClicked="#handleLogin" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="I Accept" textFill="WHITE">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>
