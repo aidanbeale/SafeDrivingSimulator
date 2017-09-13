@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ChooseCarController">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
+      <AnchorPane layoutX="36.0" layoutY="77.0" prefHeight="619.0" prefWidth="1296.0" style="-fx-background-color: f4f4f4;">
+         <effect>
+            <Blend />
+         </effect>
+         <children>
+            <Label layoutX="523.0" layoutY="35.0" text="Safe Driving Simulator" textFill="#43515e">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="451.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@traffic.png" />
+               </image>
+            </ImageView>
+            <JFXButton id="chooseCar1" fx:id="chooseCar1" layoutX="141.0" layoutY="501.0" onAction="#chooseCar1" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 1" textFill="WHITE" />
+            <JFXButton id="chooseCar2" fx:id="chooseCar2" layoutX="533.0" layoutY="501.0" onAction="#chooseCar2" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 2" textFill="WHITE" />
+            <JFXButton id="chooseCar3" fx:id="chooseCar3" layoutX="989.0" layoutY="501.0" onAction="#chooseCar3" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 3" textFill="WHITE" />
+            <Label layoutX="581.0" layoutY="89.0" text="Choose a car" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

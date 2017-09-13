@@ -28,7 +28,7 @@ public class TermsConditionsController {
 	private void handleAccept(ActionEvent event) throws IOException {
 
 		// Change scene to display simulation
-			Parent root = FXMLLoader.load(getClass().getResource("../view/TermsConditions.fxml"));
+			Parent root = FXMLLoader.load(getClass().getResource("../view/ChooseCar.fxml"));
 			Scene scene = new Scene(root);
 			
 			Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();

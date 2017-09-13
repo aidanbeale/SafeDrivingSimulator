@@ -16,8 +16,8 @@ import javafx.stage.Stage;
 
 public class LoginController {
 
-	private final String USERNAME = "John";
-	private final String PASSWORD = "john";
+	private final String USERNAME = "";
+	private final String PASSWORD = "";
 
 	@FXML private JFXTextField usernameField;
 	@FXML private JFXTextField usernameField2;
