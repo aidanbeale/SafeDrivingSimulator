@@ -6,7 +6,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,30 +23,7 @@ public class LoginController {
 	@FXML private JFXTextField usernameField2;
 	@FXML private JFXPasswordField passwordField;
 	@FXML private JFXButton loginButton;
-	@FXML private JFXButton errorOk;
-
-	
-	private void handleLogin3() throws IOException {
-		String username = usernameField.getText();
-		String password = passwordField.getText();
-
-		if (username.equals(USERNAME) && password.equals(PASSWORD)) {
-			System.out.println("Credentials are correct");
-
-		} else {
-			System.out.println("Credentials are incorrect");
-			
-			
-			/*
-			Scene sceneError = new Scene(FXMLLoader.load(getClass().getResource("../view/LoginError.fxml")));
-			Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-			stage.setScene(sceneError);
-			stage.show();
-			*/
-		}
-	}
-	
-	
+		
 	@FXML
 	private void handleLogin(ActionEvent event) throws IOException {
 		String username = usernameField.getText();
