@@ -64,72 +64,59 @@ public class SimulationController {
 
     @FXML
     private void handleSimBegin(ActionEvent event) {
- 
-        PerspectiveCamera camera = new PerspectiveCamera();
-        camera.setTranslateZ(-10000);
- 
-        //
-        // importing 3ds Modell
-        //
-        TdsModelImporter myModel = new TdsModelImporter();
-        try {
-            String path = "C:\\Users\\John\\Documents\\UniEclipseplswork\\SafeDrivingSimulator\\src\\controller\\golf5.3DS";
-            myModel.read(path);
-        } catch (ImportException e) {
-            System.out.println("Error importing 3ds model: " + e.getMessage());
-            return;
-        }
- 
-        //
-        // adding Model
-        //
-        final Node[] myMesh = myModel.getImport();
-        myModel.close();
-        final Group model3D = new Group(myMesh);
-        model3D.setLayoutX(600);
-        model3D.setLayoutY(600);
- 
-        //
-        // setting Anchorpane and scene and start
-        //
-        
-        
- 
-        SubScene subScene = new SubScene(model3D, 300, 300, true, SceneAntialiasing.BALANCED);
-        subScene.setCamera(camera);
- 
-        simGroup.getChildren().add(subScene);
     }
     
     @FXML
     private void initialize() {
     	
-        PerspectiveCamera camera = new PerspectiveCamera();
-        camera.setTranslateZ(-1000);
+    	Group carMesh = import3dModel("mini");
+    	SubScene subScene = addMeshToSubScene(carMesh);
+    	simGroup.getChildren().add(subScene);
+    }
+    
+    private SubScene addMeshToSubScene(Group carMesh) {
+        
+    	// Create view camera
+    	PerspectiveCamera camera = new PerspectiveCamera();
+        camera.setTranslateZ(-10000);
 
-        TdsModelImporter myModel = new TdsModelImporter();
-        try {
-            String path = "C:\\Users\\John\\Documents\\UniEclipseplswork\\SafeDrivingSimulator\\src\\controller\\hst.3ds";
-            myModel.read(path);
-        } catch (ImportException e) {
-            System.out.println("Error importing 3ds model: " + e.getMessage());
-            return;
-        }
- 
-        Node[] myMesh = myModel.getImport();
-        myModel.close();
+        // Create sub scene
+        SubScene subScene = new SubScene(carMesh, 740, 740, true, SceneAntialiasing.BALANCED);
         
-        Group model3D = new Group(myMesh);
-        
-        model3D.setLayoutX(600);
-        model3D.setLayoutY(600);  
- 
-        //
-        SubScene subScene = new SubScene(model3D, 740, 740, true, SceneAntialiasing.BALANCED);
+        // Colour in the background
         subScene.setFill(Color.GREEN);
         subScene.setCamera(camera);
  
-        simGroup.getChildren().add(subScene);
+        return subScene;
     }
-
+    
+    private Group import3dModel(String carName) {
+    	
+    	// Create model importer
+    	// @see http://www.interactivemesh.org/models/jfx3dimporter.html
+    	TdsModelImporter modelImporter = new TdsModelImporter();
+    	
+        try {
+        	// Read car model from path
+            String path = "C:\\Users\\John\\Documents\\UniEclipseplswork\\SafeDrivingSimulator\\src\\carModels\\" + carName + ".3DS";
+            modelImporter.read(path);
+        } catch (ImportException e) {
+        	// TODO fix this
+            System.out.println("Error importing 3ds model: " + e.getMessage());
+            return null;
+        }
+        
+        // Get car mesh
+        Node[] carMesh = modelImporter.getImport();
+        modelImporter.close();
+        
+        // Add car mesh to group
+        Group model3D = new Group(carMesh);
+        
+        // Set the basic layout of the car
+        model3D.setLayoutX(100);
+        model3D.setLayoutY(100);
+        
+        return model3D;
+    }
 }
