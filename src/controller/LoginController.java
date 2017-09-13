@@ -31,10 +31,19 @@ public class LoginController {
 
 		if (username.equals(USERNAME) && password.equals(PASSWORD)) {
 			System.out.println("Credentials are correct");
+			
+			// Change scene to display error
+			Parent root = FXMLLoader.load(getClass().getResource("../view/TermsConditions.fxml"));
+			Scene scene = new Scene(root);
+			
+			Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
+			window.setScene(scene);
+			window.show();
 
 		} else {
 			System.out.println("Credentials are incorrect");
-		// Change scene to display error
+			
+			// Change scene to display error
 			Parent root = FXMLLoader.load(getClass().getResource("../view/LoginError.fxml"));
 			Scene scene = new Scene(root);
 			
