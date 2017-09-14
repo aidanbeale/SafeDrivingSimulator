@@ -1,64 +1,27 @@
 package controller;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.Map;
+import java.util.ArrayList;
 
 import com.interactivemesh.jfx.importer.ImportException;
-import com.interactivemesh.jfx.importer.ModelImporter;
-import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import com.jfoenix.controls.JFXButton;
 
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
-import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.AmbientLight;
-import javafx.scene.Camera;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
-import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.CullFace;
-import javafx.scene.shape.DrawMode;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Sphere;
-import javafx.scene.shape.TriangleMesh;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
-import javafx.stage.Stage;
-import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import javafx.scene.control.CheckBox;
-import javafx.scene.image.Image;
-import javafx.scene.layout.VBox;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Insets;
 
 public class SimulationController {
 
@@ -69,23 +32,18 @@ public class SimulationController {
 	@FXML
 	private Group simGroup;
 
-	private Node[] carMesh;
-	private Group carMeshGroup;
-	private Group floorBoxGroup;
-	private int trans = -1200;
+	private Group userCarGroup;
+	private Group aiCarGroup1;
+	private Group aiCarGroup2;
+	private Group roadGroup;
 	private PerspectiveCamera camera;
 
 	private int transCam = -1200;
 	private int transCar = 0;
 
-	Lighting lighting;
-	AmbientLight ambient;
-
-	Group roadGroup;
-
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
-		moveCar();
+		moveUserCar();
 	}
 
 	/**
@@ -94,32 +52,32 @@ public class SimulationController {
 	@FXML
 	private void initialize() {
 
-		/*
-		 * Light.Distant light = new Light.Distant(); light.setAzimuth(45.0);
-		 * light.setElevation(45.0);
-		 * 
-		 * //Instantiating the Lighting class lighting = new Lighting();
-		 * 
-		 * //Setting the source of the light lighting.setLight(light);
-		 */
+		// Import car and add to subscene
+		Node[] userCarMesh = import3dModel("mini-aws"); // Users choice TODO remove hardcode
+		Node[] aiCarMesh1 = import3dModel("mini-blueNo");
+		Node[] aiCarMesh2 = import3dModel("mini-redNo");
+
+		ArrayList<Group> allGroups = new ArrayList<>();
+
+		userCarGroup = meshIntoGroup(userCarMesh);
+		aiCarGroup1 = meshIntoGroup(aiCarMesh1);
+		aiCarGroup2 = meshIntoGroup(aiCarMesh2);
+		roadGroup = createRoad();
+		
+		allGroups.add(userCarGroup);
+		allGroups.add(aiCarGroup1);
+		allGroups.add(aiCarGroup2);
+		allGroups.add(roadGroup);
+
+		camera = setupUserCamera("first");
 
 		// Creating Ambient Light
-		ambient = new AmbientLight();
+		AmbientLight ambient = new AmbientLight();
 		ambient.setColor(Color.rgb(255, 255, 255, 0.6));
-		// Creating Point Light
-		/*
-		 * PointLight point = new PointLight (); point.setColor(Color.rgb(255, 255,
-		 * 255,1)); point.setLayoutX(400); point.setLayoutY(100);
-		 * point.setTranslateZ(-1100); point.getScope().add(sh);
-		 */
 
-		// Import car and add to subscene
-		Node[] carMesh = import3dModel("mini-aws");
-		carMeshGroup = meshIntoGroup(carMesh);
+		Group rootGroup = new Group();
 
-		carMeshGroup.getChildren().add(ambient);
-
-		SubScene subScene = addMeshToSubScene(carMeshGroup);
+		SubScene subScene = addGroupsToSubScene(allGroups, rootGroup, camera, ambient);
 
 		simGroup.getChildren().add(subScene);
 	}
@@ -137,7 +95,6 @@ public class SimulationController {
 
 			road.setTranslateY(95); // Fix road height
 			road.setTranslateZ(140); // Centre the road to the car
-			road.setEffect(lighting);
 
 			road.setTranslateX(roadDistance -= 2000);
 			roadGroup.getChildren().add(road);
@@ -146,7 +103,7 @@ public class SimulationController {
 		return roadGroup;
 	}
 
-	private void moveCar() {
+	private void moveUserCar() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -161,7 +118,7 @@ public class SimulationController {
 						@Override
 						public void run() {
 
-							carMeshGroup.setTranslateX(transCar--);
+							userCarGroup.setTranslateX(transCar--);
 							System.out.println("trans car to " + transCar--);
 
 							camera.setTranslateX(transCam--);
@@ -174,43 +131,47 @@ public class SimulationController {
 		}).start();
 	}
 
+	private PerspectiveCamera setupUserCamera(String camPlacement) {
+		// Create view camera
+		camera = new PerspectiveCamera();
+
+		if (camPlacement.equals("first")) {
+			// First person view
+			camera.setTranslateX(-1202); // -1202
+			camera.setTranslateY(-420); // -420
+			camera.setTranslateZ(-520); // -520
+			camera.setRotationAxis(Rotate.Y_AXIS);
+			camera.setRotate(270.0); // 270
+		} else if (camPlacement.equals("third")) {
+			// TODO this
+		} else {
+			// TODO throws
+			System.out.println("no cam");
+			return null;
+		}
+		return camera;
+	}
+
 	/**
 	 * Method adds a car mesh to a subscene
+	 * @param ambient 
 	 * 
 	 * @param carMesh
 	 *            The carmesh to add to the subscene
 	 * @param road
 	 * @return The subscene
 	 */
-	private SubScene addMeshToSubScene(Group carGroup) { // TODO need to be able to add multiple car meshes to the scene
+	private SubScene addGroupsToSubScene(ArrayList<Group> groupsToAdd, Group rootGroup, PerspectiveCamera camera, AmbientLight ambient) {
 
-		// Create view camera
-		camera = new PerspectiveCamera();
-
-		// First person view
-		camera.setTranslateX(-1202); // -1200
-		camera.setTranslateY(-420); // -414
-		camera.setTranslateZ(-520); // -420
-		camera.setRotationAxis(Rotate.Y_AXIS);
-		camera.setRotate(270.0); // 270
-
-
-		// Testing
-		// Box road = createRoad();
-
-		// Testing
-		// carMesh.getChildren().add(road);
-
-		createRoad();
-
-		Group rootGroup = new Group();
-		rootGroup.getChildren().add(carGroup);
-		rootGroup.getChildren().add(roadGroup);
+		for (Group g : groupsToAdd) {
+			rootGroup.getChildren().add(g);
+		}
+		
+		rootGroup.getChildren().add(ambient);
 
 		// Create sub scene
 		SubScene subScene = new SubScene(rootGroup, 975, 740, true, SceneAntialiasing.BALANCED);
-		// Colour in the background
-		subScene.setFill(Color.WHITE);
+		subScene.setFill(Color.SKYBLUE);
 		subScene.setCamera(camera);
 
 		return subScene;
