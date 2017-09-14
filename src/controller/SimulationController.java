@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
@@ -39,7 +40,11 @@ public class SimulationController {
 	private PerspectiveCamera camera;
 
 	private int transCam = -1200;
-	private int transCar = 0;
+	private int userTransCar = 0;
+	private int aiTransCar1 = -3200;
+	private int aiTransCar2 = -6400;
+	
+	private Random rand = new Random();
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -86,7 +91,7 @@ public class SimulationController {
 		roadGroup = new Group();
 		Double roadDistance = 0.0;
 		Image roadMap = new Image("https://i.imgur.com/T41orEg.jpg");
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Box road = new Box(2000.0, 1.0, 2000.0);
 
 			PhongMaterial tpLogo = new PhongMaterial();
@@ -102,7 +107,7 @@ public class SimulationController {
 
 		return roadGroup;
 	}
-
+		
 	private void moveUserCar() {
 		new Thread(new Runnable() {
 			@Override
@@ -118,17 +123,40 @@ public class SimulationController {
 						@Override
 						public void run() {
 
-							userCarGroup.setTranslateX(transCar--);
-							System.out.println("trans car to " + transCar--);
+							userCarGroup.setTranslateX(userTransCar-= 2);
+							System.out.println("trans car to " + userTransCar);
 
-							camera.setTranslateX(transCam--);
-							System.out.println("trans cam to " + transCam--);
+							camera.setTranslateX(transCam-= 2);
+							System.out.println("trans cam to " + transCam);
+							
+							aiCarGroup1.setTranslateX(aiTransCar1);
+							System.out.println("trans ai1 car to " + aiTransCar1);
+							
+							aiCarGroup2.setTranslateX(aiTransCar2);
+							System.out.println("trans ai2 car to " + aiTransCar2);
+							
+							calculateNextStep();
 							;
 						}
 					});
 				}
 			}
 		}).start();
+	}
+	
+	private void calculateNextStep() {
+		int randomNumber = rand.nextInt(100);
+		System.out.println(randomNumber);
+		if (randomNumber > 4) {
+			aiTransCar1-= 2;
+		} else {
+			
+		}
+		
+		if (randomNumber > 2) {
+			aiTransCar2-= 2;
+		}
+		
 	}
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
