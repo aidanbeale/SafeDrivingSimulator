@@ -61,9 +61,15 @@ public class SimulationController {
 	@FXML private JFXButton beginSimButton;
 	@FXML private AnchorPane simAnchor;
 	@FXML private Group simGroup;
+	
+	private Node[] carMesh;
+	private Group carMeshGroup;
+	private int trans = -1200;
+	private PerspectiveCamera camera;
 
     @FXML
     private void handleSimBegin(ActionEvent event) {
+    	moveCar();
     }
     
     /**
@@ -73,9 +79,34 @@ public class SimulationController {
     private void initialize() {
     	
     	// Import car and add to subscene
-    	Group carMesh = import3dModel("mini-blueNo");
-    	SubScene subScene = addMeshToSubScene(carMesh);
+    	Node[] carMesh = import3dModel("mini-greenNo");
+    	carMeshGroup = meshIntoGroup(carMesh);
+    	SubScene subScene = addMeshToSubScene(carMeshGroup);
     	simGroup.getChildren().add(subScene);
+    }
+    
+    private void moveCar() {
+    	new Thread(new Runnable() {
+    	    @Override public void run() {
+    	    while(true) {
+    	    	try {
+					Thread.sleep(2);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	        Platform.runLater(new Runnable() {
+    	            @Override public void run() {
+    	            	//carMeshGroup.setTranslateX(trans--);
+    	            	//System.out.println("trans car to " + trans);
+    	            	
+    	            	camera.setTranslateX(trans++);
+    	            	System.out.println("trans cam to " + trans);
+    	            }
+    	        });
+    	    }
+    	    }
+    	}).start();
     }
     
     /**
@@ -87,8 +118,9 @@ public class SimulationController {
     private SubScene addMeshToSubScene(Group carMesh) { // TODO need to be able to add multiple car meshes to the scene
         
     	// Create view camera
-    	PerspectiveCamera camera = new PerspectiveCamera();
+    	camera = new PerspectiveCamera();
         
+    	// First person view
     	camera.setTranslateX(-1200);
     	camera.setTranslateY(-414);
     	camera.setTranslateZ(-420);
@@ -113,7 +145,7 @@ public class SimulationController {
      * @param carName The file name of the car
      * @return A group containing the car mesh
      */
-    private Group import3dModel(String carName) {
+    private Node[] import3dModel(String carName) {
     	
     	// Create model importer
     	// @see http://www.interactivemesh.org/models/jfx3dimporter.html
@@ -132,6 +164,11 @@ public class SimulationController {
         // Get car mesh
         Node[] carMesh = modelImporter.getImport();
         modelImporter.close();
+
+        return carMesh;
+    }
+    
+    private Group meshIntoGroup(Node[] carMesh) {
         
         // Add car mesh to group
         Group model3D = new Group(carMesh);
