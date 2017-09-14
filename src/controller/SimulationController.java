@@ -16,10 +16,10 @@ import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
@@ -32,6 +32,8 @@ public class SimulationController {
 	private AnchorPane simAnchor;
 	@FXML
 	private Group simGroup;
+	@FXML
+	private Label failurescreen;
 
 	private Group userCarGroup;
 	private Group aiCarGroup1;
@@ -43,7 +45,9 @@ public class SimulationController {
 	private int userTransCar = 0;
 	private int aiTransCar1 = -3200;
 	private int aiTransCar2 = -6400;
-	
+
+	private boolean testFailed = false;
+
 	private Random rand = new Random();
 
 	@FXML
@@ -59,8 +63,8 @@ public class SimulationController {
 
 		// Import car and add to subscene
 		Node[] userCarMesh = import3dModel("mini-aws"); // Users choice TODO remove hardcode
-		Node[] aiCarMesh1 = import3dModel("mini-blueNo");
-		Node[] aiCarMesh2 = import3dModel("mini-redNo");
+		Node[] aiCarMesh1 = import3dModel("mini-blue");
+		Node[] aiCarMesh2 = import3dModel("mini-red");
 
 		ArrayList<Group> allGroups = new ArrayList<>();
 
@@ -68,7 +72,7 @@ public class SimulationController {
 		aiCarGroup1 = meshIntoGroup(aiCarMesh1);
 		aiCarGroup2 = meshIntoGroup(aiCarMesh2);
 		roadGroup = createRoad();
-		
+
 		allGroups.add(userCarGroup);
 		allGroups.add(aiCarGroup1);
 		allGroups.add(aiCarGroup2);
@@ -107,12 +111,12 @@ public class SimulationController {
 
 		return roadGroup;
 	}
-		
+
 	private void moveUserCar() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (true) {
+				while (!testFailed) {
 					try {
 						Thread.sleep(2);
 					} catch (InterruptedException e) {
@@ -123,40 +127,56 @@ public class SimulationController {
 						@Override
 						public void run() {
 
-							userCarGroup.setTranslateX(userTransCar-= 2);
+							userCarGroup.setTranslateX(userTransCar -= 2);
 							System.out.println("trans car to " + userTransCar);
 
-							camera.setTranslateX(transCam-= 2);
+							camera.setTranslateX(transCam -= 2);
 							System.out.println("trans cam to " + transCam);
-							
+
 							aiCarGroup1.setTranslateX(aiTransCar1);
 							System.out.println("trans ai1 car to " + aiTransCar1);
-							
+
 							aiCarGroup2.setTranslateX(aiTransCar2);
 							System.out.println("trans ai2 car to " + aiTransCar2);
-							
+
 							calculateNextStep();
-							;
-						}
+
+							if (userTransCar < aiTransCar1 + 1500 || userTransCar < aiTransCar2 + 1500) {
+								System.out.print("SIMULATION ENDED");
+								failurescreen.setText("YOU FAIL");
+								testFailed = true;
+
+							}
+						};
 					});
 				}
 			}
 		}).start();
 	}
-	
+
 	private void calculateNextStep() {
 		int randomNumber = rand.nextInt(100);
 		System.out.println(randomNumber);
 		if (randomNumber > 4) {
-			aiTransCar1-= 2;
-		} else {
-			
+			aiTransCar1 -= 2;
+		} else if (randomNumber > 15 && randomNumber < 95) {
+			aiTransCar1 -= 1;
+		} else if (randomNumber > 60 && randomNumber < 95) {
+			aiTransCar1 += 1;
 		}
-		
-		if (randomNumber > 2) {
-			aiTransCar2-= 2;
+
+		if (randomNumber > 4) {
+			aiTransCar2 -= 2;
+		} else if (randomNumber > 15 && randomNumber < 95) {
+			aiTransCar2 -= 1;
+		} else if (randomNumber > 60 && randomNumber < 95) {
+			aiTransCar2 += 3;
 		}
-		
+
+		/*
+		 * if (randomNumber > 2) { aiTransCar2 -= 2; }
+		 */
+
 	}
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
@@ -182,19 +202,21 @@ public class SimulationController {
 
 	/**
 	 * Method adds a car mesh to a subscene
-	 * @param ambient 
+	 * 
+	 * @param ambient
 	 * 
 	 * @param carMesh
 	 *            The carmesh to add to the subscene
 	 * @param road
 	 * @return The subscene
 	 */
-	private SubScene addGroupsToSubScene(ArrayList<Group> groupsToAdd, Group rootGroup, PerspectiveCamera camera, AmbientLight ambient) {
+	private SubScene addGroupsToSubScene(ArrayList<Group> groupsToAdd, Group rootGroup, PerspectiveCamera camera,
+			AmbientLight ambient) {
 
 		for (Group g : groupsToAdd) {
 			rootGroup.getChildren().add(g);
 		}
-		
+
 		rootGroup.getChildren().add(ambient);
 
 		// Create sub scene
@@ -246,5 +268,10 @@ public class SimulationController {
 		model3D.setLayoutY(100);
 
 		return model3D;
+	}
+
+	@FXML
+	private void brakeButtonPressed() {
+
 	}
 }
