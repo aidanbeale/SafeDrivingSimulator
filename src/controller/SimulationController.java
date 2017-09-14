@@ -135,7 +135,7 @@ public class SimulationController {
 			tpLogo.setDiffuseMap(roadMap);
 			road.setMaterial(tpLogo);
 
-			road.setTranslateY(20); // Fix road height
+			road.setTranslateY(95); // Fix road height
 			road.setTranslateZ(140); // Centre the road to the car
 			road.setEffect(lighting);
 
@@ -188,11 +188,12 @@ public class SimulationController {
 		camera = new PerspectiveCamera();
 
 		// First person view
-		camera.setTranslateX(-200); // Temp -
-		camera.setTranslateY(-414); // -414 -600
-		camera.setTranslateZ(-420); // -420
+		camera.setTranslateX(-1202); // -1200
+		camera.setTranslateY(-420); // -414
+		camera.setTranslateZ(-520); // -420
 		camera.setRotationAxis(Rotate.Y_AXIS);
-		camera.setRotate(270.0);
+		camera.setRotate(270.0); // 270
+
 
 		// Testing
 		// Box road = createRoad();
@@ -207,7 +208,7 @@ public class SimulationController {
 		rootGroup.getChildren().add(roadGroup);
 
 		// Create sub scene
-		SubScene subScene = new SubScene(rootGroup, 740, 740, true, SceneAntialiasing.BALANCED);
+		SubScene subScene = new SubScene(rootGroup, 975, 740, true, SceneAntialiasing.BALANCED);
 		// Colour in the background
 		subScene.setFill(Color.WHITE);
 		subScene.setCamera(camera);
