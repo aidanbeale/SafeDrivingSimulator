@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
@@ -14,15 +15,21 @@ import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Light;
+import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
+import simulation.Car;
 
 public class SimulationController {
 
@@ -48,11 +55,11 @@ public class SimulationController {
 
 	private boolean testHalt = false;
 	private boolean brakePressed = false;
-	private boolean accelPressed = false;
 
 	private String simButtonLabel = "begin";
 
 	private Random rand = new Random();
+	private Timer timeSinceOptimal;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -63,8 +70,10 @@ public class SimulationController {
 			moveUserCar();
 		} else if (simButtonLabel.equals("cancel")) {
 			failureScreen.setText("TEST CANCELLED");
-			simButtonLabel = "begin";
 			testHalt = true;
+			
+			// Disable buttons
+			beginSimButton.setDisable(true);
 		}
 	}
 
@@ -74,6 +83,8 @@ public class SimulationController {
 	@FXML
 	private void initialize() {
 
+		Car userCar = new Car(0, -3200, "mini-aws");
+		
 		// Import car and add to subscene
 		Node[] userCarMesh = import3dModel("mini-aws"); // Users choice TODO remove hardcode
 		Node[] aiCarMesh1 = import3dModel("mini-blue");
@@ -84,7 +95,11 @@ public class SimulationController {
 		userCarGroup = meshIntoGroup(userCarMesh);
 		aiCarGroup1 = meshIntoGroup(aiCarMesh1);
 		aiCarGroup2 = meshIntoGroup(aiCarMesh2);
+		//aiCarGroup2.getChildren().add(testLightPoint());
+		
+		//aiCarGroup2.setEffect(testLightPoint());
 		roadGroup = createRoad();
+		//roadGroup.setEffect(testLightPoint());
 
 		allGroups.add(userCarGroup);
 		allGroups.add(aiCarGroup1);
@@ -95,7 +110,10 @@ public class SimulationController {
 
 		// Creating Ambient Light
 		AmbientLight ambient = new AmbientLight();
-		ambient.setColor(Color.rgb(255, 255, 255, 0.6));
+		//ambient.setTranslateX(-180);
+		//ambient.setTranslateY(-90);
+		//ambient.setTranslateZ(-120);
+		//ambient.setColor(Color.rgb(255, 255, 255, 0.6));
 
 		Group rootGroup = new Group();
 
@@ -107,18 +125,17 @@ public class SimulationController {
 	private Group createRoad() {
 		roadGroup = new Group();
 		Double roadDistance = 0.0;
-		Image roadMap = new Image("https://i.imgur.com/T41orEg.jpg");
-		for (int i = 0; i < 1000; i++) {
-			Box road = new Box(2000.0, 1.0, 2000.0);
-
-			PhongMaterial tpLogo = new PhongMaterial();
-			tpLogo.setDiffuseMap(roadMap);
-			road.setMaterial(tpLogo);
-
+		
+		PhongMaterial roadSurface = new PhongMaterial();
+		roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
+		roadSurface.setSpecularColor(Color.WHITE);
+		
+		for (int i = 0; i < 200; i++) {
+			Box road = new Box(1624.0, 10.0, 6600.0);
+			road.setMaterial(roadSurface);
 			road.setTranslateY(95); // Fix road height
 			road.setTranslateZ(140); // Centre the road to the car
-
-			road.setTranslateX(roadDistance -= 2000);
+			road.setTranslateX(roadDistance -= 1600);
 			roadGroup.getChildren().add(road);
 		}
 
@@ -244,6 +261,19 @@ public class SimulationController {
 
 		return subScene;
 	}
+	
+	private PointLight testLightPoint() {
+
+	    PointLight pointLight = new PointLight(Color.WHITE);
+	    pointLight.setTranslateX(-2300);
+	    pointLight.setTranslateY(-820);
+	    pointLight.setTranslateZ(-800);
+	    //pointLight.setRotate(0);
+
+        
+        
+        return pointLight;
+	}
 
 	/**
 	 * This method will import the carmodel requested
@@ -278,6 +308,7 @@ public class SimulationController {
 
 	private Group meshIntoGroup(Node[] carMesh) {
 
+		
 		// Add car mesh to group
 		Group model3D = new Group(carMesh);
 
@@ -290,6 +321,6 @@ public class SimulationController {
 
 	@FXML
 	private void brakeButtonPressed() {
-
+		
 	}
 }
