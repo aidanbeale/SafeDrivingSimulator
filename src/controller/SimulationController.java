@@ -33,7 +33,7 @@ public class SimulationController {
 	@FXML
 	private Group simGroup;
 	@FXML
-	private Label failurescreen;
+	private Label failureScreen;
 
 	private Group userCarGroup;
 	private Group aiCarGroup1;
@@ -46,13 +46,26 @@ public class SimulationController {
 	private int aiTransCar1 = -3200;
 	private int aiTransCar2 = -6400;
 
-	private boolean testFailed = false;
+	private boolean testHalt = false;
+	private boolean brakePressed = false;
+	private boolean accelPressed = false;
+
+	private String simButtonLabel = "begin";
 
 	private Random rand = new Random();
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
-		moveUserCar();
+
+		if (simButtonLabel.equals("begin")) {
+			beginSimButton.setText("Cancel Simulation");
+			simButtonLabel = "cancel";
+			moveUserCar();
+		} else if (simButtonLabel.equals("cancel")) {
+			failureScreen.setText("TEST CANCELLED");
+			simButtonLabel = "begin";
+			testHalt = true;
+		}
 	}
 
 	/**
@@ -116,7 +129,7 @@ public class SimulationController {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (!testFailed) {
+				while (!testHalt) {
 					try {
 						Thread.sleep(2);
 					} catch (InterruptedException e) {
@@ -124,28 +137,33 @@ public class SimulationController {
 						e.printStackTrace();
 					}
 					Platform.runLater(new Runnable() {
+
 						@Override
 						public void run() {
+							if (brakePressed) {
+								// TODO Work some magic
+							} else if (accelPressed) {
+								// TODO Work more magic
+							} else {
+								userCarGroup.setTranslateX(userTransCar -= 2);
+								System.out.println("trans car to " + userTransCar);
 
-							userCarGroup.setTranslateX(userTransCar -= 2);
-							System.out.println("trans car to " + userTransCar);
+								camera.setTranslateX(transCam -= 2);
+								System.out.println("trans cam to " + transCam);
 
-							camera.setTranslateX(transCam -= 2);
-							System.out.println("trans cam to " + transCam);
+								aiCarGroup1.setTranslateX(aiTransCar1);
+								System.out.println("trans ai1 car to " + aiTransCar1);
 
-							aiCarGroup1.setTranslateX(aiTransCar1);
-							System.out.println("trans ai1 car to " + aiTransCar1);
-
-							aiCarGroup2.setTranslateX(aiTransCar2);
-							System.out.println("trans ai2 car to " + aiTransCar2);
+								aiCarGroup2.setTranslateX(aiTransCar2);
+								System.out.println("trans ai2 car to " + aiTransCar2);
+							}
 
 							calculateNextStep();
 
-							if (userTransCar < aiTransCar1 + 1500 || userTransCar < aiTransCar2 + 1500) {
+							if (userTransCar < aiTransCar1 + 2000 || userTransCar < aiTransCar2 + 2000) {
 								System.out.print("SIMULATION ENDED");
-								failurescreen.setText("YOU FAIL");
-								testFailed = true;
-
+								failureScreen.setText("YOU FAIL");
+								testHalt = true;
 							}
 						};
 					});
