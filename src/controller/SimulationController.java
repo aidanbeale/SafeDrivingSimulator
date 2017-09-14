@@ -66,19 +66,36 @@ public class SimulationController {
     private void handleSimBegin(ActionEvent event) {
     }
     
+    /**
+     * Calls the nessasary methods to initialise the simulation scene
+     */
     @FXML
     private void initialize() {
     	
-    	Group carMesh = import3dModel("mini");
+    	// Import car and add to subscene
+    	Group carMesh = import3dModel("mini-blueNo");
     	SubScene subScene = addMeshToSubScene(carMesh);
     	simGroup.getChildren().add(subScene);
     }
     
-    private SubScene addMeshToSubScene(Group carMesh) {
+    /**
+     * Method adds a car mesh to a subscene
+     * 
+     * @param carMesh The carmesh to add to the subscene
+     * @return The subscene
+     */
+    private SubScene addMeshToSubScene(Group carMesh) { // TODO need to be able to add multiple car meshes to the scene
         
     	// Create view camera
     	PerspectiveCamera camera = new PerspectiveCamera();
-        camera.setTranslateZ(-10000);
+        
+    	camera.setTranslateX(-1200);
+    	camera.setTranslateY(-414);
+    	camera.setTranslateZ(-420);
+    	camera.setRotationAxis(Rotate.Y_AXIS);
+    	camera.setRotate(270.0);
+        
+        
 
         // Create sub scene
         SubScene subScene = new SubScene(carMesh, 740, 740, true, SceneAntialiasing.BALANCED);
@@ -90,6 +107,12 @@ public class SimulationController {
         return subScene;
     }
     
+    /**
+     * This method will import the carmodel requested
+     * 
+     * @param carName The file name of the car
+     * @return A group containing the car mesh
+     */
     private Group import3dModel(String carName) {
     	
     	// Create model importer
