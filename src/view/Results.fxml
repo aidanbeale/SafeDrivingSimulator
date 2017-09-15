@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ResultsController">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
+      <AnchorPane layoutX="25.0" layoutY="31.0" prefHeight="713.0" prefWidth="1308.0" style="-fx-background-color: f4f4f4;">
+         <effect>
+            <Blend />
+         </effect>
+         <children>
+            <Label layoutX="86.0" layoutY="31.0" text="Safe Driving Simulator" textFill="#43515e">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Label>
+            <JFXButton id="loginButton" layoutX="488.0" layoutY="620.0" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Save to CSV" textFill="WHITE">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </JFXButton>
+            <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@traffic.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="584.0" layoutY="43.0" text="Final Results" textFill="#43515e">
+               <font>
+                  <Font name="Segoe UI Bold" size="24.0" />
+               </font>
+            </Label>
+            <JFXTreeTableView id="resultsTable" fx:id="resultsTable" layoutX="32.0" layoutY="84.0" prefHeight="516.0" prefWidth="1249.0" stylesheets="@table.css" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

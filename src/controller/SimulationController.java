@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 
-import com.interactivemesh.jfx.importer.ImportException;
-import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import com.jfoenix.controls.JFXButton;
 
 import javafx.application.Platform;
@@ -18,20 +16,15 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Light;
-import javafx.scene.effect.Lighting;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
-import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
 import simulation.Car;
 import simulation.EventHandler;
-import simulation.EventTimer;
 import simulation.Score;
 
 public class SimulationController {
@@ -236,7 +229,7 @@ public class SimulationController {
 						public void run() {
 							timeRemainingLabel.setText(String.valueOf(simulationTime--));
 
-							if(simulationTime == 0) {
+							if (simulationTime == 0) {
 								testHalt = true;
 							}
 						}
