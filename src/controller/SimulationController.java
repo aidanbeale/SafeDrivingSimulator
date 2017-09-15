@@ -48,6 +48,8 @@ public class SimulationController {
 	private Label clockLabel;
 	@FXML
 	private Label speedLabel;
+	@FXML
+	private Label timeRemainingLabel;
 
 	private Car userCar;
 	private Car aiCar1;
@@ -76,12 +78,15 @@ public class SimulationController {
 	private int brakeCount = 0;
 	private boolean braking = false;
 	private boolean accelerating = false;
+	private boolean acceleratingBreak = false;
 	private Score score = new Score();
 	private int minute;
+	private int simulationTime = 30;
+	private boolean simulationRunning = false;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
-
+		simulationRunning = true;
 		if (simButtonLabel.equals("begin")) {
 			beginSimButton.setText("Cancel Simulation");
 			simButtonLabel = "cancel";
@@ -92,7 +97,11 @@ public class SimulationController {
 
 			// Disable buttons
 			beginSimButton.setDisable(true);
+
 		}
+
+		// Start countdown
+		simulationCountdown();
 	}
 
 	private void createCars(String userChoice) {
@@ -173,7 +182,7 @@ public class SimulationController {
 		} else if (hour.equals("8") || hour.equals("3")) {
 			minute = rand.nextInt(54);
 		}
-		
+
 		if (String.valueOf(minute).length() == 1) {
 			clockLabel.setText(hour + ":0" + minute);
 		} else {
@@ -200,8 +209,36 @@ public class SimulationController {
 							} else {
 								clockLabel.setText(hour + ":" + minute);
 							}
-							
 
+						}
+					});
+				}
+
+			};
+
+		}).start();
+	}
+
+	private void simulationCountdown() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (!testHalt) {
+					try {
+						Thread.sleep(1000); // every second
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run() {
+							timeRemainingLabel.setText(String.valueOf(simulationTime--));
+
+							if(simulationTime == 0) {
+								testHalt = true;
+							}
 						}
 					});
 				}
@@ -261,13 +298,19 @@ public class SimulationController {
 
 							} else if (accelerating) {
 								if (userUnitsps < 20) {
-									userUnitsps += 1;
+									if (!acceleratingBreak) {
+										userUnitsps += 1;
+										acceleratingBreak = true;
+									} else {
+										acceleratingBreak = false;
+									}
 								} else {
 									accelerating = false;
 								}
 							}
 
 							userCar.setxPos(userCar.getxPos() - userUnitsps);
+							speedLabel.setText(String.valueOf((userUnitsps * 2) + "km/h"));
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
 							// System.out.println("trans car to " + userCar.getxPos());
 
@@ -305,7 +348,6 @@ public class SimulationController {
 									failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
 									testHalt = true;
 								}
-
 							}
 						};
 					});
