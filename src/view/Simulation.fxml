@@ -49,7 +49,7 @@
       <AnchorPane id="simAnchor" fx:id="simAnchor" prefHeight="768.0" prefWidth="826.0">
          <children>
             <Group id="simGroup" fx:id="simGroup" layoutX="13.0" layoutY="13.0" />
-            <Label id="failurescreen" fx:id="failureScreen" layoutX="322.0" layoutY="289.0" prefHeight="191.0" prefWidth="405.0" textAlignment="CENTER" textFill="RED">
+            <Label id="failurescreen" fx:id="failureScreen" layoutY="289.0" prefHeight="191.0" prefWidth="944.0" textAlignment="CENTER" textFill="RED">
                <font>
                   <Font size="96.0" />
                </font>

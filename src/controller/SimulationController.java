@@ -30,6 +30,7 @@ import javafx.scene.shape.Box;
 import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
 import simulation.Car;
+import simulation.EventHandler;
 
 public class SimulationController {
 
@@ -62,6 +63,13 @@ public class SimulationController {
 
 	private ArrayList<String> carColourList = new ArrayList<>();
 	Group rootGroup = new Group();
+
+	private EventHandler crashEvent;
+	private boolean brakesApplied;
+	private int userUnitsps = 20;
+	private int brakeCount = 0;
+	private boolean braking = false;
+	private boolean accelerating = false;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -164,12 +172,15 @@ public class SimulationController {
 	}
 
 	private void moveUserCar() {
+
+		crashEvent = new EventHandler(false, true, false);
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (!testHalt) {
 					try {
-						Thread.sleep(2);
+						Thread.sleep(30); // 30
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -178,35 +189,63 @@ public class SimulationController {
 
 						@Override
 						public void run() {
-							if (brakePressed) {
-								// TODO Work some magic
-							} else {
-								userCar.setxPos(userCar.getxPos() - 2);
-								userCar.getCarGroup().setTranslateX(userCar.getxPos());
-								System.out.println("trans car to " + userCar.getxPos());
 
-								camera.setTranslateX(transCam -= 2);
-								System.out.println("trans cam to " + transCam);
+							if (braking) {
 
-								aiCar1.setxPos(aiCar1.getxPos() - 2);
-								aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
-								System.out.println("trans ai1 car to " + aiCar1.getxPos());
-								
-								aiCar2.setxPos(aiCar2.getxPos() - 2);
-								aiCar2.getCarGroup().setTranslateX(aiCar2.getxPos());
-								System.out.println("trans ai2 car to " + aiCar2.getxPos());
-								
-								aiCar3.setxPos(aiCar3.getxPos() + 2);
-								aiCar3.getCarGroup().setTranslateX(aiCar3.getxPos());
-								System.out.println("trans ai3 car to " + aiCar3.getxPos());
+								if (userUnitsps > 0) {
+									userUnitsps -= 1;
+								} else {
+									braking = false;
+									accelerating = true;
+								}
+
+							} else if (accelerating) {
+								if (userUnitsps < 20) {
+									userUnitsps += 1;
+								} else {
+									accelerating = false;
+								}
 							}
 
-							//calculateNextStep();
+							userCar.setxPos(userCar.getxPos() - userUnitsps);
+							userCar.getCarGroup().setTranslateX(userCar.getxPos());
+							// System.out.println("trans car to " + userCar.getxPos());
 
-							if (userCar.getxPos() < aiCar1.getxPos() + 2000 || userCar.getxPos() < aiCar2.getxPos() + 2000) {
-								System.out.print("SIMULATION ENDED");
-								failureScreen.setText("YOU FAIL");
-								testHalt = true;
+							camera.setTranslateX(transCam -= 20);
+							// System.out.println("trans cam to " + transCam);
+
+							// aiCar1.setxPos(aiCar1.getxPos() - 20);
+							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
+							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
+
+							aiCar2.setxPos(aiCar2.getxPos() - 18);
+							aiCar2.getCarGroup().setTranslateX(aiCar2.getxPos());
+							// System.out.println("trans ai2 car to " + aiCar2.getxPos());
+
+							aiCar3.setxPos(aiCar3.getxPos() + 20);
+							aiCar3.getCarGroup().setTranslateX(aiCar3.getxPos());
+							// System.out.println("trans ai3 car to " + aiCar3.getxPos());
+
+							// calculateNextStep();
+
+							// Should apply brake now
+							if ((userCar.getxPos() < aiCar1.getxPos() + 2000
+									|| userCar.getxPos() < aiCar2.getxPos() + 2000) && !crashEvent.getTimerStarted()) {
+
+								crashEvent.startCrashEvent();
+
+								//// System.out.print("SIMULATION ENDED");
+							} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
+									|| userCar.getxPos() < aiCar2.getxPos() + 480) {
+
+								if (!crashEvent.isTimerStopped()) {
+									crashEvent.stopCrashEvent();
+									crashEvent.setTimerStopped(true);
+									//// System.out.print("SIMULATION ENDED");
+									failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
+									testHalt = true;
+								}
+
 							}
 						};
 					});
@@ -215,30 +254,21 @@ public class SimulationController {
 		}).start();
 	}
 
-	private void calculateNextStep() {
-		int randomNumber = rand.nextInt(100);
-		System.out.println(randomNumber);
-		if (randomNumber > 4) {
-			aiCar1.setxPos() =  aiCar1.getxPos() - 2;
-		} else if (randomNumber > 15 && randomNumber < 95) {
-			aiTransCar1 -= 1;
-		} else if (randomNumber > 60 && randomNumber < 95) {
-			aiTransCar1 += 1;
-		}
-
-		if (randomNumber > 4) {
-			aiTransCar2 -= 2;
-		} else if (randomNumber > 15 && randomNumber < 95) {
-			aiTransCar2 -= 1;
-		} else if (randomNumber > 60 && randomNumber < 95) {
-			aiTransCar2 += 3;
-		}
-
-		/*
-		 * if (randomNumber > 2) { aiTransCar2 -= 2; }
-		 */
-
-	}
+	/*
+	 * private void calculateNextStep() { int randomNumber = rand.nextInt(100);
+	 * System.out.println(randomNumber); if (randomNumber > 4) { aiCar1.setxPos() =
+	 * aiCar1.getxPos() - 2; } else if (randomNumber > 15 && randomNumber < 95) {
+	 * aiTransCar1 -= 1; } else if (randomNumber > 60 && randomNumber < 95) {
+	 * aiTransCar1 += 1; }
+	 * 
+	 * if (randomNumber > 4) { aiTransCar2 -= 2; } else if (randomNumber > 15 &&
+	 * randomNumber < 95) { aiTransCar2 -= 1; } else if (randomNumber > 60 &&
+	 * randomNumber < 95) { aiTransCar2 += 3; }
+	 * 
+	 * 
+	 * 
+	 * }
+	 */
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
 		// Create view camera
@@ -246,7 +276,7 @@ public class SimulationController {
 
 		if (camPlacement.equals("first")) {
 			// First person view
-			camera.setTranslateX(-4400); // -1202
+			camera.setTranslateX(-1202); // -1202
 			camera.setTranslateY(-420); // -420
 			camera.setTranslateZ(-520); // -520
 			camera.setRotationAxis(Rotate.Y_AXIS);
@@ -256,12 +286,12 @@ public class SimulationController {
 			camera.setTranslateX(-800); // -1202
 			camera.setTranslateY(-320); // -420
 			camera.setTranslateZ(500); // -520
-			//camera.setRotationAxis(Rotate.Y_AXIS);
-			//camera.setRotate(0.0); // 270
+			// camera.setRotationAxis(Rotate.Y_AXIS);
+			// camera.setRotate(0.0); // 270
 			camera.setRotationAxis(Rotate.X_AXIS);
 			camera.setRotate(270.0);
-			//camera.setRotationAxis(Rotate.Z_AXIS);
-			//camera.setRotate(0.0);
+			// camera.setRotationAxis(Rotate.Z_AXIS);
+			// camera.setRotate(0.0);
 		} else {
 			// TODO throws
 			System.out.println("no cam");
@@ -296,5 +326,17 @@ public class SimulationController {
 	@FXML
 	private void brakeButtonPressed() {
 
+		if (crashEvent.getTimerStarted()) {
+			crashEvent.stopCrashEvent();
+			crashEvent.setTimerStopped(true);
+
+			braking = true;
+
+			//// System.out.print("SIMULATION ENDED");
+			failureScreen.setText("YOU applied the brakes correctly  Score: " + crashEvent.calculateScore());
+
+		} else {
+			failureScreen.setText("brakes early   Score: ");
+		}
 	}
 }
