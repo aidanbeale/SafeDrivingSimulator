@@ -45,7 +45,6 @@ public class EventHandler {
 		} else {
 			return 0;
 		}
-
 	}
 
 	public boolean getTimerStarted() {

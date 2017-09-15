@@ -40,8 +40,6 @@
                </image>
             </ImageView>
             <Label layoutX="141.0" layoutY="114.0" prefHeight="29.0" prefWidth="62.0" text="Traffic Hint" textAlignment="CENTER" />
-            <Label layoutX="98.0" layoutY="397.0" text="Current Time:" />
-            <Label id="clockLabel" fx:id="clockLabel" layoutX="187.0" layoutY="391.0" prefHeight="29.0" prefWidth="83.0" text="Label" />
             <Label layoutX="24.0" layoutY="427.0" text="Simulation Remaining Time:" />
             <Label id="timeRemainingLabel" fx:id="timeRemainingLabel" layoutX="187.0" layoutY="427.0" text="Label" />
          </children>
@@ -51,9 +49,17 @@
             <Group id="simGroup" fx:id="simGroup" layoutX="13.0" layoutY="13.0" />
             <Label id="failurescreen" fx:id="failureScreen" layoutY="289.0" prefHeight="191.0" prefWidth="944.0" textAlignment="CENTER" textFill="RED">
                <font>
-                  <Font size="96.0" />
+                  <Font size="48.0" />
                </font>
             </Label>
+            <Pane layoutX="637.0" layoutY="660.0" prefHeight="94.0" prefWidth="352.0" style="-fx-background-color: f4f4f4;">
+               <children>
+                  <Label layoutX="23.0" layoutY="39.0" text="Speed:" />
+                  <Label layoutX="196.0" layoutY="39.0" text="Clock:" />
+                  <Label id="speedLabel" fx:id="speedLabel" layoutX="106.0" layoutY="39.0" text="4km/h" />
+                  <Label id="clockLabel" fx:id="clockLabel" layoutX="275.0" layoutY="39.0" text="8:35" />
+               </children>
+            </Pane>
          </children></AnchorPane>
    </children>
 </AnchorPane>

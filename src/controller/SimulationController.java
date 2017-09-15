@@ -31,6 +31,8 @@ import javafx.scene.shape.CullFace;
 import javafx.scene.transform.Rotate;
 import simulation.Car;
 import simulation.EventHandler;
+import simulation.EventTimer;
+import simulation.Score;
 
 public class SimulationController {
 
@@ -42,6 +44,10 @@ public class SimulationController {
 	private Group simGroup;
 	@FXML
 	private Label failureScreen;
+	@FXML
+	private Label clockLabel;
+	@FXML
+	private Label speedLabel;
 
 	private Car userCar;
 	private Car aiCar1;
@@ -70,6 +76,8 @@ public class SimulationController {
 	private int brakeCount = 0;
 	private boolean braking = false;
 	private boolean accelerating = false;
+	private Score score = new Score();
+	private int minute;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -149,6 +157,58 @@ public class SimulationController {
 
 		// Add subscene to main window
 		simGroup.getChildren().add(subScene);
+
+		// Start car clock
+		initClock();
+	}
+
+	private void initClock() {
+
+		final String[] hourArr = { "8", "9", "2", "3" };
+		String hour = hourArr[rand.nextInt(hourArr.length)];
+		// Dont have to worry about changing hour
+
+		if (hour.equals("2") || hour.equals("9")) {
+			minute = rand.nextInt(25);
+		} else if (hour.equals("8") || hour.equals("3")) {
+			minute = rand.nextInt(54);
+		}
+		
+		if (String.valueOf(minute).length() == 1) {
+			clockLabel.setText(hour + ":0" + minute);
+		} else {
+			clockLabel.setText(hour + ":" + minute);
+		}
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						Thread.sleep(60000); // every minute
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Platform.runLater(new Runnable() {
+
+						@Override
+						public void run() {
+							minute++;
+							if (String.valueOf(minute).length() == 1) {
+								clockLabel.setText(hour + ":0" + minute);
+							} else {
+								clockLabel.setText(hour + ":" + minute);
+							}
+							
+
+						}
+					});
+				}
+
+			};
+
+		}).start();
 	}
 
 	private Group createRoad() {
@@ -326,17 +386,18 @@ public class SimulationController {
 	@FXML
 	private void brakeButtonPressed() {
 
+		// If crash event occuring
 		if (crashEvent.getTimerStarted()) {
 			crashEvent.stopCrashEvent();
 			crashEvent.setTimerStopped(true);
 
 			braking = true;
 
-			//// System.out.print("SIMULATION ENDED");
 			failureScreen.setText("YOU applied the brakes correctly  Score: " + crashEvent.calculateScore());
 
-		} else {
+		} else if (!crashEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("brakes early   Score: -100 ");
+			score.setLostScore(score.getLostScore() - 100);
 			braking = true;
 		}
 	}
