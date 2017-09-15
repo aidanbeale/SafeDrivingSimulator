@@ -192,7 +192,7 @@ public class SimulationController {
 
 							if (braking) {
 
-								if (userUnitsps > 0) {
+								if (userUnitsps > 3) {
 									userUnitsps -= 1;
 								} else {
 									braking = false;
@@ -211,10 +211,10 @@ public class SimulationController {
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
 							// System.out.println("trans car to " + userCar.getxPos());
 
-							camera.setTranslateX(transCam -= 20);
+							camera.setTranslateX(transCam -= userUnitsps);
 							// System.out.println("trans cam to " + transCam);
 
-							// aiCar1.setxPos(aiCar1.getxPos() - 20);
+							aiCar1.setxPos(aiCar1.getxPos() - 18);
 							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
 							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
 
@@ -336,7 +336,8 @@ public class SimulationController {
 			failureScreen.setText("YOU applied the brakes correctly  Score: " + crashEvent.calculateScore());
 
 		} else {
-			failureScreen.setText("brakes early   Score: ");
+			failureScreen.setText("brakes early   Score: -100 ");
+			braking = true;
 		}
 	}
 }
