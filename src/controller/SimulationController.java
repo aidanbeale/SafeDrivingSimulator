@@ -66,16 +66,15 @@ public class SimulationController {
 	Group rootGroup = new Group();
 
 	private EventHandler crashEvent;
-	private boolean brakesApplied;
-	private int userUnitsps = 20;
-	private int brakeCount = 0;
+	private int userUnitsps = 40; 
+	private int aiUnitsps = 40;
 	private boolean braking = false;
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
-	private Score score = new Score();
 	private int minute;
-	private int simulationTime = 30;
+	private int simulationTime = 300;
 	private boolean simulationRunning = false;
+	private ArrayList<Score> scoringOps = new ArrayList<>();
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -263,7 +262,7 @@ public class SimulationController {
 
 	private void moveUserCar() {
 
-		crashEvent = new EventHandler(false, true, false);
+		crashEvent = new EventHandler();
 
 		new Thread(new Runnable() {
 			@Override
@@ -282,7 +281,7 @@ public class SimulationController {
 
 							if (braking) {
 
-								if (userUnitsps > 3) {
+								if (userUnitsps > 15) {
 									userUnitsps -= 1;
 								} else {
 									braking = false;
@@ -290,7 +289,7 @@ public class SimulationController {
 								}
 
 							} else if (accelerating) {
-								if (userUnitsps < 20) {
+								if (userUnitsps < 40) {
 									if (!acceleratingBreak) {
 										userUnitsps += 1;
 										acceleratingBreak = true;
@@ -310,11 +309,11 @@ public class SimulationController {
 							camera.setTranslateX(transCam -= userUnitsps);
 							// System.out.println("trans cam to " + transCam);
 
-							aiCar1.setxPos(aiCar1.getxPos() - 18);
+							aiCar1.setxPos(aiCar1.getxPos() - (aiUnitsps - 3));
 							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
 							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
 
-							aiCar2.setxPos(aiCar2.getxPos() - 18);
+							aiCar2.setxPos(aiCar2.getxPos() - (aiUnitsps - 3));
 							aiCar2.getCarGroup().setTranslateX(aiCar2.getxPos());
 							// System.out.println("trans ai2 car to " + aiCar2.getxPos());
 
@@ -328,14 +327,14 @@ public class SimulationController {
 							if ((userCar.getxPos() < aiCar1.getxPos() + 2000
 									|| userCar.getxPos() < aiCar2.getxPos() + 2000) && !crashEvent.getTimerStarted()) {
 
-								crashEvent.startCrashEvent();
+								crashEvent.startCrashEventTimer();
 
 								//// System.out.print("SIMULATION ENDED");
 							} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
 									|| userCar.getxPos() < aiCar2.getxPos() + 480) {
 
 								if (!crashEvent.isTimerStopped()) {
-									crashEvent.stopCrashEvent();
+									crashEvent.stopCrashEventTimer();
 									crashEvent.setTimerStopped(true);
 									//// System.out.print("SIMULATION ENDED");
 									failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
@@ -421,19 +420,25 @@ public class SimulationController {
 	@FXML
 	private void brakeButtonPressed() {
 
+		braking = true;
+		
 		// If crash event occuring
 		if (crashEvent.getTimerStarted()) {
-			crashEvent.stopCrashEvent();
+			crashEvent.stopCrashEventTimer();
 			crashEvent.setTimerStopped(true);
-
-			braking = true;
 
 			failureScreen.setText("YOU applied the brakes correctly  Score: " + crashEvent.calculateScore());
 
+			Score score = new Score("crashevent", crashEvent.getTimerStartedTime(), crashEvent.getTimerStoppedTime());
+			scoringOps.add(score);
+
+			crashEvent = new EventHandler();
+
 		} else if (!crashEvent.getTimerStarted()) { // if no events have started
-			failureScreen.setText("brakes early   Score: -100 ");
-			score.setLostScore(score.getLostScore() - 100);
-			braking = true;
+			failureScreen.setText("brakes early   Score: -300 ");
+
+			Score score = new Score("failedAttempt", -300);
+			scoringOps.add(score);
 		}
 	}
 }

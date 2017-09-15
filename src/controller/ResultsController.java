@@ -26,7 +26,6 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 	@FXML
 	private void initialize() {
 		loadTable();
-		
 	}
 
 	private void loadTable() {

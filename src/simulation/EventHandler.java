@@ -4,27 +4,22 @@ import java.util.TimerTask;
 
 public class EventHandler {
 
-	private boolean speedingEvent;
-	private boolean crashEvent; // Crash occurs if cars are 480 apart
-	private boolean childEvent;
 	private EventTimer timer;
-	private boolean timerStarted = false;
+	private boolean timerStarted = false;// Crash occurs if cars are 480 apart
 	private boolean timerStopped = false;
+	private long timerStartedTime;
+	private long timerStoppedTime;
 
-	public EventHandler(boolean speedingEvent, boolean crashEvent, boolean childEvent) {
-		super();
-		this.speedingEvent = speedingEvent;
-		this.crashEvent = crashEvent;
-		this.childEvent = childEvent;
+	public EventHandler() {
 	}
 
-	public void startCrashEvent() {
+	public void startCrashEventTimer() {
 		timerStarted = true;
 		timer = new EventTimer();
 		timer.startTimer();
 	}
 	
-	public void stopCrashEvent() {
+	public void stopCrashEventTimer() {
 		timer.stopTimer();
 	}
 
@@ -50,6 +45,10 @@ public class EventHandler {
 	public boolean getTimerStarted() {
 		return timerStarted;
 	}
+	
+	public boolean getTimerStopped() {
+		return timerStarted;
+	}
 
 	public boolean isTimerStopped() {
 		return timerStopped;
@@ -61,6 +60,30 @@ public class EventHandler {
 
 	public void setTimerStopped(boolean timerStopped) {
 		this.timerStopped = timerStopped;
+	}
+
+	public EventTimer getTimer() {
+		return timer;
+	}
+
+	public void setTimer(EventTimer timer) {
+		this.timer = timer;
+	}
+
+	public long getTimerStartedTime() {
+		return timerStartedTime;
+	}
+
+	public void setTimerStartedTime(long timerStartedTime) {
+		this.timerStartedTime = timerStartedTime;
+	}
+
+	public long getTimerStoppedTime() {
+		return timerStoppedTime;
+	}
+
+	public void setTimerStoppedTime(long timerStoppedTime) {
+		this.timerStoppedTime = timerStoppedTime;
 	}
 	
 	
