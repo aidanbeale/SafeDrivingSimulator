@@ -10,17 +10,16 @@ public class EventHandler {
 	private long timerStartedTime;
 	private long timerStoppedTime;
 
-	public EventHandler() {
-	}
+	public EventHandler() {}
 
 	public void startCrashEventTimer() {
 		timerStarted = true;
 		timer = new EventTimer();
-		timer.startTimer();
+		timerStartedTime = timer.startTimer();
 	}
 	
 	public void stopCrashEventTimer() {
-		timer.stopTimer();
+		timerStoppedTime = timer.stopTimer();
 	}
 
 	public void startSpeedingEvent() {
@@ -85,6 +84,5 @@ public class EventHandler {
 	public void setTimerStoppedTime(long timerStoppedTime) {
 		this.timerStoppedTime = timerStoppedTime;
 	}
-	
 	
 }

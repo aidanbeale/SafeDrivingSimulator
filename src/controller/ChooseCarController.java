@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.jfoenix.controls.JFXButton;
 
@@ -10,7 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
+import simulation.Car;
 
 public class ChooseCarController {
 	
@@ -47,4 +50,40 @@ public class ChooseCarController {
 		window.setScene(scene);
 		window.show();
 	}
+	
+	private void createCars(String userChoice) {
+		carColourList.add("mini-red");
+		carColourList.add("mini-green");
+		carColourList.add("mini-blue");
+		carColourList.add("mini-aws");
+
+		for (String c : carColourList) {
+			if (c.equals(userChoice)) {
+				carColourList.remove(c);
+				break;
+			}
+		}
+
+		userCar = new Car(0, 0, userChoice, true);
+		rootGroup.getChildren().add(userCar.getCarGroup());
+
+		int i = 1;
+		ArrayList<Car> aiCarList = new ArrayList<>();
+		// Create the other cars
+		for (String c : carColourList) {
+			Car newCar = new Car(0, -5200 * i, c, false);
+			rootGroup.getChildren().add(newCar.getCarGroup());
+			aiCarList.add(newCar);
+			i++;
+		}
+		// Assign cars as global
+		aiCar1 = aiCarList.get(0);
+		aiCar2 = aiCarList.get(1);
+		aiCar3 = aiCarList.get(2);
+		aiCar3.setxPos(-30000);
+		aiCar3.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
+		aiCar3.getCarGroup().setRotate(180.0);
+		aiCar3.getCarGroup().setTranslateZ(550);
+	}
+	
 }

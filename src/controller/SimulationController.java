@@ -16,6 +16,7 @@ import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
@@ -43,6 +44,8 @@ public class SimulationController {
 	private Label speedLabel;
 	@FXML
 	private Label timeRemainingLabel;
+	@FXML
+	private Button brakeButton;
 
 	private Car userCar;
 	private Car aiCar1;
@@ -66,13 +69,13 @@ public class SimulationController {
 	Group rootGroup = new Group();
 
 	private EventHandler crashEvent;
-	private int userUnitsps = 40; 
+	private int userUnitsps = 40;
 	private int aiUnitsps = 40;
 	private boolean braking = false;
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
-	private int simulationTime = 300;
+	private int simulationTime = 60;
 	private boolean simulationRunning = false;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 
@@ -309,7 +312,7 @@ public class SimulationController {
 							camera.setTranslateX(transCam -= userUnitsps);
 							// System.out.println("trans cam to " + transCam);
 
-							aiCar1.setxPos(aiCar1.getxPos() - (aiUnitsps - 3));
+							aiCar1.setxPos(aiCar1.getxPos() - (aiUnitsps - 6));
 							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
 							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
 
@@ -421,24 +424,55 @@ public class SimulationController {
 	private void brakeButtonPressed() {
 
 		braking = true;
-		
+
 		// If crash event occuring
 		if (crashEvent.getTimerStarted()) {
 			crashEvent.stopCrashEventTimer();
 			crashEvent.setTimerStopped(true);
 
-			failureScreen.setText("YOU applied the brakes correctly  Score: " + crashEvent.calculateScore());
+			// tempDisableBrakeButton();
 
 			Score score = new Score("crashevent", crashEvent.getTimerStartedTime(), crashEvent.getTimerStoppedTime());
 			scoringOps.add(score);
 
+			if (score.getScore() != 0) {
+				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+			} else {
+				failureScreen.setText("Brakes applied correctly. Too slow to react.  Score: " + score.getScore());
+			}
+
 			crashEvent = new EventHandler();
 
 		} else if (!crashEvent.getTimerStarted()) { // if no events have started
-			failureScreen.setText("brakes early   Score: -300 ");
+			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
+
+			// tempDisableBrakeButton();
 
 			Score score = new Score("failedAttempt", -300);
 			scoringOps.add(score);
 		}
+	}
+
+	private void tempDisableBrakeButton() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						brakeButton.setDisable(true);
+
+						try {
+							Thread.sleep(3000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						brakeButton.setDisable(false);
+					}
+				});
+			};
+		}).start();
 	}
 }

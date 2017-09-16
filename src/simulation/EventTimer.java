@@ -1,22 +1,21 @@
 package simulation;
 
 public class EventTimer {
-	
+
 	private long start;
 	private long end;
 
-	public void startTimer() {
+	public long startTimer() {
 		start = System.currentTimeMillis();
-		System.out.println("start: " + start);
+		return start;
 	}
 
-	public void stopTimer() {
+	public long stopTimer() {
 		end = System.currentTimeMillis();
-		System.out.println("end: " + end);
+		return end;
 	}
 
 	public int reactionTime() {
-		System.out.println((int) (end - start));
 		return ((int) (end - start));
 	}
 }

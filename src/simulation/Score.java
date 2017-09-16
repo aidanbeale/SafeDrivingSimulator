@@ -17,8 +17,15 @@ public class Score {
 		this.yourTime = yourTime;
 		
 		this.diff = (int) (yourTime - optimalTime);
-		this.score = REACTION_TIME - diff;
-		this.scorePercentage = score / REACTION_TIME;
+		
+		if ((REACTION_TIME - diff) > 0) {
+			this.score = REACTION_TIME - diff;
+			this.scorePercentage = score / REACTION_TIME;
+		} else {
+			this.score = 0;
+			this.scorePercentage = 0;
+		}
+
 	}
 
 	public Score(String event, int score) {
