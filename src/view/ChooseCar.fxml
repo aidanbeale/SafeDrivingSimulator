@@ -19,6 +19,16 @@
             <Blend />
          </effect>
          <children>
+            <JFXButton id="chooseBack" fx:id="chooseBack" layoutX="30.0" layoutY="388.0" onAction="#chooseBack" prefHeight="66.0" prefWidth="65.0" style="-fx-background-color: #34495e;" text="&lt;" textFill="WHITE">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </JFXButton>
+            <JFXButton id="chooseForward" fx:id="chooseForward" layoutX="445.0" layoutY="388.0" onAction="#chooseForward" prefHeight="66.0" prefWidth="65.0" style="-fx-background-color: #34495e;" text="&gt;" textFill="WHITE">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </JFXButton>
             <Label layoutX="523.0" layoutY="35.0" text="Safe Driving Simulator" textFill="#43515e">
                <font>
                   <Font name="Segoe UI Bold" size="24.0" />
@@ -29,12 +39,12 @@
                   <Image url="@traffic.png" />
                </image>
             </ImageView>
-            <JFXButton id="chooseCar1" fx:id="chooseCar1" layoutX="141.0" layoutY="501.0" onAction="#chooseCar1" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 1" textFill="WHITE" />
+            <JFXButton id="chooseCar1" fx:id="chooseCar1" layoutX="710.0" layoutY="545.0" onAction="#chooseCar1" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 1" textFill="WHITE" />
             <JFXCheckBox checkedColor="#34495e" layoutX="692.0" layoutY="220.0" text="Children" />
             <JFXCheckBox checkedColor="#34495e" layoutX="581.0" layoutY="188.0" text="Speeding" />
             <JFXCheckBox checkedColor="#34495e" layoutX="692.0" layoutY="180.0" text="Crash" />
             <JFXCheckBox checkedColor="#34495e" layoutX="581.0" layoutY="237.0" text="Give way" />
-            <AnchorPane layoutX="170.0" layoutY="177.0" prefHeight="200.0" prefWidth="200.0">
+            <AnchorPane layoutX="116.0" layoutY="299.0" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Group id="chooseCarGroup" fx:id="chooseCarGroup" />
                </children>

@@ -35,33 +35,32 @@ public class ChooseCarController {
 
 	PerspectiveCamera camera;
 	Group rootGroup = new Group();
-	ArrayList<Car> carList = new ArrayList<>();
+	ArrayList<Group> carGroupList = new ArrayList<>();
 	private int rotateAmount;
-	
+	private int currCarGroup = 0;
+
 	@FXML
 	private void initialize() {
-		
+
 		// Create cars
 		createCars();
-		
+
 		// Setup camera
 		camera = setupCamera();
-		
+
 		// Create Ambient Light
 		AmbientLight ambient = new AmbientLight();
-		
+
 		// Add ambient light to the group
 		rootGroup.getChildren().add(ambient);
-		
+
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 300, 300, true, SceneAntialiasing.BALANCED);
-		subScene.setFill(Color.SKYBLUE);
 		subScene.setCamera(camera);
-		
-		
+
 		// Add subscene to main window
 		chooseCarGroup.getChildren().add(subScene);
-		
+
 		rotateCarChoice();
 	}
 
@@ -105,7 +104,7 @@ public class ChooseCarController {
 
 		for (String s : carColourList) {
 			Car c = new Car(s);
-			rootGroup.getChildren().add(c.getCarGroup());
+			carGroupList.add(c.getCarGroup());
 		}
 
 	}
@@ -127,7 +126,7 @@ public class ChooseCarController {
 						@Override
 						public void run() {
 							rootGroup.setRotationAxis(Rotate.Y_AXIS);
-							
+
 							if (rotateAmount == 359) {
 								rotateAmount = 0;
 							}
@@ -151,4 +150,26 @@ public class ChooseCarController {
 		return camera;
 	}
 
+	@FXML
+	private void chooseBack(ActionEvent event) throws IOException {
+		if (currCarGroup == 4) { // TODO length of arraylist
+			currCarGroup = 0;
+		} else if (currCarGroup == -1) {
+			currCarGroup = 3;
+		}
+		
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
+	}
+
+	@FXML
+	private void chooseForward(ActionEvent event) throws IOException {
+		if (currCarGroup == 4) { // TODO length of arraylist
+			currCarGroup = 0;
+		} else if (currCarGroup == -1) {
+			currCarGroup = 3;
+		}
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup++));
+	}
 }
