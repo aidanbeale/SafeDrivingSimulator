@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
@@ -28,9 +30,15 @@
                </image>
             </ImageView>
             <JFXButton id="chooseCar1" fx:id="chooseCar1" layoutX="141.0" layoutY="501.0" onAction="#chooseCar1" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 1" textFill="WHITE" />
-            <JFXButton id="chooseCar2" fx:id="chooseCar2" layoutX="533.0" layoutY="501.0" onAction="#chooseCar2" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 2" textFill="WHITE" />
-            <JFXButton id="chooseCar3" fx:id="chooseCar3" layoutX="989.0" layoutY="501.0" onAction="#chooseCar3" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Choose Car 3" textFill="WHITE" />
-            <Label layoutX="581.0" layoutY="89.0" text="Choose a car" />
+            <JFXCheckBox checkedColor="#34495e" layoutX="692.0" layoutY="220.0" text="Children" />
+            <JFXCheckBox checkedColor="#34495e" layoutX="581.0" layoutY="188.0" text="Speeding" />
+            <JFXCheckBox checkedColor="#34495e" layoutX="692.0" layoutY="180.0" text="Crash" />
+            <JFXCheckBox checkedColor="#34495e" layoutX="581.0" layoutY="237.0" text="Give way" />
+            <AnchorPane layoutX="170.0" layoutY="177.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Group id="chooseCarGroup" fx:id="chooseCarGroup" />
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>

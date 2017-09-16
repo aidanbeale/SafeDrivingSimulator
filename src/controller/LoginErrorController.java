@@ -20,7 +20,7 @@ public class LoginErrorController {
 	private void handleOk(ActionEvent event) throws IOException {
 		
 		// Change scene to display login screen again
-			Parent root = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
+			Parent root = FXMLLoader.load(getClass().getResource("../view/ChooseCar.fxml"));
 			Scene scene = new Scene(root);
 			
 			Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();

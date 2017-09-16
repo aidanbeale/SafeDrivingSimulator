@@ -22,6 +22,11 @@ public class Car {
 
 		init();
 	}
+	
+	public Car(String model) {
+		this.model = model;
+		init();
+	}
 
 	private void init() {
 		Node[] carMesh = import3dModel(model);
