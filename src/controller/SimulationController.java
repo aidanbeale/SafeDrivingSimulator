@@ -148,7 +148,7 @@ public class SimulationController {
 		rootGroup.getChildren().add(roadGroup);
 
 		// Create camera
-		camera = setupUserCamera("first");
+		camera = setupUserCamera("third");
 
 		// Create Ambient Light
 		AmbientLight ambient = new AmbientLight();
@@ -380,15 +380,16 @@ public class SimulationController {
 			camera.setRotate(270.0); // 270
 		} else if (camPlacement.equals("third")) {
 			// Third person view
-			camera.setTranslateX(-800); // -1202
-			camera.setTranslateY(-320); // -420
-			camera.setTranslateZ(500); // -520
+			camera.setTranslateX(2000); // -1202
+			camera.setTranslateY(-620); // -420
+			camera.setTranslateZ(-500); // -520
 			// camera.setRotationAxis(Rotate.Y_AXIS);
 			// camera.setRotate(0.0); // 270
+			//camera.setRotationAxis(Rotate.Y_AXIS);
+			//camera.setRotate(270.0);
 			camera.setRotationAxis(Rotate.X_AXIS);
-			camera.setRotate(270.0);
-			// camera.setRotationAxis(Rotate.Z_AXIS);
-			// camera.setRotate(0.0);
+			camera.setRotate(-45.0);
+
 		} else {
 			// TODO throws
 			System.out.println("no cam");
@@ -453,7 +454,7 @@ public class SimulationController {
 		}
 	}
 
-	private void tempDisableBrakeButton() {
+	private void tempDisableBrakeButton() { // TODO not working, needs fixing. Check begin button disable?	
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
