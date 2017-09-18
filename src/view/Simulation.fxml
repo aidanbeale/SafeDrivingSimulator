@@ -42,6 +42,7 @@
             <Label layoutX="141.0" layoutY="114.0" prefHeight="29.0" prefWidth="62.0" text="Traffic Hint" textAlignment="CENTER" />
             <Label layoutX="24.0" layoutY="427.0" text="Simulation Remaining Time:" />
             <Label id="timeRemainingLabel" fx:id="timeRemainingLabel" layoutX="187.0" layoutY="427.0" text="Label" />
+            <JFXButton id="displayScore" fx:id="displayScore" layoutX="236.0" layoutY="388.0" onAction="#displayScores" text="finish test" />
          </children>
       </AnchorPane>
       <AnchorPane id="simAnchor" fx:id="simAnchor" prefHeight="768.0" prefWidth="826.0">

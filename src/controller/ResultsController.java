@@ -1,6 +1,8 @@
 package controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
@@ -20,12 +22,14 @@ import simulation.Score;
 
 public class ResultsController { // Referenced this https://www.youtube.com/watch?v=nbl0kOum-ps
 
+	private ArrayList<Score> scoringOps = new ArrayList<>();
+	
 	@FXML
 	JFXTreeTableView<RowProp> resultsTable;
 
 	@FXML
 	private void initialize() {
-		loadTable();
+		//loadTable();
 	}
 
 	private void loadTable() {
@@ -91,19 +95,22 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 
 		ObservableList<RowProp> rows = FXCollections.observableArrayList();
 		
-		// loadResults();
-		rows.add(new RowProp("testevent", "testopt", "testyous", "testdiff", "testscore", "testscore%"));
-		rows.add(new RowProp("testevaent", "testaopt", "testydous", "testdiff", "testscdore", "testsdcore%"));
-		
-        final TreeItem<RowProp> root = new RecursiveTreeItem<RowProp>(rows, RecursiveTreeObject::getChildren);
+		ObservableList<RowProp> updatedRows = loadResults(rows);
+
+        final TreeItem<RowProp> root = new RecursiveTreeItem<RowProp>(updatedRows, RecursiveTreeObject::getChildren);
         resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol);
         resultsTable.setRoot(root);
         resultsTable.setShowRoot(false);
 		
 	}
 	
-	private ArrayList<Score> loadResults() {
-		return null;
+	private ObservableList<RowProp> loadResults(ObservableList<RowProp> rows) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");    
+		
+		for (Score s : scoringOps) {
+			rows.add(new RowProp(s.getEvent(), sdf.format(s.getOptimalTime()), sdf.format(s.getYourTime()), String.valueOf(s.getDiff()), String.valueOf(s.getScore()), String.valueOf(s.getScorePercentage()) + "%"));
+		}
+		return rows;
 	}
 
 	class RowProp extends RecursiveTreeObject<RowProp> {
@@ -123,5 +130,10 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 			this.scorePercent = new SimpleStringProperty(scorePercent);
 		}
 
+	}
+
+	public void setScoringOps(ArrayList<Score> scoringOps) {
+		this.scoringOps = scoringOps;
+		loadTable();
 	}
 }

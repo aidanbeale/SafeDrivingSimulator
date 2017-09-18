@@ -43,6 +43,11 @@ public class LoginController {
 		} else {
 			System.out.println("Credentials are incorrect");
 			
+			AlertBox box = new AlertBox();
+			box.display("Error", "Credentials are incorrect, please try again", "Okay", "close");
+			
+
+			/*
 			// Change scene to display error
 			Parent root = FXMLLoader.load(getClass().getResource("../view/LoginError.fxml"));
 			Scene scene = new Scene(root);
@@ -50,6 +55,7 @@ public class LoginController {
 			Stage window = (Stage)((Node)event.getSource()).getScene().getWindow();
 			window.setScene(scene);
 			window.show();
+			*/
 	}
 	}
 }

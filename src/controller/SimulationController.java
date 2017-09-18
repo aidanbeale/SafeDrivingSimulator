@@ -1,5 +1,6 @@
 package controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -9,11 +10,14 @@ import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.AmbientLight;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.PointLight;
+import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
 import javafx.scene.control.Button;
@@ -24,6 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Stage;
 import simulation.Car;
 import simulation.EventHandler;
 import simulation.Score;
@@ -47,6 +52,8 @@ public class SimulationController {
 	private Label timeRemainingLabel;
 	@FXML
 	private Button brakeButton;
+	@FXML
+	private JFXButton displayScore;
 
 	private Car userCar;
 	private Car aiCar1;
@@ -134,22 +141,21 @@ public class SimulationController {
 		aiCar3.getCarGroup().setRotate(180.0);
 		aiCar3.getCarGroup().setTranslateZ(550);
 	}
-	
+
 	private void createObjects() {
 		Group objGroup = new Group();
 		Double distBetweenSign = 0.0;
 		Double distBetweenTree = 0.0;
-		
-		SimObject sign = new SimObject("boy", -1500, -420, -520); // Sign is not loading correctly
+
+		SimObject sign = new SimObject("scSign", -1500, -420, -520); // Sign is not loading correctly
 		sign.getObjGroup().setTranslateX(-5000);
 		sign.getObjGroup().setTranslateY(0);
 		sign.getObjGroup().setTranslateZ(-520);
-		//sign.getObjGroup().setRotationAxis(Rotate.Y_AXIS);
-		//sign.getObjGroup().setRotate(90.0);
+		sign.getObjGroup().setRotationAxis(Rotate.Y_AXIS);
+		sign.getObjGroup().setRotate(90.0);
 
 		rootGroup.getChildren().add(sign.getObjGroup());
 	}
-		
 
 	/**
 	 * Calls the nessasary methods to initialise the simulation scene
@@ -181,7 +187,7 @@ public class SimulationController {
 
 		// Start car clock
 		initClock();
-		
+
 		createObjects();
 	}
 
@@ -404,8 +410,8 @@ public class SimulationController {
 			camera.setTranslateZ(-500); // -520
 			// camera.setRotationAxis(Rotate.Y_AXIS);
 			// camera.setRotate(0.0); // 270
-			//camera.setRotationAxis(Rotate.Y_AXIS);
-			//camera.setRotate(270.0);
+			// camera.setRotationAxis(Rotate.Y_AXIS);
+			// camera.setRotate(270.0);
 			camera.setRotationAxis(Rotate.X_AXIS);
 			camera.setRotate(-45.0);
 
@@ -473,7 +479,7 @@ public class SimulationController {
 		}
 	}
 
-	private void tempDisableBrakeButton() { // TODO not working, needs fixing. Check begin button disable?	
+	private void tempDisableBrakeButton() { // TODO not working, needs fixing. Check begin button disable?
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -495,4 +501,22 @@ public class SimulationController {
 			};
 		}).start();
 	}
+
+	@FXML
+	private void displayScores(ActionEvent event) throws IOException {
+
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("../view/Results.fxml"));
+
+		loader.load();
+
+		ResultsController results = loader.getController();
+		results.setScoringOps(scoringOps);
+
+		Parent p = loader.getRoot();
+		Stage stage = new Stage();
+		stage.setScene(new Scene(p));
+		stage.show();
+	}
+
 }
