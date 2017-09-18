@@ -62,7 +62,7 @@ public class SimulationController {
 
 	private Group roadGroup;
 	private PerspectiveCamera camera;
-	
+
 	private boolean testHalt = false;
 	private boolean brakePressed = false;
 
@@ -76,22 +76,20 @@ public class SimulationController {
 
 	private EventHandler crashEvent;
 	private EventHandler speedingEvent;
+	private EventHandler givewayEvent;
 	private final int SPEED_LIMIT = 40;
-	private int userUnitsps = SPEED_LIMIT;
-	private int aiUnitsps = SPEED_LIMIT;
 	private boolean braking = false;
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
 	private int simulationTime = 300;
-	private boolean simulationRunning = false;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 	private ArrayList<String> events = new ArrayList<>();
 	private int randomiseCarSpeedCounter = 0;
+	private Group givewayGroup;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
-		simulationRunning = true;
 		if (simButtonLabel.equals("begin")) {
 			beginSimButton.setText("Cancel Simulation");
 			simButtonLabel = "cancel";
@@ -109,6 +107,7 @@ public class SimulationController {
 		simulationCountdown();
 
 		assignRandomEventTime();
+
 	}
 
 	private void createCars(String userChoice) {
@@ -147,8 +146,8 @@ public class SimulationController {
 	}
 
 	private void createSign() {
-		int boxSize = 1624;
-		int numberOfBoxes = 20;
+		int boxSize = 1624 * 20;
+		int numberOfBoxes = 50;
 		int signDistance = 0;
 
 		PhongMaterial schoolZone = new PhongMaterial();
@@ -163,15 +162,15 @@ public class SimulationController {
 			schoolZoneSign.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 			schoolZoneSign.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
 			roadGroup.getChildren().add(schoolZoneSign);
-			
+
 			PhongMaterial postMaterial = new PhongMaterial();
 			postMaterial.setDiffuseColor(Color.GRAY);
-			
-			Box post = new Box(500, 500, 500);
+
+			Box post = new Box(10, 10, 500);
 			post.setMaterial(postMaterial);
 			post.setTranslateY(-100); // Fix road height
 			post.setTranslateZ(-700); // Centre the road to the car
-			post.setTranslateX(signDistance = boxSize);
+			post.setTranslateX(schoolZoneSign.getTranslateX() - 10);
 			post.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
 			post.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
 			roadGroup.getChildren().add(post);
@@ -198,7 +197,7 @@ public class SimulationController {
 	 */
 	@FXML
 	private void initialize() {
-		events.add("speedingEvent"); // TODO remove
+		events.add("givewayEvent"); // TODO remove
 
 		// Create cars
 		createCars("mini-aws.3DS");
@@ -303,7 +302,7 @@ public class SimulationController {
 		roadGroup = new Group();
 		int roadDistance = 0;
 		int boxSize = 1624;
-		int numberOfBoxes = 200;
+		int numberOfBoxes = 180;
 
 		PhongMaterial roadSurface = new PhongMaterial();
 		roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
@@ -322,9 +321,21 @@ public class SimulationController {
 		// Create Ambient Light
 		AmbientLight ambient = new AmbientLight();
 		roadGroup.getChildren().add(ambient);
+		
+		if (events.contains("givewayEvent")) {
+			// TODO Create three give way events by default
+			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000)));
+			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000) - 100000));
+			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000) - 200000));
+		}
 
 		return roadGroup;
 	}
+
+	/*
+	 * private void cleanupOldRoad() { if(userCar.getxPos() >
+	 * rootGroup.getChildren(). }
+	 */
 
 	private int randomiseCarSpeed(Car car) {
 		final int minCarSpeed = car.getCarSpeedLimit() - 3;
@@ -338,6 +349,7 @@ public class SimulationController {
 
 		crashEvent = new EventHandler();
 		speedingEvent = new EventHandler();
+		givewayEvent = new EventHandler();
 
 		new Thread(new Runnable() {
 			@Override
@@ -423,7 +435,6 @@ public class SimulationController {
 				}
 			}
 		}).start();
-
 	}
 
 	private void checkBrakeRequired() {
@@ -480,9 +491,8 @@ public class SimulationController {
 			camera.setTranslateX(600); // -1202
 			camera.setTranslateY(-720); // -420
 			camera.setTranslateZ(-520); // -520
-			camera.getTransforms().add((new Rotate(-15.0, Rotate.Z_AXIS)));
+			camera.getTransforms().add((new Rotate(-17.0, Rotate.Z_AXIS)));
 			camera.getTransforms().add((new Rotate(-90.0, Rotate.Y_AXIS)));
-
 
 		} else {
 			// TODO throws
@@ -503,22 +513,42 @@ public class SimulationController {
 			crashEvent.stopEventTimer();
 			crashEvent.setTimerStopped(true);
 
-			// tempDisableBrakeButton();
-
 			Score score = new Score("crashevent", crashEvent.getTimerStartedTime(), crashEvent.getTimerStoppedTime());
 			scoringOps.add(score);
 
 			if (score.getScore() != 0) {
 				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
 			} else {
-				failureScreen.setText("Brakes applied correctly. Too slow to react.  Score: " + score.getScore());
+				failureScreen.setText("Brakes applied correctly but too slow to react.");
 			}
 
 			crashEvent = new EventHandler();
 
 		} else if (speedingEvent.getTimerStarted()) {
+			Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(), speedingEvent.getTimerStoppedTime());
+			scoringOps.add(score);
 
-		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted()) { // if no events have started
+			if (score.getScore() != 0) {
+				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+			} else {
+				failureScreen.setText("Brakes applied correctly but too slow to react.");
+			}
+
+			speedingEvent = new EventHandler();
+			
+		} else if (givewayEvent.getTimerStarted()) {
+			Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(), givewayEvent.getTimerStoppedTime());
+			scoringOps.add(score);
+
+			if (score.getScore() != 0) {
+				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+			} else {
+				failureScreen.setText("Brakes applied correctly but too slow to react.");
+			}
+
+			speedingEvent = new EventHandler();
+			
+		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted() && !givewayEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
 			// tempDisableBrakeButton();
@@ -565,7 +595,6 @@ public class SimulationController {
 
 			@Override
 			public void run() {
-				System.out.println("Starting a freshy");
 
 				try {
 					Thread.sleep(eventBreak);
@@ -596,6 +625,13 @@ public class SimulationController {
 					} else if (events.get(eventType).equals("speedingEvent")) {
 						EventHandler speedingEvent = new EventHandler();
 						speedingEvent.startSpeedingEvent(userCar);
+
+						// Start Giveway event
+					} else if (events.get(eventType).equals("givewayEvent")) {
+						EventHandler givewayEvent = new EventHandler();
+						int posOfGiveway = givewayEvent.startGivewayEvent(userCar);
+						// givewayGroup = createGivewayEvent(posOfGiveway);
+
 					}
 
 					// Sleep for one second to keep randomising speeds
@@ -607,11 +643,50 @@ public class SimulationController {
 						e.printStackTrace();
 					}
 				}
-				System.out.println("Threads done m8");
 			}
 		});
 		t.setDaemon(true);
 		t.start();
+	}
+
+	private Group createGivewayEvent(int xPos) {
+		Group givewayGroup = new Group();
+
+		PhongMaterial givewayRoad = new PhongMaterial();
+		givewayRoad.setDiffuseMap(new Image("images\\givewayRoad.jpg"));
+
+		Box givewayRoadBox = new Box(1624, 11, 6600);
+		givewayRoadBox.setMaterial(givewayRoad);
+		givewayRoadBox.setTranslateY(95); // Fix road height
+		givewayRoadBox.setTranslateZ(140); // Centre the road to the car
+		givewayRoadBox.setTranslateX(xPos);
+		givewayGroup.getChildren().add(givewayRoadBox);
+
+		PhongMaterial giveway = new PhongMaterial();
+		giveway.setDiffuseMap(new Image("images\\giveway.jpg"));
+
+		Box givewaySign = new Box(200, 11, 200);
+		givewaySign.setMaterial(giveway);
+		givewaySign.setTranslateY(-200); // Fix road height
+		givewaySign.setTranslateZ(-700); // Centre the road to the car
+		givewaySign.setTranslateX(xPos + 1000);
+		givewaySign.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+		givewaySign.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
+		givewayGroup.getChildren().add(givewaySign);
+
+		PhongMaterial postMaterial = new PhongMaterial();
+		postMaterial.setDiffuseColor(Color.GRAY);
+
+		Box post = new Box(10, 11, 500);
+		post.setMaterial(postMaterial);
+		post.setTranslateY(givewaySign.getTranslateY() + 100); // Fix road height
+		post.setTranslateZ(givewaySign.getTranslateZ()); // Centre the road to the car
+		post.setTranslateX(givewaySign.getTranslateX() - 10);
+		post.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+		post.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
+		givewayGroup.getChildren().add(post);
+
+		return givewayGroup;
 
 	}
 
