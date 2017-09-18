@@ -27,6 +27,7 @@ import javafx.scene.transform.Rotate;
 import simulation.Car;
 import simulation.EventHandler;
 import simulation.Score;
+import simulation.SimObject;
 
 public class SimulationController {
 
@@ -133,6 +134,19 @@ public class SimulationController {
 		aiCar3.getCarGroup().setRotate(180.0);
 		aiCar3.getCarGroup().setTranslateZ(550);
 	}
+	
+	private void createObjects() {
+		Group objGroup = new Group();
+		Double distBetweenSign = 0.0;
+		Double distBetweenTree = 0.0;
+		
+		SimObject sign = new SimObject("school-zone-sign", -1500, -420, -520);
+		sign.setxPos(-2000);
+		sign.setyPos(-420);
+		sign.setzPos(-520);
+		rootGroup.getChildren().add(sign.getObjGroup());
+	}
+		
 
 	/**
 	 * Calls the nessasary methods to initialise the simulation scene
@@ -148,7 +162,7 @@ public class SimulationController {
 		rootGroup.getChildren().add(roadGroup);
 
 		// Create camera
-		camera = setupUserCamera("third");
+		camera = setupUserCamera("first");
 
 		// Create Ambient Light
 		AmbientLight ambient = new AmbientLight();
@@ -164,6 +178,8 @@ public class SimulationController {
 
 		// Start car clock
 		initClock();
+		
+		createObjects();
 	}
 
 	private void initClock() {

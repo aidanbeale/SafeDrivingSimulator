@@ -6,31 +6,26 @@ import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 import javafx.scene.Group;
 import javafx.scene.Node;
 
-public class Car {
-	private int speed;
-	private int xPos;
-	private String model;
-	private Group carGroup;
-	private boolean userControlling;
+public class SimObject {
 
-	public Car(int speed, int xPos, String model, boolean userControlling) {
-		super();
-		this.speed = speed;
+	String model;
+	Group objGroup;
+	int xPos;
+	int yPos;
+	int zPos;
+
+	public SimObject(String model, int xPos, int yPos, int zPos) {
+		this.model = model;
 		this.xPos = xPos;
-		this.model = model;
-		this.userControlling = userControlling;
+		this.yPos = yPos;
+		this.zPos = zPos;
 
-		init();
-	}
-	
-	public Car(String model) {
-		this.model = model;
 		init();
 	}
 
 	private void init() {
-		Node[] carMesh = import3dModel(model);
-		carGroup = meshIntoGroup(carMesh);
+		Node[] objMesh = import3dModel(model);
+		objGroup = meshIntoGroup(objMesh);
 	}
 
 	/**
@@ -40,7 +35,7 @@ public class Car {
 	 *            The file name of the car
 	 * @return A group containing the car mesh
 	 */
-	private Node[] import3dModel(String carName) {
+	private Node[] import3dModel(String objName) {
 
 		// Create model importer
 		// @see http://www.interactivemesh.org/models/jfx3dimporter.html
@@ -48,7 +43,7 @@ public class Car {
 
 		try {
 			// Read car model from path
-			String path = "src\\simModels\\" + carName + ".3DS";
+			String path = "src\\simModels\\" + objName + ".3DS";
 			modelImporter.read(path);
 		} catch (ImportException e) {
 			System.out.println("Error importing 3ds model: " + e.getMessage());
@@ -81,12 +76,12 @@ public class Car {
 		return model3D;
 	}
 
-	public int getSpeed() {
-		return speed;
+	public String getModel() {
+		return model;
 	}
 
-	public void setSpeed(int speed) {
-		this.speed = speed;
+	public void setModel(String model) {
+		this.model = model;
 	}
 
 	public int getxPos() {
@@ -97,19 +92,28 @@ public class Car {
 		this.xPos = xPos;
 	}
 
-	public String getModel() {
-		return model;
+	public int getyPos() {
+		return yPos;
 	}
 
-	public void setModel(String model) {
-		this.model = model;
+	public void setyPos(int yPos) {
+		this.yPos = yPos;
 	}
 
-	public Group getCarGroup() {
-		return carGroup;
+	public int getzPos() {
+		return zPos;
 	}
 
-	public void setCarGroup(Group carGroup) {
-		this.carGroup = carGroup;
+	public void setzPos(int zPos) {
+		this.zPos = zPos;
 	}
+
+	public Group getObjGroup() {
+		return objGroup;
+	}
+
+	public void setObjGroup(Group objGroup) {
+		this.objGroup = objGroup;
+	}
+
 }
