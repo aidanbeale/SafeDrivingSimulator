@@ -33,10 +33,11 @@ public class EventHandler {
 		
 		// aiCar1 needs to slow down randomly 
 		aiCar1.setSpeed(rand.nextInt(maxSpeed - minSpeed) + minSpeed);
+		System.out.println("aiCar1 speed: " + aiCar1.getSpeed());
 		
 		// aiCar2 needs to be equal to or faster than aiCar1 or they will crash
 		aiCar2.setSpeed(rand.nextInt(maxSpeed - aiCar1.getSpeed()) + minSpeed);		
-		
+		System.out.println("aiCar2 speed: " + aiCar2.getSpeed());
 	}
 
 	public void startSpeedingEvent() {

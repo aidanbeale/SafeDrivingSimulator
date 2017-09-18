@@ -108,8 +108,7 @@ public class SimulationController {
 		// Start countdown
 		simulationCountdown();
 
-		EventHandler crashEvent = new EventHandler();
-		crashEvent.startCrashEvent(aiCar1, aiCar2);
+		assignRandomEventTime();
 	}
 
 	private void createCars(String userChoice) {
@@ -168,6 +167,7 @@ public class SimulationController {
 	 */
 	@FXML
 	private void initialize() {
+		events.add("crashEvent"); // TODO remove 
 
 		// Create cars
 		createCars("mini-aws.3DS");
@@ -339,12 +339,12 @@ public class SimulationController {
 							userCar.setxPos(userCar.getxPos() - userUnitsps);
 							speedLabel.setText(String.valueOf((userUnitsps) + "km/h"));
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
-							System.out.println(userCar.getxPos());
+							//System.out.println(userCar.getxPos());
 
 							camera.setTranslateX(transCam -= userUnitsps);
 							// System.out.println("trans cam to " + transCam);
 
-							aiCar1.setxPos(aiCar2.getxPos() - (aiCar1.getSpeed()));
+							aiCar1.setxPos(aiCar1.getxPos() - (aiCar1.getSpeed()));
 							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
 							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
 
@@ -459,9 +459,6 @@ public class SimulationController {
 
 			crashEvent = new EventHandler();
 
-			endOldEvent();
-			assignRandomEventTime();
-
 		} else if (!crashEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
@@ -469,9 +466,8 @@ public class SimulationController {
 
 			Score score = new Score("failedAttempt", -300);
 			scoringOps.add(score);
-			endOldEvent();
-			assignRandomEventTime();
 		}
+		endOldEvent();
 	}
 
 	private void tempDisableBrakeButton() {
@@ -503,12 +499,13 @@ public class SimulationController {
 		final int MAX_EVENTS = (simulationTime - 10) / 30;
 
 		// Wait minimum of 10 seconds between events starting and max of 30
-		int eventBreak = rand.nextInt(20) + 10;
+		int eventBreak = rand.nextInt(10) + 10;
 
 		final Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
+				System.out.println("Starting a freshy");
 				try {
 					Thread.sleep(eventBreak);
 				} catch (InterruptedException e) {
@@ -516,21 +513,37 @@ public class SimulationController {
 					e.printStackTrace();
 				}
 
-				while (simulationRunning) {
-					int eventType = rand.nextInt(events.size());
+				while (!braking) {
+					int eventType;
 					String eventName;
-
+					
+					// Choose event
+					if (events.size() == 0) {
+						eventType = 0;
+					} else {
+						eventType = rand.nextInt((events.size() + 1) -1);
+					}
+					
+					// Start Crash event
 					if (events.get(eventType).equals("crashEvent")) {
 						EventHandler crashEvent = new EventHandler();
 						crashEvent.startCrashEvent(aiCar1, aiCar2);
 
+						// Start Speeding event
 					} else if (events.get(eventType).equals("speedingEvent")) {
 
 					}
 
-					// Until event ends
+					// Sleep for one second to keep randomising speeds
+					System.out.println("Sleeping..");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-
+				System.out.println("Threads done m8");
 			}
 		});
 		t.start();
@@ -561,6 +574,7 @@ public class SimulationController {
 				// Restore cars (Crash event)
 				aiCar1.setSpeed(SPEED_LIMIT);
 				aiCar2.setSpeed(SPEED_LIMIT);
+				assignRandomEventTime();
 			}
 
 		});
