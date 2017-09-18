@@ -77,6 +77,7 @@ public class SimulationController {
 	Group rootGroup = new Group();
 
 	private EventHandler crashEvent;
+	private EventHandler speedingEvent;
 	private final int SPEED_LIMIT = 40;
 	private int userUnitsps = SPEED_LIMIT;
 	private int aiUnitsps = SPEED_LIMIT;
@@ -125,14 +126,14 @@ public class SimulationController {
 			}
 		}
 
-		userCar = new Car(40, 0, userChoice, true);
+		userCar = new Car(40, 0, userChoice, true, SPEED_LIMIT);
 		rootGroup.getChildren().add(userCar.getCarGroup());
 
 		int i = 1;
 		ArrayList<Car> aiCarList = new ArrayList<>();
 		// Create the other cars
 		for (String c : carColourList) {
-			Car newCar = new Car(40, -5200 * i, c, false);
+			Car newCar = new Car(40, -5200 * i, c, false, SPEED_LIMIT);
 			rootGroup.getChildren().add(newCar.getCarGroup());
 			aiCarList.add(newCar);
 			i++;
@@ -296,9 +297,9 @@ public class SimulationController {
 		return roadGroup;
 	}
 
-	private int randomiseCarSpeed() {
-		final int minCarSpeed = SPEED_LIMIT - 3;
-		final int maxCarSpeed = SPEED_LIMIT;
+	private int randomiseCarSpeed(Car car) {
+		final int minCarSpeed = car.getCarSpeedLimit() - 3;
+		final int maxCarSpeed = car.getCarSpeedLimit();
 
 		int randomSpeed = rand.nextInt(maxCarSpeed - minCarSpeed) + minCarSpeed;
 		return randomSpeed;
@@ -307,11 +308,11 @@ public class SimulationController {
 	private void moveUserCar() {
 
 		crashEvent = new EventHandler();
+		speedingEvent = new EventHandler();
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				
 
 				while (!testHalt) {
 					try {
@@ -324,23 +325,31 @@ public class SimulationController {
 
 						@Override
 						public void run() {
-
+							boolean breakingBreak = false;
+							int acceleratingBreakCounter = 0;
+							
 							if (braking) {
 
-								if (userCar.getSpeed() > 15) {
-									userCar.setSpeed(userCar.getSpeed() - 1);
-								} else {
-									braking = false;
-									accelerating = true;
+								if (!breakingBreak) {
+									if (userCar.getCarSpeedLimit() > 15) {
+										userCar.setCarSpeedLimit(userCar.getCarSpeedLimit() - 1);
+										breakingBreak = true;
+									} else {
+										braking = false;
+										accelerating = true;
+									}
+								} else if (breakingBreak) {
+									breakingBreak = false;
 								}
 
 							} else if (accelerating) {
-								if (userCar.getSpeed() < 40) {
-									if (!acceleratingBreak) {
-										userCar.setSpeed(userCar.getSpeed() + 1);
+								if (userCar.getCarSpeedLimit() < SPEED_LIMIT) {
+									if (!acceleratingBreak && acceleratingBreakCounter % 2 == 0) {
+										userCar.setCarSpeedLimit(userCar.getCarSpeedLimit() + 1);
 										acceleratingBreak = true;
 									} else {
 										acceleratingBreak = false;
+										acceleratingBreakCounter++;
 									}
 								} else {
 									accelerating = false;
@@ -350,10 +359,11 @@ public class SimulationController {
 							randomiseCarSpeedCounter++;
 
 							if (randomiseCarSpeedCounter % 10 == 0) {
-								userCar.setSpeed(randomiseCarSpeed() + 1);
-								aiCar1.setSpeed(randomiseCarSpeed());
-								aiCar2.setSpeed(randomiseCarSpeed());
-								aiCar3.setSpeed(randomiseCarSpeed());
+
+								userCar.setSpeed(randomiseCarSpeed(userCar));
+								aiCar1.setSpeed(randomiseCarSpeed(aiCar1));
+								aiCar2.setSpeed(randomiseCarSpeed(aiCar2));
+								aiCar3.setSpeed(randomiseCarSpeed(aiCar3));
 							}
 
 							userCar.setxPos(userCar.getxPos() - userCar.getSpeed());
@@ -384,25 +394,41 @@ public class SimulationController {
 				}
 			}
 		}).start();
+
 	}
 
 	private void checkBrakeRequired() {
 
-		// Crash event
+		/*
+		 * Crash event
+		 */
 		if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
 				&& !crashEvent.getTimerStarted()) {
 
-			crashEvent.startCrashEventTimer();
+			crashEvent.startEventTimer();
 
 			//// System.out.print("SIMULATION ENDED");
 		} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
 				|| userCar.getxPos() < aiCar2.getxPos() + 480) {
 
 			if (!crashEvent.isTimerStopped()) {
-				crashEvent.stopCrashEventTimer();
+				crashEvent.stopEventTimer();
 				crashEvent.setTimerStopped(true);
 				//// System.out.print("SIMULATION ENDED");
-				failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
+				failureScreen.setText("YOU FAIL");
+				testHalt = true;
+			}
+		}
+		/*
+		 * Speeding event
+		 */
+		if (userCar.getSpeed() > SPEED_LIMIT) {
+			speedingEvent.startEventTimer();
+		} else if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
+			if (!speedingEvent.isTimerStopped()) {
+				speedingEvent.stopEventTimer();
+				speedingEvent.setTimerStopped(true);
+				failureScreen.setText("YOU FAIL");
 				testHalt = true;
 			}
 		}
@@ -440,29 +466,6 @@ public class SimulationController {
 		return camera;
 	}
 
-	private PointLight testLightPoint() {
-
-		PointLight pointLight = new PointLight(Color.WHITE);
-		pointLight.setTranslateX(-2300);
-		pointLight.setTranslateY(-820);
-		pointLight.setTranslateZ(-800);
-		// pointLight.setRotate(0);
-
-		return pointLight;
-	}
-
-	private Group meshIntoGroup(Node[] carMesh) {
-
-		// Add car mesh to group
-		Group model3D = new Group(carMesh);
-
-		// Set the basic layout of the car
-		model3D.setLayoutX(100);
-		model3D.setLayoutY(100);
-
-		return model3D;
-	}
-
 	@FXML
 	private void brakeButtonPressed() {
 
@@ -471,7 +474,7 @@ public class SimulationController {
 
 		// If crash event occuring
 		if (crashEvent.getTimerStarted()) {
-			crashEvent.stopCrashEventTimer();
+			crashEvent.stopEventTimer();
 			crashEvent.setTimerStopped(true);
 
 			// tempDisableBrakeButton();
@@ -487,7 +490,9 @@ public class SimulationController {
 
 			crashEvent = new EventHandler();
 
-		} else if (!crashEvent.getTimerStarted()) { // if no events have started
+		} else if (speedingEvent.getTimerStarted()) {
+
+		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
 			// tempDisableBrakeButton();

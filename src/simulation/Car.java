@@ -12,12 +12,14 @@ public class Car {
 	private String model;
 	private Group carGroup;
 	private boolean userControlling;
+	private int carSpeedLimit;
 
-	public Car(int speed, int xPos, String model, boolean userControlling) {
+	public Car(int speed, int xPos, String model, boolean userControlling, int carSpeedLimit) {
 		this.speed = speed;
 		this.xPos = xPos;
 		this.model = model;
 		this.userControlling = userControlling;
+		this.carSpeedLimit = carSpeedLimit;
 
 		init();
 	}
@@ -111,4 +113,13 @@ public class Car {
 	public void setCarGroup(Group carGroup) {
 		this.carGroup = carGroup;
 	}
+
+	public int getCarSpeedLimit() {
+		return carSpeedLimit;
+	}
+
+	public void setCarSpeedLimit(int carSpeedLimit) {
+		this.carSpeedLimit = carSpeedLimit;
+	}
+	
 }

@@ -14,13 +14,13 @@ public class EventHandler {
 
 	public EventHandler() {}
 
-	public void startCrashEventTimer() {
+	public void startEventTimer() {
 		timerStarted = true;
 		timer = new EventTimer();
 		timerStartedTime = timer.startTimer();
 	}
 	
-	public void stopCrashEventTimer() {
+	public void stopEventTimer() {
 		timerStoppedTime = timer.stopTimer();
 	}
 	
@@ -44,7 +44,7 @@ public class EventHandler {
 		// In a speeding event, the cars speed will begin fluctuating more than normal and rise above the 40km/h
 		// limit. The user will need to apply the brakes to slow the car down and end the event.
 		
-		userCar.setSpeed(userCar.getSpeed() + 2);
+		userCar.setCarSpeedLimit(userCar.getCarSpeedLimit() + 1);
 		System.out.println("userCar speed: " + userCar.getSpeed());
 	}
 
