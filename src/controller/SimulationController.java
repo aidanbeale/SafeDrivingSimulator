@@ -173,10 +173,6 @@ public class SimulationController {
 		// Create camera
 		camera = setupUserCamera("first");
 
-		// Create Ambient Light
-		AmbientLight ambient = new AmbientLight();
-		rootGroup.getChildren().add(ambient);
-
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 975, 740, true, SceneAntialiasing.BALANCED);
 		subScene.setFill(Color.SKYBLUE);
@@ -284,6 +280,10 @@ public class SimulationController {
 			road.setTranslateX(roadDistance -= 1624);
 			roadGroup.getChildren().add(road);
 		}
+
+		// Create Ambient Light
+		AmbientLight ambient = new AmbientLight();
+		roadGroup.getChildren().add(ambient);
 
 		return roadGroup;
 	}
@@ -450,6 +450,7 @@ public class SimulationController {
 	private void brakeButtonPressed() {
 
 		braking = true;
+		tempDisableBrakeButton();
 
 		// If crash event occuring
 		if (crashEvent.getTimerStarted()) {
@@ -480,26 +481,24 @@ public class SimulationController {
 	}
 
 	private void tempDisableBrakeButton() { // TODO not working, needs fixing. Check begin button disable?
-		new Thread(new Runnable() {
+
+		final Thread t = new Thread(new Runnable() {
+
 			@Override
 			public void run() {
-				Platform.runLater(new Runnable() {
+				brakeButton.setDisable(true);
 
-					@Override
-					public void run() {
-						brakeButton.setDisable(true);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				brakeButton.setDisable(false);
 
-						try {
-							Thread.sleep(3000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						brakeButton.setDisable(false);
-					}
-				});
-			};
-		}).start();
+			}
+		});
+		t.start();
 	}
 
 	@FXML
@@ -514,7 +513,7 @@ public class SimulationController {
 		results.setScoringOps(scoringOps);
 
 		Parent p = loader.getRoot();
-		Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));
 		stage.show();
 	}
