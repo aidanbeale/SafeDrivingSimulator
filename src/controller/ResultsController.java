@@ -26,7 +26,8 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 
 	@FXML
 	JFXTreeTableView<RowProp> resultsTable;
-
+	
+	
 	@FXML
 	private void initialize() {
 		// loadTable();
@@ -142,5 +143,11 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 	public void setScoringOps(ArrayList<Score> scoringOps) {
 		this.scoringOps = scoringOps;
 		loadTable();
+	}
+	
+	@FXML
+	private void saveCSV() {
+		FileUtility fu = new FileUtility();
+		fu.writeBookings(scoringOps);
 	}
 }
