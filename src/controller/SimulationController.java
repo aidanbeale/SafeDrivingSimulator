@@ -300,7 +300,7 @@ public class SimulationController {
 
 	private Group createRoad() {
 		roadGroup = new Group();
-		int roadDistance = 0;
+		int roadDistance = 1624;
 		int boxSize = 1624;
 		int numberOfBoxes = 180;
 
@@ -321,12 +321,24 @@ public class SimulationController {
 		// Create Ambient Light
 		AmbientLight ambient = new AmbientLight();
 		roadGroup.getChildren().add(ambient);
-		
+
 		if (events.contains("givewayEvent")) {
 			// TODO Create three give way events by default
-			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000)));
-			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000) - 100000));
-			roadGroup.getChildren().add(createGivewayEvent(rand.nextInt(-100000) - 200000));
+
+			givewayEvent = new EventHandler();
+			int loc1 = -(rand.nextInt(100000));
+			int loc2 = -(rand.nextInt(100000) + 100000);
+			int loc3 = -(rand.nextInt(100000) + 200000);
+
+			System.out.println("locs:" + loc1 + " " + loc2 + " " + loc3);
+			
+			givewayEvent.addGivewayLocation(loc1);
+			givewayEvent.addGivewayLocation(loc2);
+			givewayEvent.addGivewayLocation(loc3);
+
+			roadGroup.getChildren().add(createGivewayEvent(loc1));
+			roadGroup.getChildren().add(createGivewayEvent(loc2));
+			roadGroup.getChildren().add(createGivewayEvent(loc3));
 		}
 
 		return roadGroup;
@@ -349,7 +361,7 @@ public class SimulationController {
 
 		crashEvent = new EventHandler();
 		speedingEvent = new EventHandler();
-		givewayEvent = new EventHandler();
+		//givewayEvent = new EventHandler();
 
 		new Thread(new Runnable() {
 			@Override
@@ -459,6 +471,7 @@ public class SimulationController {
 				testHalt = true;
 			}
 		}
+
 		/*
 		 * Speeding event
 		 */
@@ -468,6 +481,27 @@ public class SimulationController {
 			if (!speedingEvent.isTimerStopped()) {
 				speedingEvent.stopEventTimer();
 				speedingEvent.setTimerStopped(true);
+				failureScreen.setText("YOU FAIL");
+				testHalt = true;
+			}
+		}
+
+		/*
+		 * Giveway event
+		 */
+		
+		if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 3000)
+				&& !givewayEvent.getTimerStarted()) {
+			System.out.println("Giveway timer started");
+			givewayEvent.startEventTimer();
+
+			//// System.out.print("SIMULATION ENDED");
+		} else if (userCar.getxPos() < givewayEvent.getClosestGivewayLoc()) {
+
+			if (!givewayEvent.isTimerStopped()) {
+				givewayEvent.stopEventTimer();
+				givewayEvent.setTimerStopped(true);
+				//// System.out.print("SIMULATION ENDED");
 				failureScreen.setText("YOU FAIL");
 				testHalt = true;
 			}
@@ -524,8 +558,13 @@ public class SimulationController {
 
 			crashEvent = new EventHandler();
 
+			// If speeding event occuring
 		} else if (speedingEvent.getTimerStarted()) {
-			Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(), speedingEvent.getTimerStoppedTime());
+			speedingEvent.stopEventTimer();
+			speedingEvent.setTimerStopped(true);
+			
+			Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(),
+					speedingEvent.getTimerStoppedTime());
 			scoringOps.add(score);
 
 			if (score.getScore() != 0) {
@@ -535,9 +574,14 @@ public class SimulationController {
 			}
 
 			speedingEvent = new EventHandler();
-			
+
+			// if giveway event occuring
 		} else if (givewayEvent.getTimerStarted()) {
-			Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(), givewayEvent.getTimerStoppedTime());
+			givewayEvent.stopEventTimer();
+			givewayEvent.setTimerStopped(true);
+			
+			Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(),
+					givewayEvent.getTimerStoppedTime());
 			scoringOps.add(score);
 
 			if (score.getScore() != 0) {
@@ -545,10 +589,13 @@ public class SimulationController {
 			} else {
 				failureScreen.setText("Brakes applied correctly but too slow to react.");
 			}
-
-			speedingEvent = new EventHandler();
 			
-		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted() && !givewayEvent.getTimerStarted()) { // if no events have started
+			if (givewayEvent.getClosestGivewayLoc() == givewayEvent.getGivewayLocations().get(0)) {
+				givewayEvent.getGivewayLocations().remove(0);
+			}
+
+		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted()
+				&& !givewayEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
 			// tempDisableBrakeButton();
@@ -631,7 +678,6 @@ public class SimulationController {
 						EventHandler givewayEvent = new EventHandler();
 						int posOfGiveway = givewayEvent.startGivewayEvent(userCar);
 						// givewayGroup = createGivewayEvent(posOfGiveway);
-
 					}
 
 					// Sleep for one second to keep randomising speeds

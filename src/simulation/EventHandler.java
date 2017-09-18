@@ -1,5 +1,6 @@
 package simulation;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.TimerTask;
 
@@ -11,6 +12,7 @@ public class EventHandler {
 	private long timerStartedTime;
 	private long timerStoppedTime;
 	private Random rand = new Random();
+	private ArrayList<Integer> givewayLocations = new ArrayList<>();
 
 	public EventHandler() {
 	}
@@ -56,6 +58,25 @@ public class EventHandler {
 	public int startGivewayEvent(Car userCar) {
 		int posOfGiveway = userCar.getxPos() - 10000;
 		return posOfGiveway;
+	}
+	
+	public void addGivewayLocation(int loc) {
+		givewayLocations.add(loc);
+	}
+
+	public int getClosestGivewayLoc() {
+		int j = -1000000;
+		for (Integer i : givewayLocations) {
+			if (i > j) {
+				j = i;
+			}
+		}
+		return j;
+	}
+	
+	
+	public ArrayList<Integer> getGivewayLocations() {
+		return givewayLocations;
 	}
 
 	public int calculateScore() {
