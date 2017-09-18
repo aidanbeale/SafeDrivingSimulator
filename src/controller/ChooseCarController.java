@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -32,12 +33,22 @@ public class ChooseCarController {
 	private JFXButton chooseCar3;
 	@FXML
 	private Group chooseCarGroup;
+	@FXML
+	private JFXCheckBox checkSpeeding;
+	@FXML
+	private JFXCheckBox checkCrash;
+	@FXML
+	private JFXCheckBox checkGiveway;
 
 	PerspectiveCamera camera;
 	Group rootGroup = new Group();
 	ArrayList<Group> carGroupList = new ArrayList<>();
+	ArrayList<Car> carList = new ArrayList<>();
 	private int rotateAmount;
 	private int currCarGroup = 0;
+
+	ArrayList<String> carColourList;
+	ArrayList<String> hazardsList = new ArrayList<>();
 
 	@FXML
 	private void initialize() {
@@ -65,42 +76,42 @@ public class ChooseCarController {
 	}
 
 	@FXML
-	private void chooseCar1(ActionEvent event) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../view/Simulation.fxml"));
-		Scene scene = new Scene(root);
+	private void start(ActionEvent event) throws IOException {
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("../view/Simulation.fxml"));
 
-		Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		window.setScene(scene);
-		window.show();
+		SimulationController sim = loader.getController();
+		String chosenCar = carColourList.get(currCarGroup);
+		addHazards();
+		
+		sim.setUserChosenCarString(chosenCar);
+		//sim.setEvents(hazardsList);
+
+		loader.load();
+
+		Parent p = loader.getRoot();
+		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+		stage.setScene(new Scene(p));
+		stage.show();
 	}
 
-	@FXML
-	private void chooseCar2(ActionEvent event) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../view/Simulation.fxml"));
-		Scene scene = new Scene(root);
-
-		Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		window.setScene(scene);
-		window.show();
-	}
-
-	@FXML
-	private void chooseCar3(ActionEvent event) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../view/Simulation.fxml"));
-		Scene scene = new Scene(root);
-
-		Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-		window.setScene(scene);
-		window.show();
+	private void addHazards() {
+		if (checkSpeeding.isSelected()) {
+			hazardsList.add("speedingEvent");
+		} else if (checkCrash.isSelected()) {
+			hazardsList.add("crashEvent");
+		} else if (checkGiveway.isSelected()) {
+			hazardsList.add("givewayEvent");
+		}
 	}
 
 	private void createCars() {
-		ArrayList<String> carColourList = new ArrayList<>();
+		carColourList = new ArrayList<>();
 
-		carColourList.add("mini-red");
-		carColourList.add("mini-green");
-		carColourList.add("mini-blue");
-		carColourList.add("mini-aws");
+		carColourList.add("mini-red.3DS");
+		carColourList.add("mini-green.3DS");
+		carColourList.add("mini-blue.3DS");
+		carColourList.add("mini-aws.3DS");
 
 		for (String s : carColourList) {
 			Car c = new Car(s);
@@ -157,7 +168,7 @@ public class ChooseCarController {
 		} else if (currCarGroup == -1) {
 			currCarGroup = 3;
 		}
-		
+
 		rootGroup.getChildren().remove(0);
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
 	}

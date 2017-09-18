@@ -89,10 +89,13 @@ public class SimulationController {
 	private int minute;
 	private int simulationTime = 10;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
-	private ArrayList<String> events = new ArrayList<>();
+
 	private int randomiseCarSpeedCounter = 0;
 	private Group givewayGroup;
-
+	
+	private String userChosenCarString;
+	private ArrayList<String> events = new ArrayList<>();
+	
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
 		if (simButtonLabel.equals("begin")) {
@@ -202,10 +205,8 @@ public class SimulationController {
 	 */
 	@FXML
 	private void initialize() {
-		events.add("givewayEvent"); // TODO remove
-
 		// Create cars
-		createCars("mini-aws.3DS");
+		createCars(userChosenCarString);
 
 		// Create road
 		roadGroup = createRoad();
@@ -785,15 +786,24 @@ public class SimulationController {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("../view/Results.fxml"));
 
-		loader.load();
-
 		ResultsController results = loader.getController();
 		results.setScoringOps(scoringOps);
 
+		loader.load();
+		
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));
 		stage.show();
 	}
 
+	public void setUserChosenCarString(String userChosenCarString) {
+		this.userChosenCarString = userChosenCarString;
+	}
+
+	public void setEvents(ArrayList<String> events) {
+		this.events = events;
+	}
+
+	
 }
