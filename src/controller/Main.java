@@ -17,7 +17,7 @@ public class Main extends Application {
 		
 		// Display initial login screen
         primaryStage.setTitle("Safe Driving Simulator");
-        Parent root = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../view/Simulation.fxml"));
         
         Scene scene = new Scene(root);
         

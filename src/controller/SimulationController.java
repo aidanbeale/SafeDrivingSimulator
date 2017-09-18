@@ -140,10 +140,13 @@ public class SimulationController {
 		Double distBetweenSign = 0.0;
 		Double distBetweenTree = 0.0;
 		
-		SimObject sign = new SimObject("school-zone-sign", -1500, -420, -520);
-		sign.setxPos(-2000);
-		sign.setyPos(-420);
-		sign.setzPos(-520);
+		SimObject sign = new SimObject("boy", -1500, -420, -520); // Sign is not loading correctly
+		sign.getObjGroup().setTranslateX(-5000);
+		sign.getObjGroup().setTranslateY(0);
+		sign.getObjGroup().setTranslateZ(-520);
+		//sign.getObjGroup().setRotationAxis(Rotate.Y_AXIS);
+		//sign.getObjGroup().setRotate(90.0);
+
 		rootGroup.getChildren().add(sign.getObjGroup());
 	}
 		
