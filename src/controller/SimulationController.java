@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
@@ -53,8 +54,12 @@ public class SimulationController {
 	@FXML
 	private Button brakeButton;
 	@FXML
+	private Pane pane;
+	@FXML
 	private JFXButton displayScore;
-
+	@FXML
+	private Label heading;
+	
 	private Car userCar;
 	private Car aiCar1;
 	private Car aiCar2;
@@ -82,7 +87,7 @@ public class SimulationController {
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
-	private int simulationTime = 300;
+	private int simulationTime = 10;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 	private ArrayList<String> events = new ArrayList<>();
 	private int randomiseCarSpeedCounter = 0;
@@ -288,6 +293,11 @@ public class SimulationController {
 
 							if (simulationTime == 0) {
 								testHalt = true;
+								
+								pane.setStyle("-fx-background-color: #F4F4F4;");
+								heading.setText("Congratulations!");
+								displayScore.setText("Display Scores");
+								
 							}
 						}
 					});
