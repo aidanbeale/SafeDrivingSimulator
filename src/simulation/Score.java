@@ -8,16 +8,16 @@ public class Score {
 	private int diff;
 	private int score;
 	private int scorePercentage;
-	
+
 	private final int REACTION_TIME = 3000; // ms
 
 	public Score(String event, long optimalTime, long yourTime) {
 		this.event = event;
 		this.optimalTime = optimalTime;
 		this.yourTime = yourTime;
-		
+
 		this.diff = (int) (yourTime - optimalTime);
-		
+
 		if ((REACTION_TIME - diff) > 0) {
 			this.score = REACTION_TIME - diff;
 			this.scorePercentage = score / REACTION_TIME;
@@ -32,13 +32,22 @@ public class Score {
 		this.event = event;
 		this.score = score;
 	}
-	
+
 	public String getEvent() {
-		return event;
+		if (event.equals("crashevent")) {
+			return "Crash Event";
+		} else if (event.equals("failedAttempt")) {
+			return "Failed Braking Attempt";
+		}
+		return null;
 	}
 
 	public long getOptimalTime() {
-		return optimalTime;
+		if (event.equals("failedAttempt")) {
+			return -1;
+		} else {
+			return optimalTime;
+		}
 	}
 
 	public void setOptimalTime(long optimalTime) {
@@ -46,7 +55,12 @@ public class Score {
 	}
 
 	public long getYourTime() {
-		return yourTime;
+		if (event.equals("failedAttempt")) {
+			return -1;
+		} else {
+			return yourTime;
+		}
+
 	}
 
 	public void setYourTime(long yourTime) {
@@ -54,7 +68,12 @@ public class Score {
 	}
 
 	public long getDiff() {
-		return diff;
+		if (event.equals("failedAttempt")) {
+			return -1;
+		} else {
+			return diff;
+		}
+
 	}
 
 	public int getScore() {
@@ -66,7 +85,11 @@ public class Score {
 	}
 
 	public int getScorePercentage() {
-		return scorePercentage;
+		if (event.equals("failedAttempt")) {
+			return -1;
+		} else {
+			return scorePercentage;
+		}
 	}
 
 	public void setScorePercentage(int scorePercentage) {

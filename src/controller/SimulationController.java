@@ -514,7 +514,7 @@ public class SimulationController {
 		results.setScoringOps(scoringOps);
 
 		Parent p = loader.getRoot();
-		Stage stage = new Stage();
+		Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));
 		stage.show();
 	}

@@ -23,13 +23,13 @@ import simulation.Score;
 public class ResultsController { // Referenced this https://www.youtube.com/watch?v=nbl0kOum-ps
 
 	private ArrayList<Score> scoringOps = new ArrayList<>();
-	
+
 	@FXML
 	JFXTreeTableView<RowProp> resultsTable;
 
 	@FXML
 	private void initialize() {
-		//loadTable();
+		// loadTable();
 	}
 
 	private void loadTable() {
@@ -62,7 +62,7 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 						return param.getValue().getValue().yourTime;
 					}
 				});
-		
+
 		JFXTreeTableColumn<RowProp, String> diffCol = new JFXTreeTableColumn<>("Difference");
 		diffCol.setPrefWidth(187);
 		diffCol.setCellValueFactory(
@@ -94,21 +94,27 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 				});
 
 		ObservableList<RowProp> rows = FXCollections.observableArrayList();
-		
+
 		ObservableList<RowProp> updatedRows = loadResults(rows);
 
-        final TreeItem<RowProp> root = new RecursiveTreeItem<RowProp>(updatedRows, RecursiveTreeObject::getChildren);
-        resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol);
-        resultsTable.setRoot(root);
-        resultsTable.setShowRoot(false);
-		
+		final TreeItem<RowProp> root = new RecursiveTreeItem<RowProp>(updatedRows, RecursiveTreeObject::getChildren);
+		resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol);
+		resultsTable.setRoot(root);
+		resultsTable.setShowRoot(false);
+
 	}
-	
+
 	private ObservableList<RowProp> loadResults(ObservableList<RowProp> rows) {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");    
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
+
 		for (Score s : scoringOps) {
-			rows.add(new RowProp(s.getEvent(), sdf.format(s.getOptimalTime()), sdf.format(s.getYourTime()), String.valueOf(s.getDiff()), String.valueOf(s.getScore()), String.valueOf(s.getScorePercentage()) + "%"));
+			if (s.getEvent().equals("Failed Braking Attempt")) {
+				rows.add(new RowProp(s.getEvent(), "N/A", "N/A", "N/A", String.valueOf(s.getScore()), "N/A"));
+			} else {
+				rows.add(new RowProp(s.getEvent(), sdf.format(s.getOptimalTime()), sdf.format(s.getYourTime()),
+						String.valueOf(s.getDiff()) + "ms", String.valueOf(s.getScore()),
+						String.valueOf(s.getScorePercentage()) + "%"));
+			}
 		}
 		return rows;
 	}
@@ -121,7 +127,8 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 		StringProperty score;
 		StringProperty scorePercent;
 
-		public RowProp(String event, String optTime, String yourTime, String difference, String score, String scorePercent) {
+		public RowProp(String event, String optTime, String yourTime, String difference, String score,
+				String scorePercent) {
 			this.event = new SimpleStringProperty(event);
 			this.optTime = new SimpleStringProperty(optTime);
 			this.yourTime = new SimpleStringProperty(yourTime);
