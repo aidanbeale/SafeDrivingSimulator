@@ -77,18 +77,18 @@ public class ChooseCarController {
 
 	@FXML
 	private void start(ActionEvent event) throws IOException {
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("../view/Simulation.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Simulation.fxml"));
 
-		SimulationController sim = loader.getController();
 		String chosenCar = carColourList.get(currCarGroup);
 		addHazards();
 		
+		SimulationController sim = loader.getController();
+		
 		sim.setUserChosenCarString(chosenCar);
-		//sim.setEvents(hazardsList);
-
-		loader.load();
-
+		sim.setEvents(hazardsList);
+		
+		//loader.load();
+		
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));

@@ -99,6 +99,7 @@ public class SimulationController {
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
 		if (simButtonLabel.equals("begin")) {
+			initialize();
 			beginSimButton.setText("Cancel Simulation");
 			simButtonLabel = "cancel";
 			moveUserCar();
@@ -203,7 +204,6 @@ public class SimulationController {
 	/**
 	 * Calls the nessasary methods to initialise the simulation scene
 	 */
-	@FXML
 	private void initialize() {
 		// Create cars
 		createCars(userChosenCarString);
