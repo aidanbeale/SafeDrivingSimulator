@@ -1,5 +1,6 @@
 package simulation;
 
+import java.util.Random;
 import java.util.TimerTask;
 
 public class EventHandler {
@@ -9,6 +10,7 @@ public class EventHandler {
 	private boolean timerStopped = false;
 	private long timerStartedTime;
 	private long timerStoppedTime;
+	private Random rand = new Random();
 
 	public EventHandler() {}
 
@@ -21,13 +23,30 @@ public class EventHandler {
 	public void stopCrashEventTimer() {
 		timerStoppedTime = timer.stopTimer();
 	}
+	
+	public void startCrashEvent(Car aiCar1, Car aiCar2) {
+		// In a crash event the car in front slows down and forces the user to apply the brakes
+		// If the user does not apply the brakes in time a crash occurs and the test subject fails.
+		
+		final int minSpeed = 30;
+		final int maxSpeed = 40;
+		
+		// aiCar1 needs to slow down randomly 
+		aiCar1.setSpeed(rand.nextInt(maxSpeed - minSpeed) + minSpeed);
+		
+		// aiCar2 needs to be equal to or faster than aiCar1 or they will crash
+		aiCar2.setSpeed(rand.nextInt(maxSpeed - aiCar1.getSpeed()) + minSpeed);		
+		
+	}
 
 	public void startSpeedingEvent() {
-
+		// In a speeding event, the cars speed will begin fluctuating more than normal and rise above the 40km/h
+		// limit. The user will need to apply the brakes to slow the car down and end the event.
 	}
 
 	public void startChildEvent() {
-
+		// In a child event a child will be moving near the road. There is a 50% chance that a ball will roll 
+		// out on the road and the child appears to go and get it. If the child runs out the brakes need to be applied.
 	}
 
 	public int calculateScore() {

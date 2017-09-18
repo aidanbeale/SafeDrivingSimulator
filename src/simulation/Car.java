@@ -14,7 +14,6 @@ public class Car {
 	private boolean userControlling;
 
 	public Car(int speed, int xPos, String model, boolean userControlling) {
-		super();
 		this.speed = speed;
 		this.xPos = xPos;
 		this.model = model;
@@ -48,7 +47,7 @@ public class Car {
 
 		try {
 			// Read car model from path
-			String path = "src\\simModels\\" + carName + ".3DS";
+			String path = "src\\simModels\\" + carName;
 			modelImporter.read(path);
 		} catch (ImportException e) {
 			System.out.println("Error importing 3ds model: " + e.getMessage());

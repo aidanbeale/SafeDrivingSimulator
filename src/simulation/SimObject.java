@@ -5,6 +5,7 @@ import com.interactivemesh.jfx.importer.tds.TdsModelImporter;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.transform.Rotate;
 
 public class SimObject {
 
@@ -26,6 +27,13 @@ public class SimObject {
 	private void init() {
 		Node[] objMesh = import3dModel(model);
 		objGroup = meshIntoGroup(objMesh);
+		objGroup.setTranslateX(xPos);
+		objGroup.setTranslateY(yPos);
+		objGroup.setTranslateZ(zPos);
+		
+		// Set rotate by default
+		objGroup.setRotationAxis(Rotate.Y_AXIS);
+		objGroup.setRotate(90.0);
 	}
 
 	/**
@@ -43,7 +51,7 @@ public class SimObject {
 
 		try {
 			// Read car model from path
-			String path = "src\\simModels\\" + objName + ".3DS";
+			String path = "src\\simModels\\" + objName;
 			modelImporter.read(path);
 		} catch (ImportException e) {
 			System.out.println("Error importing 3ds model: " + e.getMessage());

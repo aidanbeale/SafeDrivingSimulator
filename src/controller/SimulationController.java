@@ -77,15 +77,17 @@ public class SimulationController {
 	Group rootGroup = new Group();
 
 	private EventHandler crashEvent;
-	private int userUnitsps = 40;
-	private int aiUnitsps = 40;
+	private final int SPEED_LIMIT = 40;
+	private int userUnitsps = SPEED_LIMIT;
+	private int aiUnitsps = SPEED_LIMIT;
 	private boolean braking = false;
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
-	private int simulationTime = 60;
+	private int simulationTime = 300;
 	private boolean simulationRunning = false;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
+	private ArrayList<String> events = new ArrayList<>();
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -105,13 +107,16 @@ public class SimulationController {
 
 		// Start countdown
 		simulationCountdown();
+
+		EventHandler crashEvent = new EventHandler();
+		crashEvent.startCrashEvent(aiCar1, aiCar2);
 	}
 
 	private void createCars(String userChoice) {
-		carColourList.add("mini-red");
-		carColourList.add("mini-green");
-		carColourList.add("mini-blue");
-		carColourList.add("mini-aws");
+		carColourList.add("mini-red.3DS");
+		carColourList.add("mini-green.3DS");
+		carColourList.add("mini-blue.3DS");
+		carColourList.add("mini-aws.3DS");
 
 		for (String c : carColourList) {
 			if (c.equals(userChoice)) {
@@ -120,14 +125,14 @@ public class SimulationController {
 			}
 		}
 
-		userCar = new Car(0, 0, userChoice, true);
+		userCar = new Car(40, 0, userChoice, true);
 		rootGroup.getChildren().add(userCar.getCarGroup());
 
 		int i = 1;
 		ArrayList<Car> aiCarList = new ArrayList<>();
 		// Create the other cars
 		for (String c : carColourList) {
-			Car newCar = new Car(0, -5200 * i, c, false);
+			Car newCar = new Car(40, -5200 * i, c, false);
 			rootGroup.getChildren().add(newCar.getCarGroup());
 			aiCarList.add(newCar);
 			i++;
@@ -142,19 +147,20 @@ public class SimulationController {
 		aiCar3.getCarGroup().setTranslateZ(550);
 	}
 
-	private void createObjects() {
+	private Group createObjects(int startOfBox, int boxLength) {
 		Group objGroup = new Group();
-		Double distBetweenSign = 0.0;
-		Double distBetweenTree = 0.0;
+		Double distBetweenSign = 1000.0;
+		Double distBetweenTree = 100.0;
 
-		SimObject sign = new SimObject("scSign", -1500, -420, -520); // Sign is not loading correctly
-		sign.getObjGroup().setTranslateX(-5000);
-		sign.getObjGroup().setTranslateY(0);
-		sign.getObjGroup().setTranslateZ(-520);
-		sign.getObjGroup().setRotationAxis(Rotate.Y_AXIS);
-		sign.getObjGroup().setRotate(90.0);
+		SimObject powerline = new SimObject("scSign.3DS", startOfBox, 0, -720);
 
-		rootGroup.getChildren().add(sign.getObjGroup());
+		// SimObject tree = new SimObject("Tree 4.3ds",
+		// rand.nextInt((startOfBox + boxLength) - startOfBox + 1) + startOfBox, 0,
+		// rand.nextInt((startOfBox + boxLength) - startOfBox + 1) + startOfBox);
+
+		objGroup.getChildren().add(powerline.getObjGroup());
+		// objGroup.getChildren().add(tree.getObjGroup());
+		return objGroup;
 	}
 
 	/**
@@ -164,7 +170,7 @@ public class SimulationController {
 	private void initialize() {
 
 		// Create cars
-		createCars("mini-aws");
+		createCars("mini-aws.3DS");
 
 		// Create road
 		roadGroup = createRoad();
@@ -183,8 +189,6 @@ public class SimulationController {
 
 		// Start car clock
 		initClock();
-
-		createObjects();
 	}
 
 	private void initClock() {
@@ -266,19 +270,22 @@ public class SimulationController {
 
 	private Group createRoad() {
 		roadGroup = new Group();
-		Double roadDistance = 0.0;
+		int roadDistance = 0;
+		int boxSize = 1624;
+		int numberOfBoxes = 200;
 
 		PhongMaterial roadSurface = new PhongMaterial();
 		roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
 		roadSurface.setSpecularColor(Color.WHITE);
 
-		for (int i = 0; i < 200; i++) {
-			Box road = new Box(1624.0, 10.0, 6600.0);
+		for (int i = 0; i < numberOfBoxes; i++) {
+			Box road = new Box(boxSize, 10.0, 6600.0);
 			road.setMaterial(roadSurface);
 			road.setTranslateY(95); // Fix road height
 			road.setTranslateZ(140); // Centre the road to the car
-			road.setTranslateX(roadDistance -= 1624);
+			road.setTranslateX(roadDistance -= boxSize);
 			roadGroup.getChildren().add(road);
+			roadGroup.getChildren().add(createObjects(roadDistance, boxSize));
 		}
 
 		// Create Ambient Light
@@ -330,26 +337,24 @@ public class SimulationController {
 							}
 
 							userCar.setxPos(userCar.getxPos() - userUnitsps);
-							speedLabel.setText(String.valueOf((userUnitsps * 2) + "km/h"));
+							speedLabel.setText(String.valueOf((userUnitsps) + "km/h"));
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
-							// System.out.println("trans car to " + userCar.getxPos());
+							System.out.println(userCar.getxPos());
 
 							camera.setTranslateX(transCam -= userUnitsps);
 							// System.out.println("trans cam to " + transCam);
 
-							aiCar1.setxPos(aiCar1.getxPos() - (aiUnitsps - 6));
+							aiCar1.setxPos(aiCar2.getxPos() - (aiCar1.getSpeed()));
 							aiCar1.getCarGroup().setTranslateX(aiCar1.getxPos());
 							// System.out.println("trans ai1 car to " + aiCar1.getxPos());
 
-							aiCar2.setxPos(aiCar2.getxPos() - (aiUnitsps - 3));
+							aiCar2.setxPos(aiCar2.getxPos() - (aiCar2.getSpeed()));
 							aiCar2.getCarGroup().setTranslateX(aiCar2.getxPos());
 							// System.out.println("trans ai2 car to " + aiCar2.getxPos());
 
-							aiCar3.setxPos(aiCar3.getxPos() + 20);
+							aiCar3.setxPos(aiCar3.getxPos() + SPEED_LIMIT);
 							aiCar3.getCarGroup().setTranslateX(aiCar3.getxPos());
 							// System.out.println("trans ai3 car to " + aiCar3.getxPos());
-
-							// calculateNextStep();
 
 							// Should apply brake now
 							if ((userCar.getxPos() < aiCar1.getxPos() + 2000
@@ -375,22 +380,6 @@ public class SimulationController {
 			}
 		}).start();
 	}
-
-	/*
-	 * private void calculateNextStep() { int randomNumber = rand.nextInt(100);
-	 * System.out.println(randomNumber); if (randomNumber > 4) { aiCar1.setxPos() =
-	 * aiCar1.getxPos() - 2; } else if (randomNumber > 15 && randomNumber < 95) {
-	 * aiTransCar1 -= 1; } else if (randomNumber > 60 && randomNumber < 95) {
-	 * aiTransCar1 += 1; }
-	 * 
-	 * if (randomNumber > 4) { aiTransCar2 -= 2; } else if (randomNumber > 15 &&
-	 * randomNumber < 95) { aiTransCar2 -= 1; } else if (randomNumber > 60 &&
-	 * randomNumber < 95) { aiTransCar2 += 3; }
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
 		// Create view camera
@@ -470,6 +459,9 @@ public class SimulationController {
 
 			crashEvent = new EventHandler();
 
+			endOldEvent();
+			assignRandomEventTime();
+
 		} else if (!crashEvent.getTimerStarted()) { // if no events have started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
@@ -477,10 +469,12 @@ public class SimulationController {
 
 			Score score = new Score("failedAttempt", -300);
 			scoringOps.add(score);
+			endOldEvent();
+			assignRandomEventTime();
 		}
 	}
 
-	private void tempDisableBrakeButton() { // TODO not working, needs fixing. Check begin button disable?
+	private void tempDisableBrakeButton() {
 
 		final Thread t = new Thread(new Runnable() {
 
@@ -497,6 +491,78 @@ public class SimulationController {
 				brakeButton.setDisable(false);
 
 			}
+		});
+		t.start();
+	}
+
+	private void assignRandomEventTime() {
+
+		// TODO choose events depending on user choice
+
+		// No random events in the first 10 seconds
+		final int MAX_EVENTS = (simulationTime - 10) / 30;
+
+		// Wait minimum of 10 seconds between events starting and max of 30
+		int eventBreak = rand.nextInt(20) + 10;
+
+		final Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(eventBreak);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				while (simulationRunning) {
+					int eventType = rand.nextInt(events.size());
+					String eventName;
+
+					if (events.get(eventType).equals("crashEvent")) {
+						EventHandler crashEvent = new EventHandler();
+						crashEvent.startCrashEvent(aiCar1, aiCar2);
+
+					} else if (events.get(eventType).equals("speedingEvent")) {
+
+					}
+
+					// Until event ends
+				}
+
+			}
+		});
+		t.start();
+
+	}
+
+	/**
+	 * Resets everything back to initial values ready for a new event
+	 */
+	private void endOldEvent() {
+
+		final Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+
+				// Move cars away from user (Crash event)
+				aiCar1.setSpeed((int) (SPEED_LIMIT * 1.2));
+				aiCar2.setSpeed((int) (SPEED_LIMIT * 1.2));
+				
+				try {
+					// Sleep for 5 seconds
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				// Restore cars (Crash event)
+				aiCar1.setSpeed(SPEED_LIMIT);
+				aiCar2.setSpeed(SPEED_LIMIT);
+			}
+
 		});
 		t.start();
 	}
