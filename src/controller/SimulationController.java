@@ -62,9 +62,7 @@ public class SimulationController {
 
 	private Group roadGroup;
 	private PerspectiveCamera camera;
-
-	private int transCam = -1200;
-
+	
 	private boolean testHalt = false;
 	private boolean brakePressed = false;
 
@@ -148,19 +146,50 @@ public class SimulationController {
 		aiCar3.getCarGroup().setTranslateZ(550);
 	}
 
+	private void createSign() {
+		int boxSize = 1624;
+		int numberOfBoxes = 20;
+		int signDistance = 0;
+
+		PhongMaterial schoolZone = new PhongMaterial();
+		schoolZone.setDiffuseMap(new Image("images\\schoolzone.png"));
+
+		for (int i = 0; i < numberOfBoxes; i++) {
+			Box schoolZoneSign = new Box(300, 10, 300);
+			schoolZoneSign.setMaterial(schoolZone);
+			schoolZoneSign.setTranslateY(-400); // Fix road height
+			schoolZoneSign.setTranslateZ(-700); // Centre the road to the car
+			schoolZoneSign.setTranslateX(signDistance -= boxSize);
+			schoolZoneSign.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+			schoolZoneSign.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
+			roadGroup.getChildren().add(schoolZoneSign);
+			
+			PhongMaterial postMaterial = new PhongMaterial();
+			postMaterial.setDiffuseColor(Color.GRAY);
+			
+			Box post = new Box(500, 500, 500);
+			post.setMaterial(postMaterial);
+			post.setTranslateY(-100); // Fix road height
+			post.setTranslateZ(-700); // Centre the road to the car
+			post.setTranslateX(signDistance = boxSize);
+			post.getTransforms().add(new Rotate(90, Rotate.Z_AXIS));
+			post.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
+			roadGroup.getChildren().add(post);
+		}
+
+	}
+
 	private Group createObjects(int startOfBox, int boxLength) {
 		Group objGroup = new Group();
 		Double distBetweenSign = 1000.0;
 		Double distBetweenTree = 100.0;
 
-		SimObject powerline = new SimObject("scSign.3DS", startOfBox, 0, -720);
-
 		// SimObject tree = new SimObject("Tree 4.3ds",
 		// rand.nextInt((startOfBox + boxLength) - startOfBox + 1) + startOfBox, 0,
 		// rand.nextInt((startOfBox + boxLength) - startOfBox + 1) + startOfBox);
 
-		objGroup.getChildren().add(powerline.getObjGroup());
 		// objGroup.getChildren().add(tree.getObjGroup());
+		createSign();
 		return objGroup;
 	}
 
@@ -179,7 +208,7 @@ public class SimulationController {
 		rootGroup.getChildren().add(roadGroup);
 
 		// Create camera
-		camera = setupUserCamera("first");
+		camera = setupUserCamera("third");
 
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 975, 740, true, SceneAntialiasing.BALANCED);
@@ -327,7 +356,7 @@ public class SimulationController {
 						public void run() {
 							boolean breakingBreak = false;
 							int acceleratingBreakCounter = 0;
-							
+
 							if (braking) {
 
 								if (!breakingBreak) {
@@ -371,7 +400,7 @@ public class SimulationController {
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
 							// System.out.println(userCar.getxPos());
 
-							camera.setTranslateX(transCam -= userCar.getSpeed());
+							camera.setTranslateX(camera.getTranslateX() - userCar.getSpeed());
 							// System.out.println("trans cam to " + transCam);
 
 							aiCar1.setxPos(aiCar1.getxPos() - (aiCar1.getSpeed()));
@@ -448,15 +477,12 @@ public class SimulationController {
 			camera.setRotate(270.0); // 270
 		} else if (camPlacement.equals("third")) {
 			// Third person view
-			camera.setTranslateX(2000); // -1202
-			camera.setTranslateY(-620); // -420
-			camera.setTranslateZ(-500); // -520
-			// camera.setRotationAxis(Rotate.Y_AXIS);
-			// camera.setRotate(0.0); // 270
-			// camera.setRotationAxis(Rotate.Y_AXIS);
-			// camera.setRotate(270.0);
-			camera.setRotationAxis(Rotate.X_AXIS);
-			camera.setRotate(-45.0);
+			camera.setTranslateX(600); // -1202
+			camera.setTranslateY(-720); // -420
+			camera.setTranslateZ(-520); // -520
+			camera.getTransforms().add((new Rotate(-15.0, Rotate.Z_AXIS)));
+			camera.getTransforms().add((new Rotate(-90.0, Rotate.Y_AXIS)));
+
 
 		} else {
 			// TODO throws
