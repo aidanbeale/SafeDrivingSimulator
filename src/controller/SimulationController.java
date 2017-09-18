@@ -88,6 +88,7 @@ public class SimulationController {
 	private boolean simulationRunning = false;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 	private ArrayList<String> events = new ArrayList<>();
+	private int randomiseCarSpeedCounter = 0;
 
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
@@ -167,7 +168,7 @@ public class SimulationController {
 	 */
 	@FXML
 	private void initialize() {
-		events.add("crashEvent"); // TODO remove 
+		events.add("speedingEvent"); // TODO remove
 
 		// Create cars
 		createCars("mini-aws.3DS");
@@ -295,6 +296,14 @@ public class SimulationController {
 		return roadGroup;
 	}
 
+	private int randomiseCarSpeed() {
+		final int minCarSpeed = SPEED_LIMIT - 3;
+		final int maxCarSpeed = SPEED_LIMIT;
+
+		int randomSpeed = rand.nextInt(maxCarSpeed - minCarSpeed) + minCarSpeed;
+		return randomSpeed;
+	}
+
 	private void moveUserCar() {
 
 		crashEvent = new EventHandler();
@@ -302,6 +311,8 @@ public class SimulationController {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				
+
 				while (!testHalt) {
 					try {
 						Thread.sleep(30); // 30
@@ -316,17 +327,17 @@ public class SimulationController {
 
 							if (braking) {
 
-								if (userUnitsps > 15) {
-									userUnitsps -= 1;
+								if (userCar.getSpeed() > 15) {
+									userCar.setSpeed(userCar.getSpeed() - 1);
 								} else {
 									braking = false;
 									accelerating = true;
 								}
 
 							} else if (accelerating) {
-								if (userUnitsps < 40) {
+								if (userCar.getSpeed() < 40) {
 									if (!acceleratingBreak) {
-										userUnitsps += 1;
+										userCar.setSpeed(userCar.getSpeed() + 1);
 										acceleratingBreak = true;
 									} else {
 										acceleratingBreak = false;
@@ -336,12 +347,21 @@ public class SimulationController {
 								}
 							}
 
-							userCar.setxPos(userCar.getxPos() - userUnitsps);
-							speedLabel.setText(String.valueOf((userUnitsps) + "km/h"));
-							userCar.getCarGroup().setTranslateX(userCar.getxPos());
-							//System.out.println(userCar.getxPos());
+							randomiseCarSpeedCounter++;
 
-							camera.setTranslateX(transCam -= userUnitsps);
+							if (randomiseCarSpeedCounter % 10 == 0) {
+								userCar.setSpeed(randomiseCarSpeed() + 1);
+								aiCar1.setSpeed(randomiseCarSpeed());
+								aiCar2.setSpeed(randomiseCarSpeed());
+								aiCar3.setSpeed(randomiseCarSpeed());
+							}
+
+							userCar.setxPos(userCar.getxPos() - userCar.getSpeed());
+							speedLabel.setText(String.valueOf((userCar.getSpeed()) + "km/h"));
+							userCar.getCarGroup().setTranslateX(userCar.getxPos());
+							// System.out.println(userCar.getxPos());
+
+							camera.setTranslateX(transCam -= userCar.getSpeed());
 							// System.out.println("trans cam to " + transCam);
 
 							aiCar1.setxPos(aiCar1.getxPos() - (aiCar1.getSpeed()));
@@ -357,28 +377,36 @@ public class SimulationController {
 							// System.out.println("trans ai3 car to " + aiCar3.getxPos());
 
 							// Should apply brake now
-							if ((userCar.getxPos() < aiCar1.getxPos() + 2000
-									|| userCar.getxPos() < aiCar2.getxPos() + 2000) && !crashEvent.getTimerStarted()) {
+							checkBrakeRequired();
 
-								crashEvent.startCrashEventTimer();
-
-								//// System.out.print("SIMULATION ENDED");
-							} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
-									|| userCar.getxPos() < aiCar2.getxPos() + 480) {
-
-								if (!crashEvent.isTimerStopped()) {
-									crashEvent.stopCrashEventTimer();
-									crashEvent.setTimerStopped(true);
-									//// System.out.print("SIMULATION ENDED");
-									failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
-									testHalt = true;
-								}
-							}
 						};
 					});
 				}
 			}
 		}).start();
+	}
+
+	private void checkBrakeRequired() {
+
+		// Crash event
+		if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
+				&& !crashEvent.getTimerStarted()) {
+
+			crashEvent.startCrashEventTimer();
+
+			//// System.out.print("SIMULATION ENDED");
+		} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
+				|| userCar.getxPos() < aiCar2.getxPos() + 480) {
+
+			if (!crashEvent.isTimerStopped()) {
+				crashEvent.stopCrashEventTimer();
+				crashEvent.setTimerStopped(true);
+				//// System.out.print("SIMULATION ENDED");
+				failureScreen.setText("YOU FAIL Score: " + crashEvent.calculateScore());
+				testHalt = true;
+			}
+		}
+
 	}
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
@@ -488,6 +516,7 @@ public class SimulationController {
 
 			}
 		});
+		t.setDaemon(true);
 		t.start();
 	}
 
@@ -499,31 +528,34 @@ public class SimulationController {
 		final int MAX_EVENTS = (simulationTime - 10) / 30;
 
 		// Wait minimum of 10 seconds between events starting and max of 30
-		int eventBreak = rand.nextInt(10) + 10;
+		int eventBreak = rand.nextInt(10000) + 10000;
 
 		final Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				System.out.println("Starting a freshy");
+
 				try {
 					Thread.sleep(eventBreak);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				System.out.println("breaks done");
 
 				while (!braking) {
+
 					int eventType;
 					String eventName;
-					
+
 					// Choose event
 					if (events.size() == 0) {
 						eventType = 0;
 					} else {
-						eventType = rand.nextInt((events.size() + 1) -1);
+						eventType = rand.nextInt((events.size() + 1) - 1);
 					}
-					
+
 					// Start Crash event
 					if (events.get(eventType).equals("crashEvent")) {
 						EventHandler crashEvent = new EventHandler();
@@ -531,7 +563,8 @@ public class SimulationController {
 
 						// Start Speeding event
 					} else if (events.get(eventType).equals("speedingEvent")) {
-
+						EventHandler speedingEvent = new EventHandler();
+						speedingEvent.startSpeedingEvent(userCar);
 					}
 
 					// Sleep for one second to keep randomising speeds
@@ -546,6 +579,7 @@ public class SimulationController {
 				System.out.println("Threads done m8");
 			}
 		});
+		t.setDaemon(true);
 		t.start();
 
 	}
@@ -563,21 +597,23 @@ public class SimulationController {
 				// Move cars away from user (Crash event)
 				aiCar1.setSpeed((int) (SPEED_LIMIT * 1.2));
 				aiCar2.setSpeed((int) (SPEED_LIMIT * 1.2));
-				
+
 				try {
 					// Sleep for 5 seconds
 					Thread.sleep(5000);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				// Restore cars (Crash event)
 				aiCar1.setSpeed(SPEED_LIMIT);
 				aiCar2.setSpeed(SPEED_LIMIT);
+				userCar.setSpeed(SPEED_LIMIT);
 				assignRandomEventTime();
 			}
 
 		});
+		t.setDaemon(true);
 		t.start();
 	}
 

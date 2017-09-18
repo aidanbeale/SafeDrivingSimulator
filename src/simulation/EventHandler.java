@@ -40,9 +40,12 @@ public class EventHandler {
 		System.out.println("aiCar2 speed: " + aiCar2.getSpeed());
 	}
 
-	public void startSpeedingEvent() {
+	public void startSpeedingEvent(Car userCar) {
 		// In a speeding event, the cars speed will begin fluctuating more than normal and rise above the 40km/h
 		// limit. The user will need to apply the brakes to slow the car down and end the event.
+		
+		userCar.setSpeed(userCar.getSpeed() + 2);
+		System.out.println("userCar speed: " + userCar.getSpeed());
 	}
 
 	public void startChildEvent() {
