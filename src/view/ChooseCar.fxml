@@ -2,8 +2,10 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
 <?import javafx.scene.Group?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.Blend?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -14,7 +16,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ChooseCarController">
    <children>
       <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
-      <AnchorPane layoutX="36.0" layoutY="77.0" prefHeight="619.0" prefWidth="1296.0" style="-fx-background-color: f4f4f4;">
+      <AnchorPane layoutX="35.0" layoutY="75.0" prefHeight="619.0" prefWidth="1296.0" style="-fx-background-color: f4f4f4;">
          <effect>
             <Blend />
          </effect>
@@ -40,9 +42,9 @@
                </image>
             </ImageView>
             <JFXButton id="chooseCar1" fx:id="start" layoutX="550.0" layoutY="526.0" onAction="#start" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Start" textFill="WHITE" />
-            <JFXCheckBox fx:id="checkSpeeding" checkedColor="#34495e" layoutX="793.0" layoutY="219.0" text="Speeding" />
-            <JFXCheckBox fx:id="checkCrash" checkedColor="#34495e" layoutX="804.0" layoutY="293.0" text="Crash" />
-            <JFXCheckBox fx:id="checkGiveway" checkedColor="#34495e" layoutX="794.0" layoutY="368.0" text="Give way" />
+            <JFXCheckBox fx:id="checkSpeeding" checkedColor="#34495e" layoutX="694.0" layoutY="199.0" text="Speeding" />
+            <JFXCheckBox fx:id="checkCrash" checkedColor="#34495e" layoutX="705.0" layoutY="273.0" text="Crash" />
+            <JFXCheckBox fx:id="checkGiveway" checkedColor="#34495e" layoutX="695.0" layoutY="348.0" text="Give way" />
             <AnchorPane layoutX="113.0" layoutY="180.0" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Group id="chooseCarGroup" fx:id="chooseCarGroup" />
@@ -53,11 +55,21 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label layoutX="798.0" layoutY="157.0" text="Hazards" textFill="#43515e">
+            <Label layoutX="699.0" layoutY="137.0" text="Hazards" textFill="#43515e">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
+            <Label layoutX="1020.0" layoutY="135.0" text="View" textFill="#43515e">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <JFXRadioButton id="firstPersonRadio" fx:id="firstPersonRadio" layoutX="991.0" layoutY="199.0" selected="true" text="First-Person">
+               <toggleGroup>
+                  <ToggleGroup fx:id="viewGroup" />
+               </toggleGroup></JFXRadioButton>
+            <JFXRadioButton id="thirdPersonRadio" fx:id="thirdPersonRadio" layoutX="991.0" layoutY="272.0" text="Third-Person" toggleGroup="$viewGroup" />
          </children>
       </AnchorPane>
    </children>

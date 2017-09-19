@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXRadioButton;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -39,7 +40,11 @@ public class ChooseCarController {
 	private JFXCheckBox checkCrash;
 	@FXML
 	private JFXCheckBox checkGiveway;
-
+	@FXML
+	private JFXRadioButton firstPersonRadio;
+	@FXML
+	private JFXRadioButton thirdPersonRadio;
+	
 	PerspectiveCamera camera;
 	Group rootGroup = new Group();
 	ArrayList<Group> carGroupList = new ArrayList<>();
@@ -49,6 +54,7 @@ public class ChooseCarController {
 
 	ArrayList<String> carColourList;
 	ArrayList<String> hazardsList = new ArrayList<>();
+	String userView;
 
 	@FXML
 	private void initialize() {
@@ -63,7 +69,7 @@ public class ChooseCarController {
 		AmbientLight ambient = new AmbientLight();
 
 		// Add ambient light to the group
-		rootGroup.getChildren().add(ambient);
+		//rootGroup.getChildren().add(ambient);
 
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 300, 300, true, SceneAntialiasing.BALANCED);
@@ -71,21 +77,28 @@ public class ChooseCarController {
 
 		// Add subscene to main window
 		chooseCarGroup.getChildren().add(subScene);
-
+		
 		rotateCarChoice();
 	}
 
 	@FXML
 	private void start(ActionEvent event) throws IOException {
+		
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Simulation.fxml"));
-
+		Parent root = (Parent) loader.load();
+		
+		SimulationController simControl = loader.<SimulationController>getController();
+		
 		String chosenCar = carColourList.get(currCarGroup);
+		addView();
 		addHazards();
 		
-		SimulationController sim = loader.getController();
+		simControl.setUserChosenCarString(chosenCar);
+		simControl.setEvents(hazardsList);
+		simControl.setUserView(userView);
 		
-		sim.setUserChosenCarString(chosenCar);
-		sim.setEvents(hazardsList);
+		
+		//sim.setEvents(hazardsList);
 		
 		//loader.load();
 		
@@ -95,8 +108,16 @@ public class ChooseCarController {
 		stage.show();
 	}
 
+	private void addView() {
+		if (firstPersonRadio.isSelected()) {
+			userView = "first";
+		} else if (thirdPersonRadio.isSelected()) {
+			userView = "third";
+		}
+	}
+
 	private void addHazards() {
-		if (checkSpeeding.isSelected()) {
+		if (firstPersonRadio.isSelected()) {
 			hazardsList.add("speedingEvent");
 		} else if (checkCrash.isSelected()) {
 			hazardsList.add("crashEvent");
@@ -104,7 +125,7 @@ public class ChooseCarController {
 			hazardsList.add("givewayEvent");
 		}
 	}
-
+	
 	private void createCars() {
 		carColourList = new ArrayList<>();
 
@@ -122,6 +143,8 @@ public class ChooseCarController {
 
 	private void rotateCarChoice() {
 
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
+		
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -163,24 +186,25 @@ public class ChooseCarController {
 
 	@FXML
 	private void chooseBack(ActionEvent event) throws IOException {
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
+		
 		if (currCarGroup == 4) { // TODO length of arraylist
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
 			currCarGroup = 3;
 		}
-
-		rootGroup.getChildren().remove(0);
-		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
 	}
 
 	@FXML
 	private void chooseForward(ActionEvent event) throws IOException {
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup++));
+		
 		if (currCarGroup == 4) { // TODO length of arraylist
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
 			currCarGroup = 3;
 		}
-		rootGroup.getChildren().remove(0);
-		rootGroup.getChildren().add(carGroupList.get(currCarGroup++));
 	}
 }

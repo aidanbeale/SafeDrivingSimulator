@@ -59,7 +59,7 @@ public class SimulationController {
 	private JFXButton displayScore;
 	@FXML
 	private Label heading;
-	
+
 	private Car userCar;
 	private Car aiCar1;
 	private Car aiCar2;
@@ -87,15 +87,16 @@ public class SimulationController {
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
-	private int simulationTime = 10;
+	private int simulationTime = 100;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 
 	private int randomiseCarSpeedCounter = 0;
 	private Group givewayGroup;
-	
+
 	private String userChosenCarString;
 	private ArrayList<String> events = new ArrayList<>();
-	
+	private String userView;
+
 	@FXML
 	private void handleSimBegin(ActionEvent event) {
 		if (simButtonLabel.equals("begin")) {
@@ -213,7 +214,7 @@ public class SimulationController {
 		rootGroup.getChildren().add(roadGroup);
 
 		// Create camera
-		camera = setupUserCamera("third");
+		camera = setupUserCamera(userView);
 
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 975, 740, true, SceneAntialiasing.BALANCED);
@@ -294,11 +295,11 @@ public class SimulationController {
 
 							if (simulationTime == 0) {
 								testHalt = true;
-								
+
 								pane.setStyle("-fx-background-color: #F4F4F4;");
 								heading.setText("Congratulations!");
 								displayScore.setText("Display Scores");
-								
+
 							}
 						}
 					});
@@ -342,7 +343,7 @@ public class SimulationController {
 			int loc3 = -(rand.nextInt(100000) + 200000);
 
 			System.out.println("locs:" + loc1 + " " + loc2 + " " + loc3);
-			
+
 			givewayEvent.addGivewayLocation(loc1);
 			givewayEvent.addGivewayLocation(loc2);
 			givewayEvent.addGivewayLocation(loc3);
@@ -372,7 +373,7 @@ public class SimulationController {
 
 		crashEvent = new EventHandler();
 		speedingEvent = new EventHandler();
-		//givewayEvent = new EventHandler();
+		// givewayEvent = new EventHandler();
 
 		new Thread(new Runnable() {
 			@Override
@@ -465,59 +466,62 @@ public class SimulationController {
 		/*
 		 * Crash event
 		 */
-		if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
-				&& !crashEvent.getTimerStarted()) {
+		if (events.contains(crashEvent)) {
+			if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
+					&& !crashEvent.getTimerStarted()) {
 
-			crashEvent.startEventTimer();
+				crashEvent.startEventTimer();
 
-			//// System.out.print("SIMULATION ENDED");
-		} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
-				|| userCar.getxPos() < aiCar2.getxPos() + 480) {
-
-			if (!crashEvent.isTimerStopped()) {
-				crashEvent.stopEventTimer();
-				crashEvent.setTimerStopped(true);
 				//// System.out.print("SIMULATION ENDED");
-				failureScreen.setText("YOU FAIL");
-				testHalt = true;
+			} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
+					|| userCar.getxPos() < aiCar2.getxPos() + 480) {
+
+				if (!crashEvent.isTimerStopped()) {
+					crashEvent.stopEventTimer();
+					crashEvent.setTimerStopped(true);
+					//// System.out.print("SIMULATION ENDED");
+					failureScreen.setText("YOU FAIL");
+					testHalt = true;
+				}
 			}
 		}
 
 		/*
 		 * Speeding event
 		 */
-		if (userCar.getSpeed() > SPEED_LIMIT) {
-			speedingEvent.startEventTimer();
-		} else if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
-			if (!speedingEvent.isTimerStopped()) {
-				speedingEvent.stopEventTimer();
-				speedingEvent.setTimerStopped(true);
-				failureScreen.setText("YOU FAIL");
-				testHalt = true;
+		if (events.contains("speedingEvent")) {
+			if (userCar.getSpeed() > SPEED_LIMIT) {
+				speedingEvent.startEventTimer();
+			} else if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
+				if (!speedingEvent.isTimerStopped()) {
+					speedingEvent.stopEventTimer();
+					speedingEvent.setTimerStopped(true);
+					failureScreen.setText("YOU FAIL");
+					testHalt = true;
+				}
 			}
 		}
 
 		/*
 		 * Giveway event
 		 */
-		
-		if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 3000)
-				&& !givewayEvent.getTimerStarted()) {
-			System.out.println("Giveway timer started");
-			givewayEvent.startEventTimer();
+		if (events.contains("givewayEvent")) {
+			if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 3000) && !givewayEvent.getTimerStarted()) {
+				System.out.println("Giveway timer started");
+				givewayEvent.startEventTimer();
 
-			//// System.out.print("SIMULATION ENDED");
-		} else if (userCar.getxPos() < givewayEvent.getClosestGivewayLoc()) {
-
-			if (!givewayEvent.isTimerStopped()) {
-				givewayEvent.stopEventTimer();
-				givewayEvent.setTimerStopped(true);
 				//// System.out.print("SIMULATION ENDED");
-				failureScreen.setText("YOU FAIL");
-				testHalt = true;
+			} else if (userCar.getxPos() < givewayEvent.getClosestGivewayLoc()) {
+
+				if (!givewayEvent.isTimerStopped()) {
+					givewayEvent.stopEventTimer();
+					givewayEvent.setTimerStopped(true);
+					//// System.out.print("SIMULATION ENDED");
+					failureScreen.setText("YOU FAIL");
+					testHalt = true;
+				}
 			}
 		}
-
 	}
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
@@ -554,67 +558,83 @@ public class SimulationController {
 		tempDisableBrakeButton();
 
 		// If crash event occuring
-		if (crashEvent.getTimerStarted()) {
-			crashEvent.stopEventTimer();
-			crashEvent.setTimerStopped(true);
+		if (events.contains("crashEvent")) {
+			if (crashEvent.getTimerStarted()) {
+				crashEvent.stopEventTimer();
+				crashEvent.setTimerStopped(true);
 
-			Score score = new Score("crashevent", crashEvent.getTimerStartedTime(), crashEvent.getTimerStoppedTime());
-			scoringOps.add(score);
+				Score score = new Score("crashevent", crashEvent.getTimerStartedTime(),
+						crashEvent.getTimerStoppedTime());
+				scoringOps.add(score);
 
-			if (score.getScore() != 0) {
-				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
-			} else {
-				failureScreen.setText("Brakes applied correctly but too slow to react.");
+				if (score.getScore() != 0) {
+					failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+				} else {
+					failureScreen.setText("Brakes applied correctly but too slow to react.");
+				}
+
+				crashEvent = new EventHandler();
 			}
+		}
 
-			crashEvent = new EventHandler();
+		// If speeding event occuring
+		if (events.contains("speedingEvent")) {
+			if (speedingEvent.getTimerStarted()) {
+				speedingEvent.stopEventTimer();
+				speedingEvent.setTimerStopped(true);
 
-			// If speeding event occuring
-		} else if (speedingEvent.getTimerStarted()) {
-			speedingEvent.stopEventTimer();
-			speedingEvent.setTimerStopped(true);
-			
-			Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(),
-					speedingEvent.getTimerStoppedTime());
-			scoringOps.add(score);
+				Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(),
+						speedingEvent.getTimerStoppedTime());
+				scoringOps.add(score);
 
-			if (score.getScore() != 0) {
-				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
-			} else {
-				failureScreen.setText("Brakes applied correctly but too slow to react.");
+				if (score.getScore() != 0) {
+					failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+				} else {
+					failureScreen.setText("Brakes applied correctly but too slow to react.");
+				}
+
+				speedingEvent = new EventHandler();
 			}
+		}
+		// if giveway event occuring
+		if (events.contains("givewayEvent")) {
+			if (givewayEvent.getTimerStarted())
 
-			speedingEvent = new EventHandler();
+			{
+				givewayEvent.stopEventTimer();
+				givewayEvent.setTimerStopped(true);
 
-			// if giveway event occuring
-		} else if (givewayEvent.getTimerStarted()) {
-			givewayEvent.stopEventTimer();
-			givewayEvent.setTimerStopped(true);
-			
-			Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(),
-					givewayEvent.getTimerStoppedTime());
-			scoringOps.add(score);
+				Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(),
+						givewayEvent.getTimerStoppedTime());
+				scoringOps.add(score);
 
-			if (score.getScore() != 0) {
-				failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
-			} else {
-				failureScreen.setText("Brakes applied correctly but too slow to react.");
+				if (score.getScore() != 0) {
+					failureScreen.setText("Brakes applied correctly.  Score: " + score.getScore());
+				} else {
+					failureScreen.setText("Brakes applied correctly but too slow to react.");
+				}
+
+				if (givewayEvent.getClosestGivewayLoc() == givewayEvent.getGivewayLocations().get(0)) {
+					givewayEvent.getGivewayLocations().remove(0);
+				}
+
 			}
-			
-			if (givewayEvent.getClosestGivewayLoc() == givewayEvent.getGivewayLocations().get(0)) {
-				givewayEvent.getGivewayLocations().remove(0);
-			}
-
-		} else if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted()
-				&& !givewayEvent.getTimerStarted()) { // if no events have started
+		}
+		if (!crashEvent.getTimerStarted() && !speedingEvent.getTimerStarted() && !givewayEvent.getTimerStarted()) { // if
+																													// no
+																													// events
+			// have
+			// started
 			failureScreen.setText("Brakes applied incorrectly. Score: -300 ");
 
 			// tempDisableBrakeButton();
 
 			Score score = new Score("failedAttempt", -300);
 			scoringOps.add(score);
+
+			endOldEvent();
+
 		}
-		endOldEvent();
 	}
 
 	private void tempDisableBrakeButton() {
@@ -790,7 +810,7 @@ public class SimulationController {
 		results.setScoringOps(scoringOps);
 
 		loader.load();
-		
+
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));
@@ -805,5 +825,8 @@ public class SimulationController {
 		this.events = events;
 	}
 
-	
+	public void setUserView(String userView) {
+		this.userView = userView;
+	}
+
 }
