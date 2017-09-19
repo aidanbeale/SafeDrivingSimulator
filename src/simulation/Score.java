@@ -7,7 +7,7 @@ public class Score {
 	private long yourTime;
 	private int diff;
 	private int score;
-	private int scorePercentage;
+	private double scorePercentage;
 
 	private final int REACTION_TIME = 3000; // ms
 
@@ -25,7 +25,6 @@ public class Score {
 			this.score = 0;
 			this.scorePercentage = 0;
 		}
-
 	}
 
 	public Score(String event, int score) {
@@ -84,7 +83,7 @@ public class Score {
 		this.score = score;
 	}
 
-	public int getScorePercentage() {
+	public double getScorePercentage() {
 		if (event.equals("failedAttempt")) {
 			return -1;
 		} else {

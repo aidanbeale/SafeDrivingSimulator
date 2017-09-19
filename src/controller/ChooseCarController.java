@@ -44,7 +44,7 @@ public class ChooseCarController {
 	private JFXRadioButton firstPersonRadio;
 	@FXML
 	private JFXRadioButton thirdPersonRadio;
-	
+
 	PerspectiveCamera camera;
 	Group rootGroup = new Group();
 	ArrayList<Group> carGroupList = new ArrayList<>();
@@ -69,7 +69,7 @@ public class ChooseCarController {
 		AmbientLight ambient = new AmbientLight();
 
 		// Add ambient light to the group
-		//rootGroup.getChildren().add(ambient);
+		// rootGroup.getChildren().add(ambient);
 
 		// Create subscene
 		SubScene subScene = new SubScene(rootGroup, 300, 300, true, SceneAntialiasing.BALANCED);
@@ -77,31 +77,30 @@ public class ChooseCarController {
 
 		// Add subscene to main window
 		chooseCarGroup.getChildren().add(subScene);
-		
+
 		rotateCarChoice();
 	}
 
 	@FXML
 	private void start(ActionEvent event) throws IOException {
-		
+
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Simulation.fxml"));
 		Parent root = (Parent) loader.load();
-		
+
 		SimulationController simControl = loader.<SimulationController>getController();
-		
+
 		String chosenCar = carColourList.get(currCarGroup);
 		addView();
 		addHazards();
-		
+
 		simControl.setUserChosenCarString(chosenCar);
 		simControl.setEvents(hazardsList);
 		simControl.setUserView(userView);
-		
-		
-		//sim.setEvents(hazardsList);
-		
-		//loader.load();
-		
+
+		// sim.setEvents(hazardsList);
+
+		// loader.load();
+
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 		stage.setScene(new Scene(p));
@@ -119,13 +118,15 @@ public class ChooseCarController {
 	private void addHazards() {
 		if (firstPersonRadio.isSelected()) {
 			hazardsList.add("speedingEvent");
-		} else if (checkCrash.isSelected()) {
+		}
+		if (checkCrash.isSelected()) {
 			hazardsList.add("crashEvent");
-		} else if (checkGiveway.isSelected()) {
+		}
+		if (checkGiveway.isSelected()) {
 			hazardsList.add("givewayEvent");
 		}
 	}
-	
+
 	private void createCars() {
 		carColourList = new ArrayList<>();
 
@@ -144,7 +145,7 @@ public class ChooseCarController {
 	private void rotateCarChoice() {
 
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
-		
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -188,7 +189,7 @@ public class ChooseCarController {
 	private void chooseBack(ActionEvent event) throws IOException {
 		rootGroup.getChildren().remove(0);
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
-		
+
 		if (currCarGroup == 4) { // TODO length of arraylist
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
@@ -200,7 +201,7 @@ public class ChooseCarController {
 	private void chooseForward(ActionEvent event) throws IOException {
 		rootGroup.getChildren().remove(0);
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup++));
-		
+
 		if (currCarGroup == 4) { // TODO length of arraylist
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
