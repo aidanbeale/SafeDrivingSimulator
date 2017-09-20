@@ -1,3 +1,19 @@
+ *
+ *   Copyright 2017 John Humphrys
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 package simulation;
 
 import com.interactivemesh.jfx.importer.ImportException;
@@ -7,6 +23,12 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.transform.Rotate;
 
+/**
+ * Class used to create 3d simulation objects
+ * 
+ * @author John Humphrys
+ *
+ */
 public class SimObject {
 
 	String model;
@@ -15,6 +37,18 @@ public class SimObject {
 	int yPos;
 	int zPos;
 
+	/**
+	 * Standard constructor
+	 * 
+	 * @param model
+	 *            The model to use
+	 * @param xPos
+	 *            The X position
+	 * @param yPos
+	 *            The Y position
+	 * @param zPos
+	 *            The Z position
+	 */
 	public SimObject(String model, int xPos, int yPos, int zPos) {
 		this.model = model;
 		this.xPos = xPos;
@@ -24,13 +58,16 @@ public class SimObject {
 		init();
 	}
 
+	/**
+	 * Used to load the model then translate it to the required location
+	 */
 	private void init() {
 		Node[] objMesh = import3dModel(model);
 		objGroup = meshIntoGroup(objMesh);
 		objGroup.setTranslateX(xPos);
 		objGroup.setTranslateY(yPos);
 		objGroup.setTranslateZ(zPos);
-		
+
 		// Set rotate by default
 		objGroup.setRotationAxis(Rotate.Y_AXIS);
 		objGroup.setRotate(90.0);

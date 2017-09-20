@@ -1,3 +1,20 @@
+/**
+ *
+ *   Copyright 2017 John Humphrys
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 package controller;
 
 import java.text.SimpleDateFormat;
@@ -20,19 +37,25 @@ import javafx.scene.control.TreeTableColumn;
 import javafx.util.Callback;
 import simulation.Score;
 
-public class ResultsController { // Referenced this https://www.youtube.com/watch?v=nbl0kOum-ps
+/**
+ * The results controller manages the display of results into the results view
+ * table
+ * 
+ * @author John Humphrys
+ * 
+ */
+public class ResultsController {
 
 	private ArrayList<Score> scoringOps;
 
 	@FXML
 	JFXTreeTableView<RowProp> resultsTable;
-	
-	
-	@FXML
-	private void initialize() {
-		// loadTable();
-	}
 
+	/**
+	 * The load table method is used to create the table and columns
+	 * 
+	 * @see https://www.youtube.com/watch?v=nbl0kOum-ps
+	 */
 	private void loadTable() {
 		JFXTreeTableColumn<RowProp, String> eventCol = new JFXTreeTableColumn<>("Event");
 		eventCol.setPrefWidth(187);
@@ -102,9 +125,15 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 		resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol);
 		resultsTable.setRoot(root);
 		resultsTable.setShowRoot(false);
-
 	}
 
+	/**
+	 * Used to load the results into the columns
+	 * 
+	 * @param rows
+	 *            Create each row
+	 * @return The populated rows
+	 */
 	private ObservableList<RowProp> loadResults(ObservableList<RowProp> rows) {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
 
@@ -120,6 +149,11 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 		return rows;
 	}
 
+	/**
+	 * Populate the table
+	 * @author John Humphrys
+	 *
+	 */
 	class RowProp extends RecursiveTreeObject<RowProp> {
 		StringProperty event;
 		StringProperty optTime;
@@ -140,11 +174,18 @@ public class ResultsController { // Referenced this https://www.youtube.com/watc
 
 	}
 
+	/**
+	 * Loads the table data
+	 * @param scoringOps The list of Score objects to add to the table
+	 */
 	public void setScoringOps(ArrayList<Score> scoringOps) {
 		this.scoringOps = scoringOps;
 		loadTable();
 	}
 	
+	/**
+	 * Used to write the csv to file
+	 */
 	@FXML
 	private void saveCSV() {
 		FileUtility fu = new FileUtility();

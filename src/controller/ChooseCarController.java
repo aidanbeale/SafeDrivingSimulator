@@ -1,3 +1,20 @@
+/**
+ *
+ *   Copyright 2017 John Humphrys
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+
 package controller;
 
 import java.io.IOException;
@@ -24,6 +41,13 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import simulation.Car;
 
+/**
+ * The choose car controller class manages all controlling aspects when a user
+ * is selecting the car and hazards
+ * 
+ * @author John
+ *
+ */
 public class ChooseCarController {
 
 	@FXML
@@ -56,6 +80,9 @@ public class ChooseCarController {
 	ArrayList<String> hazardsList = new ArrayList<>();
 	String userView;
 
+	/**
+	 * Initialises the controller
+	 */
 	@FXML
 	private void initialize() {
 
@@ -78,9 +105,19 @@ public class ChooseCarController {
 		// Add subscene to main window
 		chooseCarGroup.getChildren().add(subScene);
 
+		// Rotate the cars
 		rotateCarChoice();
 	}
 
+	/**
+	 * This method is called when the user presses the button to start the
+	 * applicaion
+	 * 
+	 * @param event
+	 *            The mouse click event on the button
+	 * @throws IOException
+	 *             Thrown if fxml file not found
+	 */
 	@FXML
 	private void start(ActionEvent event) throws IOException {
 
@@ -89,17 +126,15 @@ public class ChooseCarController {
 
 		SimulationController simControl = loader.<SimulationController>getController();
 
+		// Get values chosen by the user
 		String chosenCar = carColourList.get(currCarGroup);
 		addView();
 		addHazards();
 
+		// Pass all values to the next controller
 		simControl.setUserChosenCarString(chosenCar);
 		simControl.setEvents(hazardsList);
 		simControl.setUserView(userView);
-
-		// sim.setEvents(hazardsList);
-
-		// loader.load();
 
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -107,6 +142,9 @@ public class ChooseCarController {
 		stage.show();
 	}
 
+	/**
+	 * Checks to see which view is selected
+	 */
 	private void addView() {
 		if (firstPersonRadio.isSelected()) {
 			userView = "first";
@@ -115,6 +153,9 @@ public class ChooseCarController {
 		}
 	}
 
+	/**
+	 * Checks to see which hazards are selected
+	 */
 	private void addHazards() {
 		if (firstPersonRadio.isSelected()) {
 			hazardsList.add("speedingEvent");
@@ -122,11 +163,16 @@ public class ChooseCarController {
 		if (checkCrash.isSelected()) {
 			hazardsList.add("crashEvent");
 		}
-		if (checkGiveway.isSelected()) {
-			hazardsList.add("givewayEvent");
-		}
+
+		// Removed due to request
+		/*
+		 * if (checkGiveway.isSelected()) { hazardsList.add("givewayEvent"); }
+		 */
 	}
 
+	/**
+	 * Used to create the car objects
+	 */
 	private void createCars() {
 		carColourList = new ArrayList<>();
 
@@ -142,6 +188,9 @@ public class ChooseCarController {
 
 	}
 
+	/**
+	 * Used to rotate the car selection
+	 */
 	private void rotateCarChoice() {
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
 		currCarGroup++;
@@ -156,6 +205,8 @@ public class ChooseCarController {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
+					// Needs to utilise runLater to update the main thread from another thread
 					Platform.runLater(new Runnable() {
 
 						@Override
@@ -173,20 +224,31 @@ public class ChooseCarController {
 		}).start();
 	}
 
+	/**
+	 * Create the perspective camera to view the rotating car
+	 * 
+	 * @return The created camera
+	 */
 	private PerspectiveCamera setupCamera() {
-		// Create view camera
 		camera = new PerspectiveCamera();
 
-		camera.setTranslateX(-50); // -1202
-		camera.setTranslateY(-320); // -420
-		camera.setTranslateZ(-320); // -520
+		// Position the camera as required
+		camera.setTranslateX(-50);
+		camera.setTranslateY(-320);
+		camera.setTranslateZ(-320);
 		camera.setRotationAxis(Rotate.X_AXIS);
-		camera.setRotate(-20.0); // 270
+		camera.setRotate(-20.0);
 		return camera;
 	}
 
+	/**
+	 * Moves the car selection to the previous one in the arraylist
+	 * 
+	 * @param event
+	 *            The mouse click event on the button
+	 */
 	@FXML
-	private void chooseBack(ActionEvent event) throws IOException {
+	private void chooseBack(ActionEvent event) {
 		currCarGroup--;
 		if (currCarGroup == carGroupList.size()) {
 			currCarGroup = 0;
@@ -196,11 +258,17 @@ public class ChooseCarController {
 
 		rootGroup.getChildren().remove(0);
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
-		
+
 	}
 
+	/**
+	 * Moves the car selection to the next one in the arraylist
+	 * 
+	 * @param event
+	 *            The mouse click event on the button
+	 */
 	@FXML
-	private void chooseForward(ActionEvent event) throws IOException {
+	private void chooseForward(ActionEvent event) {
 		currCarGroup++;
 		if (currCarGroup == carGroupList.size()) {
 			currCarGroup = 0;
@@ -210,7 +278,6 @@ public class ChooseCarController {
 
 		rootGroup.getChildren().remove(0);
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
-		
 
 	}
 }
