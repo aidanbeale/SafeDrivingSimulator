@@ -317,7 +317,7 @@ public class SimulationController {
 		roadGroup = new Group();
 		int roadDistance = 1624;
 		int boxSize = 1624;
-		int numberOfBoxes = 1;
+		int numberOfBoxes = 200;
 
 		PhongMaterial roadSurface = new PhongMaterial();
 		roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
@@ -469,7 +469,7 @@ public class SimulationController {
 		/*
 		 * Crash event
 		 */
-		if (events.contains(crashEvent)) {
+		if (events.contains("crashEvent")) {
 			if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
 					&& !crashEvent.getTimerStarted()) {
 				System.out.println("---------Crash event timer started---------");
@@ -696,17 +696,17 @@ public class SimulationController {
 				}
 				System.out.println("breaks done");
 
+				int eventType;
+				String eventName;
+
+				// Choose event
+				if (events.size() == 0) {
+					eventType = 0;
+				} else {
+					eventType = rand.nextInt((events.size()));
+				}
+
 				while (eventRunning) {
-
-					int eventType;
-					String eventName;
-
-					// Choose event
-					if (events.size() == 0) {
-						eventType = 0;
-					} else {
-						eventType = rand.nextInt((events.size()));
-					}
 
 					// Start Crash event
 					if (events.get(eventType).equals("crashEvent")) {
