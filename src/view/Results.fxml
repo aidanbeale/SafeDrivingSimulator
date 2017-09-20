@@ -30,7 +30,7 @@
             </JFXButton>
             <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="14.0" layoutY="19.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@traffic.png" />
+                  <Image url="@../images/traffic.png" />
                </image>
             </ImageView>
             <Label layoutX="584.0" layoutY="43.0" text="Final Results" textFill="#43515e">

@@ -90,7 +90,7 @@ public class SimulationController {
 	private boolean accelerating = false;
 	private boolean acceleratingBreak = false;
 	private int minute;
-	private int simulationTime = 100;
+	private int simulationTime = 10;
 	private ArrayList<Score> scoringOps = new ArrayList<>();
 
 	private int randomiseCarSpeedCounter = 0;
@@ -835,13 +835,12 @@ public class SimulationController {
 	@FXML
 	private void displayScores(ActionEvent event) throws IOException {
 
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("../view/Results.fxml"));
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Results.fxml"));
+		Parent root = (Parent) loader.load();
 
-		ResultsController results = loader.getController();
-		results.setScoringOps(scoringOps);
+		ResultsController resultsControl = loader.<ResultsController>getController();
+		resultsControl.setScoringOps(scoringOps);
 
-		loader.load();
 
 		Parent p = loader.getRoot();
 		Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

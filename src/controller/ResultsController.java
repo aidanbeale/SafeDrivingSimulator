@@ -22,7 +22,7 @@ import simulation.Score;
 
 public class ResultsController { // Referenced this https://www.youtube.com/watch?v=nbl0kOum-ps
 
-	private ArrayList<Score> scoringOps = new ArrayList<>();
+	private ArrayList<Score> scoringOps;
 
 	@FXML
 	JFXTreeTableView<RowProp> resultsTable;
