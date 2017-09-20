@@ -143,8 +143,8 @@ public class ChooseCarController {
 	}
 
 	private void rotateCarChoice() {
-
 		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
+		currCarGroup++;
 
 		new Thread(new Runnable() {
 			@Override
@@ -187,25 +187,30 @@ public class ChooseCarController {
 
 	@FXML
 	private void chooseBack(ActionEvent event) throws IOException {
-		rootGroup.getChildren().remove(0);
-		rootGroup.getChildren().add(carGroupList.get(currCarGroup--));
-
-		if (currCarGroup == 4) { // TODO length of arraylist
+		currCarGroup--;
+		if (currCarGroup == carGroupList.size()) {
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
 			currCarGroup = 3;
 		}
+
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
+		
 	}
 
 	@FXML
 	private void chooseForward(ActionEvent event) throws IOException {
-		rootGroup.getChildren().remove(0);
-		rootGroup.getChildren().add(carGroupList.get(currCarGroup++));
-
-		if (currCarGroup == 4) { // TODO length of arraylist
+		currCarGroup++;
+		if (currCarGroup == carGroupList.size()) {
 			currCarGroup = 0;
 		} else if (currCarGroup == -1) {
 			currCarGroup = 3;
 		}
+
+		rootGroup.getChildren().remove(0);
+		rootGroup.getChildren().add(carGroupList.get(currCarGroup));
+		
+
 	}
 }
