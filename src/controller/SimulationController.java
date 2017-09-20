@@ -20,7 +20,6 @@ package controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
 
 import com.jfoenix.controls.JFXButton;
 
@@ -33,7 +32,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.PointLight;
 import javafx.scene.Scene;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
@@ -50,8 +48,6 @@ import javafx.stage.Stage;
 import simulation.Car;
 import simulation.EventHandler;
 import simulation.Score;
-import simulation.SimObject;
-
 /**
  * The simulation controller manages all aspects of the controller. Is made up
  * of several models and other classes located in the 'model' package.

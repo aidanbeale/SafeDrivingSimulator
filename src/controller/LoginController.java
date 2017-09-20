@@ -90,6 +90,7 @@ public class LoginController {
 			System.out.println("Credentials are incorrect");
 
 			// Display error message
+			popPane.setDisable(false);
 			popPane.setStyle("-fx-background-color: #dddddd;");
 			popPane.setOpacity(1.00);
 			popHeading.setText("Error");
@@ -129,6 +130,7 @@ public class LoginController {
 	private void initialize() {
 		lm = new LoginModel(USERNAME, PASSWORD);
 		errorButton.setDisable(true);
+		popPane.setDisable(true);
 	}
 
 	/**
