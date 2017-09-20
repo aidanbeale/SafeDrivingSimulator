@@ -51,12 +51,6 @@ import simulation.Car;
 public class ChooseCarController {
 
 	@FXML
-	private JFXButton chooseCar1;
-	@FXML
-	private JFXButton chooseCar2;
-	@FXML
-	private JFXButton chooseCar3;
-	@FXML
 	private Group chooseCarGroup;
 	@FXML
 	private JFXCheckBox checkSpeeding;
@@ -91,9 +85,6 @@ public class ChooseCarController {
 
 		// Setup camera
 		camera = setupCamera();
-
-		// Create Ambient Light
-		AmbientLight ambient = new AmbientLight();
 
 		// Add ambient light to the group
 		// rootGroup.getChildren().add(ambient);
@@ -157,7 +148,7 @@ public class ChooseCarController {
 	 * Checks to see which hazards are selected
 	 */
 	private void addHazards() {
-		if (firstPersonRadio.isSelected()) {
+		if (checkSpeeding.isSelected()) {
 			hazardsList.add("speedingEvent");
 		}
 		if (checkCrash.isSelected()) {

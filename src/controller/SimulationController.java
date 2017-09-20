@@ -592,7 +592,7 @@ public class SimulationController {
 			/*
 			 * Crash event
 			 */
-			if (events.contains("crashEvent")) {
+			//if (events.contains("crashEvent")) {
 				if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
 						&& !crashEvent.getTimerStarted() && failureScreen.getText() == "") {
 					System.out.println("---------Crash event timer started---------");
@@ -610,7 +610,7 @@ public class SimulationController {
 						testHalt = true;
 					}
 				}
-			}
+			//}
 
 			/*
 			 * Speeding event
@@ -626,6 +626,7 @@ public class SimulationController {
 				if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
 					if (!speedingEvent.isTimerStopped()) {
 						speedingEvent.stopEventTimer();
+						System.out.println("---------Speeding event timer stopped---------");
 						speedingEvent.setTimerStopped(true);
 						manageMessage("You went way over the speed limit!");
 						displayResultsNotification("You have failed the test...");
@@ -827,12 +828,10 @@ public class SimulationController {
 				}
 				System.out.println("Choosing event");
 
-				int eventType;
+				int eventType = -1;
 
 				// Choose event based on random number
-				if (events.size() == 0) {
-					eventType = 0;
-				} else {
+				if (events.size() != 0) {
 					eventType = rand.nextInt((events.size()));
 				}
 
@@ -1008,8 +1007,8 @@ public class SimulationController {
 
 	/**
 	 * Used to set chosen events from chooseCarController
-	 * 
-	 * @param userChosenCarString The chosen events
+	 *
+	 * @param events The chosen events
 	 */
 	public void setEvents(ArrayList<String> events) {
 		this.events = events;
@@ -1018,7 +1017,7 @@ public class SimulationController {
 	/**
 	 * Used to set chosen view from chooseCarController
 	 * 
-	 * @param userChosenCarString The chosen view
+	 * @param userView The chosen view
 	 */
 	public void setUserView(String userView) {
 		this.userView = userView;
