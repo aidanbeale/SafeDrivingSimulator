@@ -13,7 +13,10 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #ffff;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
-      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;" />
+      <Pane prefHeight="200.0" prefWidth="1366.0" style="-fx-background-color: #34495e;">
+         <children>
+            <JFXButton fx:id="aboutPressed" layoutX="1256.0" layoutY="25.0" onAction="#aboutPressed" prefHeight="44.0" prefWidth="84.0" style="-fx-background-color: #f3f3f3;" text="About" />
+         </children></Pane>
       <AnchorPane layoutX="361.0" layoutY="121.0" prefHeight="527.0" prefWidth="645.0" style="-fx-background-color: f4f4f4;">
          <effect>
             <Blend />
@@ -34,16 +37,30 @@
                   <Font name="Segoe UI" size="17.0" />
                </font>
             </JFXPasswordField>
-            <JFXButton id="loginButton" layoutX="156.0" layoutY="396.0" onAction="#handleLogin" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Log In" textFill="WHITE">
+            <JFXButton id="loginButton" fx:id="loginButton" layoutX="156.0" layoutY="396.0" onAction="#handleLogin" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Log In" textFill="WHITE">
                <font>
                   <Font size="17.0" />
                </font>
             </JFXButton>
             <ImageView fitHeight="53.0" fitWidth="73.0" layoutX="158.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@traffic.png" />
+                  <Image url="@../images/traffic.png" />
                </image>
             </ImageView>
+            <Pane fx:id="popPane" layoutX="89.0" layoutY="150.0" opacity="0.0" prefHeight="227.0" prefWidth="468.0" style="-fx-background-color: #f3f3f3;">
+               <children>
+                  <JFXButton id="errorButton" fx:id="errorButton" layoutX="163.0" layoutY="169.0" onAction="#handleOk" prefHeight="44.0" prefWidth="143.0" text=" " textFill="WHITE" />
+                  <Label fx:id="popMessage" layoutX="109.0" layoutY="100.0" />
+                  <Label fx:id="popHeading" layoutX="212.0" layoutY="29.0">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+               <effect>
+                  <Blend />
+               </effect>
+            </Pane>
          </children>
       </AnchorPane>
    </children>

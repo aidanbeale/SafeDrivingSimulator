@@ -320,7 +320,7 @@ public class SimulationController {
 		roadGroup = new Group();
 		int roadDistance = 1624;
 		int boxSize = 1624;
-		int numberOfBoxes = 2;
+		int numberOfBoxes = 85;
 
 		PhongMaterial roadSurface = new PhongMaterial();
 		roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
@@ -440,7 +440,7 @@ public class SimulationController {
 							userCar.setxPos(userCar.getxPos() - userCar.getSpeed());
 							speedLabel.setText(String.valueOf((userCar.getSpeed()) + "km/h"));
 							userCar.getCarGroup().setTranslateX(userCar.getxPos());
-							// System.out.println(userCar.getxPos());
+							//System.out.println(userCar.getxPos());
 
 							camera.setTranslateX(camera.getTranslateX() - userCar.getSpeed());
 							// System.out.println("trans cam to " + transCam);
