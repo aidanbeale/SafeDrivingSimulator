@@ -32,38 +32,68 @@
                   <Image url="@../images/traffic.png" />
                </image>
             </ImageView>
-            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="20.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="36.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Begin Simulation" textFill="WHITE" />
-            <JFXButton id="brakeButton" fx:id="brakeButton" layoutX="20.0" layoutY="478.0" onAction="#brakeButtonPressed" prefHeight="200.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Brake" textFill="WHITE" />
+            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="20.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="36.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Begin Simulation" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font></JFXButton>
+            <JFXButton id="brakeButton" fx:id="brakeButton" layoutX="20.0" layoutY="478.0" onAction="#brakeButtonPressed" prefHeight="200.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Brake" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font></JFXButton>
             <ImageView fitHeight="222.0" fitWidth="256.0" layoutX="48.0" layoutY="143.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../images/schoolzone.png" />
                </image>
             </ImageView>
-            <Label layoutX="141.0" layoutY="114.0" prefHeight="29.0" prefWidth="62.0" text="Traffic Hint" textAlignment="CENTER" />
-            <Label layoutX="24.0" layoutY="427.0" text="Simulation Remaining Time:" />
-            <Label id="timeRemainingLabel" fx:id="timeRemainingLabel" layoutX="187.0" layoutY="427.0" />
+            <Label layoutX="125.0" layoutY="107.0" prefHeight="30.0" prefWidth="102.0" text="Traffic Hint" textAlignment="CENTER">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
+            <Label layoutX="20.0" layoutY="413.0" text="Simulation Remaining Time:">
+               <font>
+                  <Font size="19.0" />
+               </font></Label>
+            <Label id="timeRemainingLabel" fx:id="timeRemainingLabel" layoutX="299.0" layoutY="412.0" text="0">
+               <font>
+                  <Font size="20.0" />
+               </font></Label>
          </children>
       </AnchorPane>
       <AnchorPane id="simAnchor" fx:id="simAnchor" prefHeight="768.0" prefWidth="826.0">
          <children>
             <Group id="simGroup" fx:id="simGroup" layoutX="13.0" layoutY="13.0" />
-            <Label id="failurescreen" fx:id="failureScreen" layoutY="289.0" prefHeight="191.0" prefWidth="944.0" textAlignment="CENTER" textFill="RED">
+            <Label id="failurescreen" fx:id="failureScreen" layoutX="235.0" layoutY="84.0" prefHeight="152.0" prefWidth="575.0" textAlignment="CENTER" textFill="#c70000" wrapText="true">
                <font>
-                  <Font size="48.0" />
+                  <Font size="26.0" />
                </font>
             </Label>
             <Pane layoutX="637.0" layoutY="660.0" prefHeight="94.0" prefWidth="352.0" style="-fx-background-color: f4f4f4;">
                <children>
-                  <Label layoutX="23.0" layoutY="39.0" text="Speed:" />
-                  <Label layoutX="196.0" layoutY="39.0" text="Clock:" />
-                  <Label id="speedLabel" fx:id="speedLabel" layoutX="106.0" layoutY="39.0" />
-                  <Label id="clockLabel" fx:id="clockLabel" layoutX="275.0" layoutY="39.0" />
+                  <Label layoutX="14.0" layoutY="32.0" text="Speed:">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <Label layoutX="192.0" layoutY="33.0" text="Clock:">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <Label id="speedLabel" fx:id="speedLabel" layoutX="95.0" layoutY="33.0" text="0km/h">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <Label id="clockLabel" fx:id="clockLabel" layoutX="268.0" layoutY="33.0" text="0:00">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
                </children>
             </Pane>
-            <Pane fx:id="pane" layoutX="394.0" layoutY="221.0" prefHeight="326.0" prefWidth="486.0">
+            <Pane fx:id="pane" layoutX="393.0" layoutY="309.0" prefHeight="152.0" prefWidth="242.0">
                <children>
-                  <JFXButton id="displayScore" fx:id="displayScore" layoutX="233.0" layoutY="263.0" onAction="#displayScores" text=" " />
-                  <Label fx:id="heading" layoutX="238.0" layoutY="140.0" text=" " />
+                  <JFXButton id="displayScore" fx:id="displayScore" layoutX="75.0" layoutY="101.0" onAction="#displayScores" textFill="WHITE" />
+                  <Label fx:id="heading" layoutX="13.0" layoutY="14.0" prefHeight="79.0" prefWidth="216.0" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="17.0" />
+                     </font></Label>
                </children>
             </Pane>
          </children>

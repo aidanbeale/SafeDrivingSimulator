@@ -20,7 +20,7 @@ public class Score {
 
 		if ((REACTION_TIME - diff) > 0) {
 			this.score = REACTION_TIME - diff;
-			this.scorePercentage = score / REACTION_TIME;
+			this.scorePercentage = (Double.valueOf(score) / Double.valueOf(REACTION_TIME)) * 100.0;
 		} else {
 			this.score = 0;
 			this.scorePercentage = 0;
@@ -37,6 +37,10 @@ public class Score {
 			return "Crash Event";
 		} else if (event.equals("failedAttempt")) {
 			return "Failed Braking Attempt";
+		} else if (event.equals("speedingEvent")) {
+			return "Speeding Event";
+		} else if (event.equals("givewayEvent")) {
+			return "Giveway Event";
 		}
 		return null;
 	}

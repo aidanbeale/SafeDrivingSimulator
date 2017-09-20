@@ -110,6 +110,7 @@ public class SimulationController {
 		} else if (simButtonLabel.equals("cancel")) {
 			manageMessage("TEST CANCELLED");
 			testHalt = true;
+			displayResultsNotification("You have cancelled the test");
 
 			// Disable buttons
 			beginSimButton.setDisable(true);
@@ -188,7 +189,6 @@ public class SimulationController {
 			post.getTransforms().add(new Rotate(270, Rotate.Y_AXIS));
 			roadGroup.getChildren().add(post);
 		}
-
 	}
 
 	private Group createObjects(int startOfBox, int boxLength) {
@@ -298,11 +298,7 @@ public class SimulationController {
 
 							if (simulationTime == 0) {
 								testHalt = true;
-
-								pane.setStyle("-fx-background-color: #F4F4F4;");
-								heading.setText("Congratulations!");
-								displayScore.setText("Display Scores");
-
+								displayResultsNotification("Congratulations!, you have passed the test");
 							}
 						}
 					});
@@ -311,6 +307,13 @@ public class SimulationController {
 			};
 
 		}).start();
+	}
+	
+	private void displayResultsNotification(String result) {
+		pane.setStyle("-fx-background-color: #F4F4F4;");
+		displayScore.setStyle("-fx-background-color:  #34495e;");
+		heading.setText(result);
+		displayScore.setText("Display Scores");
 	}
 
 	private Group createRoad() {
@@ -475,14 +478,14 @@ public class SimulationController {
 						failureScreen.setText(message);
 					}
 				});
-				
+
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(3200);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				Platform.runLater(new Runnable() {
 
 					@Override
@@ -497,71 +500,79 @@ public class SimulationController {
 
 	private void checkBrakeRequired() {
 
-		/*
-		 * Crash event
-		 */
-		if (events.contains("crashEvent")) {
-			if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
-					&& !crashEvent.getTimerStarted() && failureScreen.getText() == "") {
-				System.out.println("---------Crash event timer started---------");
-				crashEvent.startEventTimer();
+		if (!brakeButton.isDisabled()) {
+			/*
+			 * Crash event
+			 */
+			if (events.contains("crashEvent")) {
+				if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
+						&& !crashEvent.getTimerStarted() && failureScreen.getText() == "") {
+					System.out.println("---------Crash event timer started---------");
+					crashEvent.startEventTimer();
 
-				//// System.out.print("SIMULATION ENDED");
-			} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
-					|| userCar.getxPos() < aiCar2.getxPos() + 480) {
+					//// System.out.print("SIMULATION ENDED");
+				} else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
+						|| userCar.getxPos() < aiCar2.getxPos() + 480) {
 
-				if (!crashEvent.isTimerStopped()) {
-					crashEvent.stopEventTimer();
-					crashEvent.setTimerStopped(true);
-					manageMessage("You crashed!");
-					testHalt = true;
-				}
-			}
-		}
-
-		/*
-		 * Speeding event
-		 */
-		if (events.contains("speedingEvent")) {
-			if (!userSpeeding) {
-				if (userCar.getSpeed() > SPEED_LIMIT) {
-					userSpeeding = true;
-					System.out.println("---------Speeding event timer started---------");
-					speedingEvent.startEventTimer();
-				} else if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
-					if (!speedingEvent.isTimerStopped()) {
-						speedingEvent.stopEventTimer();
-						speedingEvent.setTimerStopped(true);
-						manageMessage("You went way over the speed limit!");
+					if (!crashEvent.isTimerStopped()) {
+						crashEvent.stopEventTimer();
+						System.out.println("---------Crash event timer stopped---------");
+						crashEvent.setTimerStopped(true);
+						manageMessage("You crashed!");
+						displayResultsNotification("You have failed the test...");
 						testHalt = true;
-
 					}
 				}
 			}
 
-		}
+			/*
+			 * Speeding event
+			 */
+			if (events.contains("speedingEvent")) {
+				if (!userSpeeding) {
+					if (userCar.getSpeed() > SPEED_LIMIT && failureScreen.getText() == "") {
+						userSpeeding = true;
+						System.out.println("---------Speeding event timer started---------");
+						speedingEvent.startEventTimer();
+					}
+				}
+				if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
+					if (!speedingEvent.isTimerStopped()) {
+						speedingEvent.stopEventTimer();
+						speedingEvent.setTimerStopped(true);
+						manageMessage("You went way over the speed limit!");
+						displayResultsNotification("You have failed the test...");
+						testHalt = true;
+					}
+				}
 
-		/*
-		 * Giveway event
-		 */
-		if (events.contains("givewayEvent")) {
-			if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 10000) && !givewayEvent.getTimerStarted()) {
-				System.out.println("Giveway timer started");
-				System.out.println("---------Giveway event timer started---------");
-				givewayEvent.startEventTimer();
+			}
 
-				//// System.out.print("SIMULATION ENDED");
-			} else if (userCar.getxPos() < givewayEvent.getClosestGivewayLoc()) {
+			/*
+			 * Giveway event
+			 */
+			if (events.contains("givewayEvent")) {
+				if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 10000)
+						&& !givewayEvent.getTimerStarted()) {
+					System.out.println("Giveway timer started");
+					System.out.println("---------Giveway event timer started---------");
+					givewayEvent.startEventTimer();
 
-				if (!givewayEvent.isTimerStopped()) {
-					givewayEvent.stopEventTimer();
-					givewayEvent.setTimerStopped(true);
 					//// System.out.print("SIMULATION ENDED");
-					manageMessage("You failed to give way!");
-					testHalt = true;
+				} else if (userCar.getxPos() < givewayEvent.getClosestGivewayLoc()) {
+
+					if (!givewayEvent.isTimerStopped()) {
+						givewayEvent.stopEventTimer();
+						givewayEvent.setTimerStopped(true);
+						//// System.out.print("SIMULATION ENDED");
+						manageMessage("You failed to give way!");
+						displayResultsNotification("You have failed the test...");
+						testHalt = true;
+					}
 				}
 			}
 		}
+
 	}
 
 	private PerspectiveCamera setupUserCamera(String camPlacement) {
@@ -599,8 +610,7 @@ public class SimulationController {
 
 		tempDisableBrakeButton();
 
-		if (!crashEvent.getTimerStarted() || crashEvent == null && !speedingEvent.getTimerStarted()
-				|| speedingEvent == null && !givewayEvent.getTimerStarted() || givewayEvent == null) { // if
+		if ((crashEvent == null || !crashEvent.getTimerStarted()) && (speedingEvent == null ||  !speedingEvent.getTimerStarted()) && (givewayEvent == null || !givewayEvent.getTimerStarted())) { // if
 			// no
 			// events
 			// have
@@ -618,6 +628,7 @@ public class SimulationController {
 		if (events.contains("crashEvent")) {
 			if (crashEvent.getTimerStarted()) {
 				crashEvent.stopEventTimer();
+				System.out.println("---------Crash event timer stopped---------");
 				crashEvent.setTimerStopped(true);
 
 				Score score = new Score("crashevent", crashEvent.getTimerStartedTime(),
@@ -638,6 +649,7 @@ public class SimulationController {
 		if (events.contains("speedingEvent")) {
 			if (speedingEvent.getTimerStarted()) {
 				speedingEvent.stopEventTimer();
+				System.out.println("---------Speeding event timer stopped---------");
 				speedingEvent.setTimerStopped(true);
 
 				Score score = new Score("speedingEvent", speedingEvent.getTimerStartedTime(),
@@ -655,10 +667,9 @@ public class SimulationController {
 		}
 		// if giveway event occuring
 		if (events.contains("givewayEvent")) {
-			if (givewayEvent.getTimerStarted())
-
-			{
+			if (givewayEvent.getTimerStarted()) {
 				givewayEvent.stopEventTimer();
+				System.out.println("---------Giveway event timer stopped---------");
 				givewayEvent.setTimerStopped(true);
 
 				Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(),
@@ -837,6 +848,10 @@ public class SimulationController {
 
 				eventRunning = false;
 				userSpeeding = false;
+
+				speedingEvent = new EventHandler();
+				crashEvent = new EventHandler();
+				givewayEvent = new EventHandler();
 
 				// Move cars away from user (Crash event)
 				aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
