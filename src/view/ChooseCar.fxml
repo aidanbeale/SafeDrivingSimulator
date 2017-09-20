@@ -1,19 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--Copyright 2017 John Humphrys
-	
+
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-	
+
 	    http://www.apache.org/licenses/LICENSE-2.0
-	
+
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
@@ -59,7 +59,8 @@
             <JFXButton id="chooseCar1" fx:id="start" layoutX="550.0" layoutY="526.0" onAction="#start" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Start" textFill="WHITE" />
             <JFXCheckBox fx:id="checkSpeeding" checkedColor="#34495e" layoutX="694.0" layoutY="199.0" text="Speeding" />
             <JFXCheckBox fx:id="checkCrash" checkedColor="#34495e" layoutX="705.0" layoutY="273.0" text="Crash" />
-            <JFXCheckBox fx:id="checkGiveway" checkedColor="#34495e" layoutX="695.0" layoutY="348.0" text="Give way" />
+            <!-- Disabled on request-->
+            <!--<JFXCheckBox fx:id="checkGiveway" checkedColor="#34495e" layoutX="695.0" layoutY="348.0" text="Give way" />-->
             <AnchorPane layoutX="113.0" layoutY="180.0" prefHeight="200.0" prefWidth="200.0">
                <children>
                   <Group id="chooseCarGroup" fx:id="chooseCarGroup" />
