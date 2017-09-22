@@ -80,7 +80,7 @@ public class Car {
 
     /**
      * This method will import the carmodel requested
-     * @see http://www.interactivemesh.org/models/jfx3dimporter.html
+     * see http://www.interactivemesh.org/models/jfx3dimporter.html
      *
      * @param carName
      *            The file name of the car

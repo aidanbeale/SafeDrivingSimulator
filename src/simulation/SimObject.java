@@ -73,11 +73,11 @@ public class SimObject {
     }
 
     /**
-     * This method will import the carmodel requested
+     * This method will import the object requested
      *
-     * @param carName
-     *            The file name of the car
-     * @return A group containing the car mesh
+     * @param objName
+     *            The file name of the object
+     * @return A group containing the object mesh
      */
     private Node[] import3dModel(String objName) {
 

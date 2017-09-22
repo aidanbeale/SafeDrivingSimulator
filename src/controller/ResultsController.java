@@ -132,7 +132,7 @@ public class ResultsController {
      * @return The populated rows
      */
     private ObservableList<RowProp> loadResults(ObservableList<RowProp> rows) {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss:SSSS");
 
         for (Score s : scoringOps) {
             if (s.getEvent().equals("Failed Braking Attempt")) {

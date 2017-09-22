@@ -101,7 +101,7 @@ public class SimulationController {
     private boolean accelerating = true;
     private boolean acceleratingBreak = false;
     private int minute;
-    private int simulationTime = 100;
+    private int simulationTime = 300;
     private ArrayList<Score> scoringOps = new ArrayList<>();
 
     private int randomiseCarSpeedCounter = 0;

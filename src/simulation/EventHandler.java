@@ -104,7 +104,7 @@ public class EventHandler {
     /**
      * Hazard removed on request
      *
-     * @param loc
+     * @param loc The location to create the giveway event at
      */
     public void addGivewayLocation(int loc) {
         givewayLocations.add(loc);
@@ -113,7 +113,7 @@ public class EventHandler {
     /**
      * Hazard removed on request
      *
-     * @return
+     * @return The xPos of the giveway event
      */
     public int getClosestGivewayLoc() {
         int j = -1000000;
@@ -128,7 +128,7 @@ public class EventHandler {
     /**
      * Hazard removed on request
      *
-     * @return
+     * @return An ArrayLiset of givewway locations
      */
     public ArrayList<Integer> getGivewayLocations() {
         return givewayLocations;
