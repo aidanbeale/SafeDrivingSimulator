@@ -77,6 +77,8 @@ public class DemoController {
     private Car aiCar2;
     private Car aiCar3;
 
+    private ArrayList<Car> extraCarList = new ArrayList<>();
+
     private Group roadGroup;
     private PerspectiveCamera camera;
     private boolean userSpeeding = false;
@@ -149,17 +151,23 @@ public class DemoController {
      *            The car selected by the user
      */
     private void createCars(String userChoice) {
+        // Random number up to 5
+        int carCount = rand.nextInt(3);
+        int carColor = rand.nextInt(4);
+
         carColourList.add("mini-red.3DS");
         carColourList.add("mini-green.3DS");
         carColourList.add("mini-blue.3DS");
         carColourList.add("mini-aws.3DS");
 
+/*
         for (String c : carColourList) {
             if (c.equals(userChoice)) {
                 carColourList.remove(c);
                 break;
             }
         }
+*/
 
         // Create user car and add to rootGroup
         userCar = new Car(40, 0, userChoice, true, SPEED_LIMIT);
@@ -168,6 +176,8 @@ public class DemoController {
         // Create ai cars
         int i = 1;
         ArrayList<Car> aiCarList = new ArrayList<>();
+
+
         // Create the other cars
         for (String c : carColourList) {
             Car newCar = new Car(40, -3700 * i, c, false, SPEED_LIMIT);
@@ -175,16 +185,29 @@ public class DemoController {
             aiCarList.add(newCar);
             i++;
         }
+
         // Assign cars as global
+
         aiCar1 = aiCarList.get(0);
         aiCar2 = aiCarList.get(1);
 
         // Create car coming opposite direction
         aiCar3 = aiCarList.get(2);
-        aiCar3.setxPos(-100000);
+        aiCar3.setxPos(-60000);
         aiCar3.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
         aiCar3.getCarGroup().setRotate(180.0);
         aiCar3.getCarGroup().setTranslateZ(550);
+
+        for (int j =0; j < carCount; j++) {
+            Car c = new Car(40, aiCar3.getxPos() * (j+2), carColourList.get(rand.nextInt(carColourList.size())), false, SPEED_LIMIT);
+            rootGroup.getChildren().add(c.getCarGroup());
+
+            c.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
+            c.getCarGroup().setRotate(180.0);
+            c.getCarGroup().setTranslateZ(550);
+            extraCarList.add(c);
+
+        }
     }
 
     /**
@@ -508,6 +531,11 @@ public class DemoController {
                                 aiCar1.setSpeed(randomiseCarSpeed(aiCar1));
                                 aiCar2.setSpeed(randomiseCarSpeed(aiCar2));
                                 aiCar3.setSpeed(randomiseCarSpeed(aiCar3));
+
+
+                                for (Car c : extraCarList) {
+                                    c.setSpeed(randomiseCarSpeed(c));
+                                }
                             }
 
                             // Move userCar
@@ -535,6 +563,11 @@ public class DemoController {
                             aiCar3.getCarGroup().setTranslateX(aiCar3.getxPos());
                             // System.out.println("trans ai3 car to " + aiCar3.getxPos());
 
+                            for (Car c : extraCarList) {
+                                c.setxPos(c.getxPos() + SPEED_LIMIT);
+                                c.getCarGroup().setTranslateX(c.getxPos());
+                            }
+
                             // check if should apply brake now
                             checkBrakeRequired();
 
@@ -546,6 +579,8 @@ public class DemoController {
             }
         }).start();
     }
+
+
 
     /**
      * Creates a message to display to the user
@@ -561,6 +596,7 @@ public class DemoController {
 
                     @Override
                     public void run() {
+
                         failureScreen.setText(message);
                     }
                 });
@@ -586,7 +622,6 @@ public class DemoController {
 
         }).start();
     }
-
 
     /**
      * Used to check if braking is required
