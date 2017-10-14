@@ -18,6 +18,8 @@ package controller;
 
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXSlider;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -51,6 +53,20 @@ public class ChooseCarController {
     private JFXRadioButton firstPersonRadio;
     @FXML
     private JFXRadioButton thirdPersonRadio;
+    @FXML
+    private JFXSlider simulationTime;
+    @FXML
+    private JFXCheckBox aiRed;
+    @FXML
+    private JFXCheckBox aiGreen;
+    @FXML
+    private JFXCheckBox aiBlue;
+    @FXML
+    private JFXCheckBox aiOrange;
+    @FXML
+    private JFXSlider aiCount;
+
+
 
     PerspectiveCamera camera;
     Group rootGroup = new Group();
@@ -61,6 +77,7 @@ public class ChooseCarController {
 
     ArrayList<String> carColourList;
     ArrayList<String> hazardsList = new ArrayList<>();
+    ArrayList<String> aiColours = new ArrayList<>();
     String userView;
 
     /**
@@ -86,7 +103,6 @@ public class ChooseCarController {
         chooseCarGroup.getChildren().add(subScene);
 
         chooseForward(null);
-
         // Rotate the cars
         rotateCarChoice();
     }
@@ -112,11 +128,16 @@ public class ChooseCarController {
         String chosenCar = carColourList.get(currCarGroup);
         addView();
         addHazards();
+        addAiColours();
+
 
         // Pass all values to the next controller
         simControl.setUserChosenCarString(chosenCar);
         simControl.setEvents(hazardsList);
         simControl.setUserView(userView);
+        simControl.setAiColours(aiColours);
+        simControl.setAiCount((int)aiCount.getValue());
+        simControl.setSimTime((int)simulationTime.getValue());
 
         Parent p = loader.getRoot();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -151,6 +172,22 @@ public class ChooseCarController {
 		 * if (checkGiveway.isSelected()) { hazardsList.add("givewayEvent"); }
 		 */
     }
+
+    private void addAiColours() {
+        if (aiRed.isSelected()) {
+            aiColours.add("mini-red.3DS");
+        }
+        if (aiGreen.isSelected()) {
+            aiColours.add("mini-green.3DS");
+        }
+        if (aiBlue.isSelected()) {
+            aiColours.add("mini-blue.3DS");
+        }
+        if (aiOrange.isSelected()) {
+            aiColours.add("mini-aws.3DS");
+        }
+    }
+
 
     /**
      * Used to create the car objects

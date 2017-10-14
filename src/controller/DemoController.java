@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 import simulation.Car;
 import simulation.EventHandler;
 import simulation.Score;
+import simulation.SimObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -78,6 +79,9 @@ public class DemoController {
     private Car aiCar3;
 
     private ArrayList<Car> extraCarList = new ArrayList<>();
+    private ArrayList<String> aiColours;
+    private int aiCount;
+    private int simTime;
 
     private Group roadGroup;
     private PerspectiveCamera camera;
@@ -103,7 +107,7 @@ public class DemoController {
     private boolean accelerating = true;
     private boolean acceleratingBreak = false;
     private int minute;
-    private int simulationTime = 300;
+    private int simulationTime = 100;
     private ArrayList<Score> scoringOps = new ArrayList<>();
 
     private int randomiseCarSpeedCounter = 0;
@@ -153,7 +157,6 @@ public class DemoController {
     private void createCars(String userChoice) {
         // Random number up to 5
         int carCount = rand.nextInt(3);
-        int carColor = rand.nextInt(4);
 
         carColourList.add("mini-red.3DS");
         carColourList.add("mini-green.3DS");
@@ -248,6 +251,34 @@ public class DemoController {
         }
     }
 
+    private void createSchool(int xCoord) {
+        SimObject person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
+        rootGroup.getChildren().add(person.getObjGroup());
+        person.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        person.getObjGroup().setScaleX(1.3);
+        person.getObjGroup().setScaleY(1.3);
+        person.getObjGroup().setScaleZ(1.3);
+
+
+        SimObject person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
+        rootGroup.getChildren().add(person2.getObjGroup());
+        person2.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        person2.getObjGroup().setScaleX(60.0);
+        person2.getObjGroup().setScaleY(60.0);
+        person2.getObjGroup().setScaleZ(60.0);
+
+
+        PhongMaterial crossingMat = new PhongMaterial();
+        crossingMat.setDiffuseMap(new Image("crossing.png"));
+        Box crossing = new Box(1624, 1, 1000);
+        crossing.setMaterial(crossingMat);
+        crossing.setTranslateY(90);
+        crossing.setTranslateZ(360);
+        crossing.setTranslateX(xCoord);
+        crossing.getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        rootGroup.getChildren().add(crossing);
+    }
+
     private Group createObjects(int startOfBox, int boxLength) {
         Group objGroup = new Group();
 
@@ -269,7 +300,7 @@ public class DemoController {
     private void initialize() {
         // Create cars
         createCars(userChosenCarString);
-
+        createSchool(-25000);
         // Create road
         roadGroup = createRoad();
         rootGroup.getChildren().add(roadGroup);
@@ -1021,7 +1052,7 @@ public class DemoController {
                 aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
 
                 try {
-                    // Sleep for 5 seconds
+                    // Sleep for 2 seconds
                     Thread.sleep(2000);
                 } catch (Exception e) {
                     e.printStackTrace();

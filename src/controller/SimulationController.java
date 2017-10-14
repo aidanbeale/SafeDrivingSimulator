@@ -78,6 +78,11 @@ public class SimulationController {
     private Car aiCar2;
     private Car aiCar3;
 
+private ArrayList<Car> extraCarList = new ArrayList<>();
+    private ArrayList<String> aiColours;
+    private int aiCount;
+    private int simTime;
+
     private Group roadGroup;
     private PerspectiveCamera camera;
     private boolean userSpeeding = false;
@@ -102,7 +107,7 @@ public class SimulationController {
     private boolean accelerating = true;
     private boolean acceleratingBreak = false;
     private int minute;
-    private int simulationTime = 300;
+    private int simulationTime;
     private ArrayList<Score> scoringOps = new ArrayList<>();
 
     private int randomiseCarSpeedCounter = 0;
@@ -119,6 +124,7 @@ public class SimulationController {
      */
     @FXML
     private void handleSimBegin(ActionEvent event) {
+        simulationTime = simTime;
         if (simButtonLabel.equals("begin")) {
             initialize();
             beginSimButton.setText("Cancel Simulation");
@@ -146,31 +152,32 @@ public class SimulationController {
      *            The car selected by the user
      */
     private void createCars(String userChoice) {
+/*
         carColourList.add("mini-red.3DS");
         carColourList.add("mini-green.3DS");
         carColourList.add("mini-blue.3DS");
         carColourList.add("mini-aws.3DS");
-
+*/
+/*
+        carColourList = aiColours;
         for (String c : carColourList) {
             if (c.equals(userChoice)) {
                 carColourList.remove(c);
                 break;
             }
         }
-
+*/
         // Create user car and add to rootGroup
         userCar = new Car(40, 0, userChoice, true, SPEED_LIMIT);
         rootGroup.getChildren().add(userCar.getCarGroup());
 
         // Create ai cars
-        int i = 1;
         ArrayList<Car> aiCarList = new ArrayList<>();
         // Create the other cars
-        for (String c : carColourList) {
-            Car newCar = new Car(40, -3700 * i, c, false, SPEED_LIMIT);
+        for (int i = 1; i < 4; i++) {
+            Car newCar = new Car(40, -3700 * i, aiColours.get(rand.nextInt(aiColours.size())), false, SPEED_LIMIT);
             rootGroup.getChildren().add(newCar.getCarGroup());
             aiCarList.add(newCar);
-            i++;
         }
         // Assign cars as global
         aiCar1 = aiCarList.get(0);
@@ -178,10 +185,22 @@ public class SimulationController {
 
         // Create car coming opposite direction
         aiCar3 = aiCarList.get(2);
-        aiCar3.setxPos(-100000);
+        aiCar3.setxPos(-25000);
         aiCar3.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
         aiCar3.getCarGroup().setRotate(180.0);
         aiCar3.getCarGroup().setTranslateZ(550);
+
+        for (int j = 1; j < aiCount + 1; j++) {
+            Car c = new Car(40, aiCar3.getxPos() * j, aiColours.get(rand.nextInt(aiColours.size())), false, SPEED_LIMIT);
+            rootGroup.getChildren().add(c.getCarGroup());
+
+            c.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
+            c.getCarGroup().setRotate(180.0);
+            c.getCarGroup().setTranslateZ(550);
+            extraCarList.add(c);
+
+        }
+
     }
 
     /**
@@ -532,6 +551,11 @@ public class SimulationController {
                                 aiCar1.setSpeed(randomiseCarSpeed(aiCar1));
                                 aiCar2.setSpeed(randomiseCarSpeed(aiCar2));
                                 aiCar3.setSpeed(randomiseCarSpeed(aiCar3));
+
+
+                                for (Car c : extraCarList) {
+                                    c.setSpeed(randomiseCarSpeed(c));
+                                }
                             }
 
                             // Move userCar
@@ -559,8 +583,13 @@ public class SimulationController {
                             aiCar3.getCarGroup().setTranslateX(aiCar3.getxPos());
                             // System.out.println("trans ai3 car to " + aiCar3.getxPos());
 
+                            for (Car c : extraCarList) {
+                                c.setxPos(c.getxPos() + SPEED_LIMIT);
+                                c.getCarGroup().setTranslateX(c.getxPos());
+                            }
+
                             // check if should apply brake now
-                            checkBrakeRequired();
+                            //checkBrakeRequired();
 
                         }
 
@@ -846,66 +875,67 @@ public class SimulationController {
 
             @Override
             public void run() {
+                while (!testHalt) {
+                    try {
+                        Thread.sleep(eventBreak);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    System.out.println("Choosing event");
 
-                try {
-                    Thread.sleep(eventBreak);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                System.out.println("Choosing event");
+                    int eventType = -1;
 
-                int eventType = -1;
+                    // Choose event based on random number
+                    if (events.size() != 0) {
+                        eventType = rand.nextInt((events.size()));
+                    }
 
-                // Choose event based on random number
-                if (events.size() != 0) {
-                    eventType = rand.nextInt((events.size()));
-                }
+                    if (eventRunning) {
 
-                while (eventRunning) {
+                        if (eventType != -1) {
+                            // Start Crash event
+                            if (events.get(eventType).equals("crashEvent")) {
+                                System.out.println("crashEvent started");
 
-                    if (eventType != -1) {
-                        // Start Crash event
-                        if (events.get(eventType).equals("crashEvent")) {
-                            System.out.println("crashEvent started");
+                                EventHandler crashEvent = new EventHandler();
+                                crashEvent.startCrashEvent(aiCar1, aiCar2);
 
-                            EventHandler crashEvent = new EventHandler();
-                            crashEvent.startCrashEvent(aiCar1, aiCar2);
+                                // Sleep for one second to keep randomising speeds
+                                System.out.println("Sleeping..");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
 
-                            // Sleep for one second to keep randomising speeds
-                            System.out.println("Sleeping..");
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
+                                // Start Speeding event
+                            } else if (events.get(eventType).equals("speedingEvent")) {
+                                System.out.println("speedingEvent started");
+                                EventHandler speedingEvent = new EventHandler();
+                                speedingEvent.startSpeedingEvent(userCar);
+
+                                // Sleep for one second to keep randomising speeds
+                                System.out.println("Sleeping..");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+
+                                // Start Giveway event
                             }
 
-                            // Start Speeding event
-                        } else if (events.get(eventType).equals("speedingEvent")) {
-                            System.out.println("speedingEvent started");
-                            EventHandler speedingEvent = new EventHandler();
-                            speedingEvent.startSpeedingEvent(userCar);
-
-                            // Sleep for one second to keep randomising speeds
-                            System.out.println("Sleeping..");
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-
-                            // Start Giveway event
-                        }
-
-                        // Event removed on request
+                            // Event removed on request
 					/*
 					 * else if (events.get(eventType).equals("givewayEvent")) {
 					 * System.out.println("givewayEvent started"); EventHandler givewayEvent = new
 					 * EventHandler(); int posOfGiveway = givewayEvent.startGivewayEvent(userCar);
 					 * // givewayGroup = createGivewayEvent(posOfGiveway); }
 					 */
+                        }
                     }
                 }
             }
@@ -972,7 +1002,7 @@ public class SimulationController {
 
             @Override
             public void run() {
-
+                System.out.println("Ending old event");
                 eventRunning = false;
                 userSpeeding = false;
 
@@ -985,8 +1015,8 @@ public class SimulationController {
                 aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
 
                 try {
-                    // Sleep for 5 seconds
-                    Thread.sleep(5000);
+                    // Sleep for 2 seconds
+                    Thread.sleep(2000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -996,7 +1026,7 @@ public class SimulationController {
                 aiCar2.setSpeed(SPEED_LIMIT);
                 userCar.setSpeed(SPEED_LIMIT);
                 eventRunning = true;
-                assignRandomEventTime();
+                //assignRandomEventTime();
             }
 
         });
@@ -1054,4 +1084,15 @@ public class SimulationController {
         this.userView = userView;
     }
 
+    public void setAiColours(ArrayList<String> aiColours) {
+        this.aiColours = aiColours;
+    }
+
+    public void setAiCount(int aiCount) {
+        this.aiCount = aiCount;
+    }
+
+    public void setSimTime(int simTime) {
+        this.simTime = simTime;
+    }
 }
