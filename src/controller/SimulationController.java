@@ -589,7 +589,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                             }
 
                             // check if should apply brake now
-                            //checkBrakeRequired();
+                            checkBrakeRequired();
 
                         }
 
@@ -641,6 +641,47 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     }
 
     /**
+     * Creates a message to display to the user
+     *
+     * @param message
+     *            The message to display
+     */
+    private void manageMessage(String message, Color color) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        failureScreen.setText(message);
+                        failureScreen.setTextFill(color);
+                    }
+                });
+
+                try {
+                    // Display for 3.2 seconds
+                    Thread.sleep(3200);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        failureScreen.setText("");
+                    }
+                });
+            }
+
+            ;
+
+        }).start();
+    }
+
+    /**
      * Used to check if braking is required
      */
     private void checkBrakeRequired() {
@@ -654,6 +695,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                     && !crashEvent.getTimerStarted() && failureScreen.getText() == "") {
                 System.out.println("---------Crash event timer started---------");
                 crashEvent.startEventTimer();
+                manageMessage("Apply the brakes! You are close to the car in front!", Color.HOTPINK);
 
             } else if (userCar.getxPos() < aiCar1.getxPos() + 480 // FAILURE
                     || userCar.getxPos() < aiCar2.getxPos() + 480) {
@@ -678,6 +720,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                         userSpeeding = true;
                         System.out.println("---------Speeding event timer started---------");
                         speedingEvent.startEventTimer();
+                        manageMessage("Apply the brakes! You are speeding!", Color.HOTPINK);
                     }
                 }
                 if (userCar.getSpeed() >= SPEED_LIMIT + 20) {
