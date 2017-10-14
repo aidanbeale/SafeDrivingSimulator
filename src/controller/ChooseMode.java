@@ -29,6 +29,7 @@ import simulation.Car;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The choose car controller class manages all controlling aspects when a user
@@ -47,11 +48,22 @@ public class ChooseMode {
 
         DemoController demoControl = loader.<DemoController>getController();
 
+        ArrayList<String> hazardsList = new ArrayList<>();
+            hazardsList.add("speedingEvent");
+            hazardsList.add("crashEvent");
+
+
+        // Pass all values to the next controller
+        demoControl.setUserChosenCarString("mini-aws.3DS");
+        demoControl.setEvents(hazardsList);
+        demoControl.setUserView("first");
+
         Parent p = loader.getRoot();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(p));
         stage.show();
     }
+
 
     @FXML
     private void startTest(ActionEvent event) throws IOException {

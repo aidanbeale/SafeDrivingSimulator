@@ -193,7 +193,7 @@ public class SimulationController {
 
         // Load required material
         PhongMaterial schoolZone = new PhongMaterial();
-        schoolZone.setDiffuseMap(new Image("images\\schoolzone.png"));
+        schoolZone.setDiffuseMap(new Image("schoolzone.png"));
 
         // Create signs
         for (int i = 0; i < numberOfBoxes; i++) {
@@ -378,7 +378,7 @@ public class SimulationController {
 
         // Read in required material
         PhongMaterial roadSurface = new PhongMaterial();
-        roadSurface.setDiffuseMap(new Image("images\\asphalt.jpg"));
+        roadSurface.setDiffuseMap(new Image("asphalt.jpg"));
         roadSurface.setSpecularColor(Color.WHITE);
 
         // Create road boxes

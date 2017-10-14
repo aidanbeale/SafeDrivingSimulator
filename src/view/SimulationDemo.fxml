@@ -47,11 +47,7 @@
                   <Image url="@../images/traffic.png" />
                </image>
             </ImageView>
-            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="20.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="36.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Begin Simulation" textFill="WHITE">
-               <font>
-                  <Font size="20.0" />
-               </font></JFXButton>
-            <JFXButton id="brakeButton" fx:id="brakeButton" layoutX="20.0" layoutY="478.0" onAction="#brakeButtonPressed" prefHeight="200.0" prefWidth="305.0" style="-fx-background-color: #34495e;" text="Brake" textFill="WHITE">
+            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="11.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="40.0" prefWidth="314.0" style="-fx-background-color: #34495e;" text="Begin Simulation" textFill="WHITE">
                <font>
                   <Font size="20.0" />
                </font></JFXButton>
@@ -72,6 +68,11 @@
                <font>
                   <Font size="20.0" />
                </font></Label>
+            <JFXButton id="firstPerson" fx:id="firstPerson" disable="true" layoutX="11.0" layoutY="478.0" prefHeight="200.0" prefWidth="314.0" style="-fx-background-color: #34495e;" text="Brake" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </JFXButton>
          </children>
       </AnchorPane>
       <AnchorPane id="simAnchor" fx:id="simAnchor" prefHeight="768.0" prefWidth="826.0">
@@ -113,5 +114,6 @@
             </Pane>
          </children>
       </AnchorPane>
+      <JFXButton id="brakeButton" fx:id="brakeButton" disable="false" layoutX="1318.0" layoutY="-176.0" text=" " />
    </children>
 </AnchorPane>
