@@ -47,7 +47,7 @@ import java.util.Random;
  * @author John Humphrys
  *
  */
-public class SimulationController {
+public class DemoController {
 
     @FXML
     private JFXButton beginSimButton;
@@ -136,6 +136,9 @@ public class SimulationController {
 
         // Begin random event manager
         assignRandomEventTime();
+
+        // Run automated demo
+        checkIfBrakeNeedsApplying();
     }
 
     /**
@@ -229,7 +232,7 @@ public class SimulationController {
 		 * SimObject tree = new SimObject("Tree 4.3ds", rand.nextInt((startOfBox +
 		 * boxLength) - startOfBox + 1) + startOfBox, 0, rand.nextInt((startOfBox +
 		 * boxLength) - startOfBox + 1) + startOfBox);
-		 * 
+		 *
 		 * objGroup.getChildren().add(tree.getObjGroup());
 		 */
         createSign();
@@ -400,16 +403,16 @@ public class SimulationController {
 		/*
 		 * if (events.contains("givewayEvent")) { // TODO Create three give way events
 		 * by default
-		 * 
+		 *
 		 * givewayEvent = new EventHandler(); int loc1 = -(rand.nextInt(100000)); int
 		 * loc2 = -(rand.nextInt(100000) + 100000); int loc3 = -(rand.nextInt(100000) +
 		 * 200000);
-		 * 
+		 *
 		 * System.out.println("locs:" + loc1 + " " + loc2 + " " + loc3);
-		 * 
+		 *
 		 * givewayEvent.addGivewayLocation(loc1); givewayEvent.addGivewayLocation(loc2);
 		 * givewayEvent.addGivewayLocation(loc3);
-		 * 
+		 *
 		 * roadGroup.getChildren().add(createGivewayEvent(loc1));
 		 * roadGroup.getChildren().add(createGivewayEvent(loc2));
 		 * roadGroup.getChildren().add(createGivewayEvent(loc3)); }
@@ -536,7 +539,7 @@ public class SimulationController {
 
                         }
 
-                        ;
+
                     });
                 }
             }
@@ -578,17 +581,18 @@ public class SimulationController {
                 });
             }
 
-            ;
+
 
         }).start();
     }
+
 
     /**
      * Used to check if braking is required
      */
     private void checkBrakeRequired() {
 
-        if (!brakeButton.isDisabled()) {
+        //if (!brakeButton.isDisabled()) {
 			/*
 			 * Crash event
 			 */
@@ -659,7 +663,7 @@ public class SimulationController {
                     }
                 }
             }
-        }
+        //}
 
     }
 
@@ -767,18 +771,18 @@ public class SimulationController {
 		 * (givewayEvent.getTimerStarted()) { givewayEvent.stopEventTimer();
 		 * System.out.println("---------Giveway event timer stopped---------");
 		 * givewayEvent.setTimerStopped(true);
-		 * 
+		 *
 		 * Score score = new Score("givewayEvent", givewayEvent.getTimerStartedTime(),
 		 * givewayEvent.getTimerStoppedTime()); scoringOps.add(score);
-		 * 
+		 *
 		 * if (score.getScore() != 0) {
 		 * manageMessage("Brakes applied correctly.  Score: " + score.getScore()); }
 		 * else { manageMessage("Brakes applied correctly but too slow to react."); }
-		 * 
+		 *
 		 * if (givewayEvent.getClosestGivewayLoc() ==
 		 * givewayEvent.getGivewayLocations().get(0)) {
 		 * givewayEvent.getGivewayLocations().remove(0); }
-		 * 
+		 *
 		 * } }
 		 */
         endOldEvent();
@@ -819,68 +823,72 @@ public class SimulationController {
 
             @Override
             public void run() {
-
+                while (!testHalt) {
                 try {
                     Thread.sleep(eventBreak);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                System.out.println("Choosing event");
 
-                int eventType = -1;
 
-                // Choose event based on random number
-                if (events.size() != 0) {
-                    eventType = rand.nextInt((events.size()));
-                }
+                    System.out.println("Choosing event");
 
-                while (eventRunning) {
+                    int eventType = -1;
 
-                    if (eventType != -1) {
-                        // Start Crash event
-                        if (events.get(eventType).equals("crashEvent")) {
-                            System.out.println("crashEvent started");
+                    // Choose event based on random number
+                    if (events.size() != 0) {
+                        eventType = rand.nextInt((events.size()));
+                    }
 
-                            EventHandler crashEvent = new EventHandler();
-                            crashEvent.startCrashEvent(aiCar1, aiCar2);
+                    if (eventRunning) {
 
-                            // Sleep for one second to keep randomising speeds
-                            System.out.println("Sleeping..");
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
+                        if (eventType != -1) {
+                            // Start Crash event
+                            if (events.get(eventType).equals("crashEvent")) {
+                                System.out.println("crashEvent started");
+
+                                EventHandler crashEvent = new EventHandler();
+                                crashEvent.startCrashEvent(aiCar1, aiCar2);
+
+                                // Sleep for one second to keep randomising speeds
+                                System.out.println("Sleeping..");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+
+                                // Start Speeding event
+                            } else if (events.get(eventType).equals("speedingEvent")) {
+                                System.out.println("speedingEvent started");
+                                EventHandler speedingEvent = new EventHandler();
+                                speedingEvent.startSpeedingEvent(userCar);
+
+                                // Sleep for one second to keep randomising speeds
+                                System.out.println("Sleeping..");
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    // TODO Auto-generated catch block
+                                    e.printStackTrace();
+                                }
+
+                                // Start Giveway event
                             }
 
-                            // Start Speeding event
-                        } else if (events.get(eventType).equals("speedingEvent")) {
-                            System.out.println("speedingEvent started");
-                            EventHandler speedingEvent = new EventHandler();
-                            speedingEvent.startSpeedingEvent(userCar);
-
-                            // Sleep for one second to keep randomising speeds
-                            System.out.println("Sleeping..");
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-
-                            // Start Giveway event
-                        }
-
-                        // Event removed on request
+                            // Event removed on request
 					/*
 					 * else if (events.get(eventType).equals("givewayEvent")) {
 					 * System.out.println("givewayEvent started"); EventHandler givewayEvent = new
 					 * EventHandler(); int posOfGiveway = givewayEvent.startGivewayEvent(userCar);
 					 * // givewayGroup = createGivewayEvent(posOfGiveway); }
 					 */
+                        }
                     }
                 }
+
             }
         });
         t.setDaemon(true);
@@ -936,6 +944,25 @@ public class SimulationController {
 	}
 	*/
 
+    private void checkIfBrakeNeedsApplying() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (!testHalt) {
+                        if (crashEvent.getTimerStarted() || speedingEvent.getTimerStarted()) {
+                            Thread.sleep(500);
+                            brakeButtonPressed();
+                        }
+                        Thread.sleep(500);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     /**
      * Resets everything back to initial values ready for a new event
      */
@@ -945,7 +972,7 @@ public class SimulationController {
 
             @Override
             public void run() {
-
+                System.out.println("Ending old event");
                 eventRunning = false;
                 userSpeeding = false;
 
@@ -959,7 +986,7 @@ public class SimulationController {
 
                 try {
                     // Sleep for 5 seconds
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -969,7 +996,7 @@ public class SimulationController {
                 aiCar2.setSpeed(SPEED_LIMIT);
                 userCar.setSpeed(SPEED_LIMIT);
                 eventRunning = true;
-                assignRandomEventTime();
+                //assignRandomEventTime();
             }
 
         });
