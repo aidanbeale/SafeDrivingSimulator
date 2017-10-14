@@ -52,6 +52,7 @@
                </children>
             </AnchorPane>
             <JFXButton id="chooseCar1" fx:id="startDemo" layoutX="360.0" layoutY="310.0" onAction="#startDemo" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Start Demo Mode" textFill="WHITE" />
+            <Label fx:id="remainingAttempts" layoutX="360.0" layoutY="380.0" prefHeight="17.0" prefWidth="163.0" text="Remaining Attempts: 3" textAlignment="CENTER" />
          </children>
       </AnchorPane>
    </children>

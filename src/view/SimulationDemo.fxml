@@ -47,7 +47,7 @@
                   <Image url="@../images/traffic.png" />
                </image>
             </ImageView>
-            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="11.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="40.0" prefWidth="314.0" style="-fx-background-color: #34495e;" text="Begin Simulation" textFill="WHITE">
+            <JFXButton id="beginSimButton" fx:id="beginSimButton" layoutX="11.0" layoutY="685.0" onAction="#handleSimBegin" prefHeight="40.0" prefWidth="314.0" style="-fx-background-color: #34495e;" text="Begin Demo" textFill="WHITE">
                <font>
                   <Font size="20.0" />
                </font></JFXButton>
@@ -56,11 +56,11 @@
                   <Image url="@../images/schoolzone.png" />
                </image>
             </ImageView>
-            <Label layoutX="125.0" layoutY="107.0" prefHeight="30.0" prefWidth="102.0" text="Traffic Hint" textAlignment="CENTER">
+            <Label layoutX="114.0" layoutY="107.0" prefHeight="30.0" prefWidth="113.0" text="Traffic Hint" textAlignment="CENTER">
                <font>
                   <Font size="20.0" />
                </font></Label>
-            <Label layoutX="20.0" layoutY="413.0" text="Simulation Remaining Time:">
+            <Label layoutX="73.0" layoutY="413.0" text="Demo Remaining Time:">
                <font>
                   <Font size="19.0" />
                </font></Label>

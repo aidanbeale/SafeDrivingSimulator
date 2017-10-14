@@ -105,6 +105,7 @@ public class DemoController {
     private ArrayList<Score> scoringOps = new ArrayList<>();
 
     private int randomiseCarSpeedCounter = 0;
+    private int remainingDemoAttempts;
 
     private String userChosenCarString;
     private ArrayList<String> events = new ArrayList<>();
@@ -120,13 +121,13 @@ public class DemoController {
     private void handleSimBegin(ActionEvent event) {
         if (simButtonLabel.equals("begin")) {
             initialize();
-            beginSimButton.setText("Cancel Simulation");
+            beginSimButton.setText("Cancel Demo");
             simButtonLabel = "cancel";
             moveUserCar();
         } else if (simButtonLabel.equals("cancel")) {
-            manageMessage("TEST CANCELLED");
+            manageMessage("DEMO CANCELLED");
             testHalt = true;
-            displayResultsNotification("You have cancelled the test");
+            displayResultsNotification("You have cancelled the demo");
 
             // Disable buttons
             beginSimButton.setDisable(true);
@@ -363,7 +364,7 @@ public class DemoController {
         pane.setStyle("-fx-background-color: #F4F4F4;");
         displayScore.setStyle("-fx-background-color:  #34495e;");
         heading.setText(result);
-        displayScore.setText("Display Scores");
+        displayScore.setText("Back to menu");
     }
 
     /**
@@ -1015,11 +1016,11 @@ public class DemoController {
 
         eventRunning = false;
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/Results.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ChooseMode.fxml"));
         Parent root = (Parent) loader.load();
 
-        ResultsController resultsControl = loader.<ResultsController>getController();
-        resultsControl.setScoringOps(scoringOps);
+        ChooseMode chooseMode = loader.<ChooseMode>getController();
+        chooseMode.setRemainingDemoAttempts(remainingDemoAttempts);
 
         Parent p = loader.getRoot();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -1054,4 +1055,11 @@ public class DemoController {
         this.userView = userView;
     }
 
+    public int getRemainingDemoAttempts() {
+        return remainingDemoAttempts;
+    }
+
+    public void setRemainingDemoAttempts(int remainingDemoAttempts) {
+        this.remainingDemoAttempts = remainingDemoAttempts;
+    }
 }
