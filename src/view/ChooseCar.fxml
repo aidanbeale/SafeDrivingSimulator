@@ -59,7 +59,7 @@
             </ImageView>
             <JFXButton id="chooseCar1" fx:id="start" layoutX="550.0" layoutY="526.0" onAction="#start" prefHeight="60.0" prefWidth="163.0" style="-fx-background-color: #34495e;" text="Start" textFill="WHITE" />
             <JFXCheckBox fx:id="checkSpeeding" checkedColor="#34495e" layoutX="530.0" layoutY="191.0" text="Speeding" />
-            <JFXCheckBox fx:id="checkCrash" checkedColor="#34495e" layoutX="530.0" layoutY="264.0" text="Crash" />
+            <JFXCheckBox fx:id="checkCrash" checkedColor="#34495e" layoutX="530.0" layoutY="226.0" text="Crash" />
             <!-- Disabled on request-->
             <!--<JFXCheckBox fx:id="checkGiveway" checkedColor="#34495e" layoutX="695.0" layoutY="348.0" text="Give way" />-->
             <AnchorPane layoutX="112.0" layoutY="150.0" prefHeight="200.0" prefWidth="200.0">
@@ -108,6 +108,7 @@
                </font>
             </Label>
             <JFXSlider fx:id="simulationTime" layoutX="494.0" layoutY="409.0" max="500.0" min="100.0" prefHeight="33.0" prefWidth="243.0" showTickLabels="true" value="3.0" />
+            <JFXCheckBox fx:id="schoolCrossing" checkedColor="#34495e" layoutX="530.0" layoutY="273.0" text="School Crossing" />
          </children>
       </AnchorPane>
    </children>

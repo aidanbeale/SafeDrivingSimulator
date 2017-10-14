@@ -19,7 +19,6 @@ package controller;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
-import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +36,6 @@ import java.util.ArrayList;
  * is selecting the car and hazards
  *
  * @author John
- *
  */
 public class ChooseCarController {
 
@@ -65,7 +63,8 @@ public class ChooseCarController {
     private JFXCheckBox aiOrange;
     @FXML
     private JFXSlider aiCount;
-
+    @FXML
+    private JFXCheckBox schoolCrossing;
 
 
     PerspectiveCamera camera;
@@ -111,10 +110,8 @@ public class ChooseCarController {
      * This method is called when the user presses the button to start the
      * applicaion
      *
-     * @param event
-     *            The mouse click event on the button
-     * @throws IOException
-     *             Thrown if fxml file not found
+     * @param event The mouse click event on the button
+     * @throws IOException Thrown if fxml file not found
      */
     @FXML
     private void start(ActionEvent event) throws IOException {
@@ -136,8 +133,8 @@ public class ChooseCarController {
         simControl.setEvents(hazardsList);
         simControl.setUserView(userView);
         simControl.setAiColours(aiColours);
-        simControl.setAiCount((int)aiCount.getValue());
-        simControl.setSimTime((int)simulationTime.getValue());
+        simControl.setAiCount((int) aiCount.getValue());
+        simControl.setSimTime((int) simulationTime.getValue());
 
         Parent p = loader.getRoot();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -166,10 +163,13 @@ public class ChooseCarController {
         if (checkCrash.isSelected()) {
             hazardsList.add("crashEvent");
         }
+        if (schoolCrossing.isSelected()) {
+            hazardsList.add("schoolCrossingEvent");
+        }
 
         // Removed due to request
         /*
-		 * if (checkGiveway.isSelected()) { hazardsList.add("givewayEvent"); }
+         * if (checkGiveway.isSelected()) { hazardsList.add("givewayEvent"); }
 		 */
     }
 
@@ -263,8 +263,7 @@ public class ChooseCarController {
     /**
      * Moves the car selection to the previous one in the arraylist
      *
-     * @param event
-     *            The mouse click event on the button
+     * @param event The mouse click event on the button
      */
     @FXML
     private void chooseBack(ActionEvent event) {
@@ -284,8 +283,7 @@ public class ChooseCarController {
     /**
      * Moves the car selection to the next one in the arraylist
      *
-     * @param event
-     *            The mouse click event on the button
+     * @param event The mouse click event on the button
      */
     @FXML
     private void chooseForward(ActionEvent event) {

@@ -70,11 +70,11 @@ public class EventHandler {
         final int maxSpeed = 40;
 
         // aiCar1 needs to slow down randomly
-        aiCar1.setCarSpeedLimit((rand.nextInt(maxSpeed - minSpeed) + minSpeed));
+        aiCar1.setCarSpeedLimit((rand.nextInt(maxSpeed - minSpeed) + minSpeed-3));
         System.out.println("aiCar1 speed: " + aiCar1.getSpeed());
 
         // aiCar2 needs to be equal to or faster than aiCar1 on average or they will crash
-        aiCar2.setCarSpeedLimit((rand.nextInt(maxSpeed - minSpeed) + minSpeed + 1));
+        aiCar2.setCarSpeedLimit((rand.nextInt(maxSpeed - minSpeed) + minSpeed -2));
         System.out.println("aiCar2 speed: " + aiCar2.getSpeed());
     }
 

@@ -81,6 +81,8 @@ public class Score {
             return "Speeding Event";
         } else if (event.equals("givewayEvent")) {
             return "Giveway Event";
+        } else if (event.equals("schoolCrossingEvent")) {
+            return "School Crossing Event";
         }
         return null;
     }

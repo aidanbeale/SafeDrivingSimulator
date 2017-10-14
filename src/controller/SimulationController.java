@@ -46,7 +46,6 @@ import java.util.Random;
  * of several models and other classes located in the 'model' package.
  *
  * @author John Humphrys
- *
  */
 public class SimulationController {
 
@@ -78,15 +77,22 @@ public class SimulationController {
     private Car aiCar2;
     private Car aiCar3;
 
-private ArrayList<Car> extraCarList = new ArrayList<>();
+    private SimObject person;
+    private SimObject person2;
+    private int personIncrement = 13;
+
+    private ArrayList<Car> extraCarList = new ArrayList<>();
     private ArrayList<String> aiColours;
     private int aiCount;
     private int simTime;
 
+    private int schoolCrossingLocation = -25000;
+    private boolean appliedBrakeAtSchoolCrossing = false;
+
     private Group roadGroup;
     private PerspectiveCamera camera;
     private boolean userSpeeding = false;
-
+    private boolean eventNotRestarting = true;
     private boolean testHalt = false;
     private boolean brakePressed = false;
 
@@ -102,6 +108,8 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     private EventHandler crashEvent;
     private EventHandler speedingEvent;
     private EventHandler givewayEvent;
+    private EventHandler schoolCrossingEvent;
+
     private final int SPEED_LIMIT = 40;
     private boolean braking = false;
     private boolean accelerating = true;
@@ -119,8 +127,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Starts the simulation and changes the button label
      *
-     * @param event
-     *            The mouse click event
+     * @param event The mouse click event
      */
     @FXML
     private void handleSimBegin(ActionEvent event) {
@@ -148,8 +155,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Creates the required cars
      *
-     * @param userChoice
-     *            The car selected by the user
+     * @param userChoice The car selected by the user
      */
     private void createCars(String userChoice) {
 /*
@@ -185,7 +191,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 
         // Create car coming opposite direction
         aiCar3 = aiCarList.get(2);
-        aiCar3.setxPos(-25000);
+        aiCar3.setxPos(-40000);
         aiCar3.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
         aiCar3.getCarGroup().setRotate(180.0);
         aiCar3.getCarGroup().setTranslateZ(550);
@@ -242,7 +248,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     }
 
     private void createSchool(int xCoord) {
-        SimObject person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
+        person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
         rootGroup.getChildren().add(person.getObjGroup());
         person.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
         person.getObjGroup().setScaleX(1.3);
@@ -250,7 +256,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
         person.getObjGroup().setScaleZ(1.3);
 
 
-        SimObject person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
+        person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
         rootGroup.getChildren().add(person2.getObjGroup());
         person2.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
         person2.getObjGroup().setScaleX(60.0);
@@ -274,7 +280,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 
         // Trees removed on request
         /*
-		 * SimObject tree = new SimObject("Tree 4.3ds", rand.nextInt((startOfBox +
+         * SimObject tree = new SimObject("Tree 4.3ds", rand.nextInt((startOfBox +
 		 * boxLength) - startOfBox + 1) + startOfBox, 0, rand.nextInt((startOfBox +
 		 * boxLength) - startOfBox + 1) + startOfBox);
 		 * 
@@ -290,7 +296,10 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     private void initialize() {
         // Create cars
         createCars(userChosenCarString);
-        createSchool(-25000);
+
+        if (events.contains("schoolCrossingEvent")) {
+            createSchool(schoolCrossingLocation);
+        }
         // Create road
         roadGroup = createRoad();
         rootGroup.getChildren().add(roadGroup);
@@ -392,6 +401,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                 }
 
             }
+
             ;
 
         }).start();
@@ -400,8 +410,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Display notification when simulation ends or is failed
      *
-     * @param result
-     *            The result of the notification appearing
+     * @param result The result of the notification appearing
      */
     private void displayResultsNotification(String result) {
         pane.setStyle("-fx-background-color: #F4F4F4;");
@@ -412,7 +421,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 
     /**
      * Creates the road objects
-     *
+     * <p>
      * // TODO Only draw required road to prevent lagging on low spec machines
      *
      * @return The group of road objects
@@ -444,8 +453,8 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
         roadGroup.getChildren().add(ambient);
 
         // Event disabled on request
-		/*
-		 * if (events.contains("givewayEvent")) { // TODO Create three give way events
+        /*
+         * if (events.contains("givewayEvent")) { // TODO Create three give way events
 		 * by default
 		 * 
 		 * givewayEvent = new EventHandler(); int loc1 = -(rand.nextInt(100000)); int
@@ -468,8 +477,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Used to randomise the car speed
      *
-     * @param car
-     *            The car to update its speed
+     * @param car The car to update its speed
      * @return The random speed to assign to the car
      */
     private int randomiseCarSpeed(Car car) {
@@ -487,6 +495,8 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 
         crashEvent = new EventHandler();
         speedingEvent = new EventHandler();
+        schoolCrossingEvent = new EventHandler();
+
         // Event removed on request
         // givewayEvent = new EventHandler();
 
@@ -588,12 +598,24 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                                 c.getCarGroup().setTranslateX(c.getxPos());
                             }
 
-                            // check if should apply brake now
-                            checkBrakeRequired();
+                            if (events.contains("schoolCrossingEvent")) {
+                                if (userCar.getxPos() < schoolCrossingLocation + 5000) {
+                                    person.setzPos(person.getzPos() + personIncrement);
+                                    person.getObjGroup().setTranslateZ(person.getzPos());
 
+                                    person2.setzPos(person2.getzPos() + personIncrement);
+                                    person2.getObjGroup().setTranslateZ(person2.getzPos());
+                                }
+                            }
+
+                            // check if should apply brake now
+
+                            if (userCar.getxPos() % 2 == 0) {
+                                checkBrakeRequired();
+                            }
                         }
 
-                        ;
+
                     });
                 }
             }
@@ -603,8 +625,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Creates a message to display to the user
      *
-     * @param message
-     *            The message to display
+     * @param message The message to display
      */
     private void manageMessage(String message) {
         new Thread(new Runnable() {
@@ -634,17 +655,13 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                     }
                 });
             }
-
-            ;
-
         }).start();
     }
 
     /**
      * Creates a message to display to the user
      *
-     * @param message
-     *            The message to display
+     * @param message The message to display
      */
     private void manageMessage(String message, Color color) {
         new Thread(new Runnable() {
@@ -675,9 +692,6 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                     }
                 });
             }
-
-            ;
-
         }).start();
     }
 
@@ -687,8 +701,8 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     private void checkBrakeRequired() {
 
         if (!brakeButton.isDisabled()) {
-			/*
-			 * Crash event
+            /*
+             * Crash event
 			 */
             //if (events.contains("crashEvent")) {
             if ((userCar.getxPos() < aiCar1.getxPos() + 3000 || userCar.getxPos() < aiCar2.getxPos() + 3000)
@@ -709,10 +723,32 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                     testHalt = true;
                 }
             }
+
+            // if school crossing event
+            if (events.contains("schoolCrossingEvent")) {
+                if ((userCar.getxPos() < schoolCrossingLocation + 5000) && (!schoolCrossingEvent.getTimerStarted()) && (failureScreen.getText() == "") && (userCar.getxPos() > schoolCrossingLocation) && !appliedBrakeAtSchoolCrossing) {
+                    System.out.println("---------School crossing event timer started---------");
+                    schoolCrossingEvent.startEventTimer();
+                    manageMessage("Apply the brakes! You are close to the crossing!", Color.GREEN);
+
+                    // Failure
+                } else if ((userCar.getxPos() < schoolCrossingLocation + 100) && !appliedBrakeAtSchoolCrossing) {
+
+                    if (!schoolCrossingEvent.isTimerStopped()) {
+                        schoolCrossingEvent.stopEventTimer();
+                        System.out.println("---------School crossing event timer stopped---------");
+                        schoolCrossingEvent.setTimerStopped(true);
+                        manageMessage("You almost hit the people!");
+                        displayResultsNotification("You have failed the test...");
+                        testHalt = true;
+                    }
+                }
+            }
+
             //}
 
 			/*
-			 * Speeding event
+             * Speeding event
 			 */
             if (events.contains("speedingEvent")) {
                 if (!userSpeeding) {
@@ -737,7 +773,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
             }
 
 			/*
-			 * Giveway event
+             * Giveway event
 			 */
             if (events.contains("givewayEvent")) {
                 if ((userCar.getxPos() < givewayEvent.getClosestGivewayLoc() + 10000)
@@ -766,8 +802,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Used to create the camera
      *
-     * @param camPlacement
-     *            The location where to position the camera
+     * @param camPlacement The location where to position the camera
      * @return The created camera
      */
     private PerspectiveCamera setupUserCamera(String camPlacement) {
@@ -811,17 +846,19 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
         // Check if events have started or exist
         if ((crashEvent == null || !crashEvent.getTimerStarted())
                 && (speedingEvent == null || !speedingEvent.getTimerStarted())
-                && (givewayEvent == null || !givewayEvent.getTimerStarted())) {
+                && (givewayEvent == null || !givewayEvent.getTimerStarted())
+                && (schoolCrossingEvent == null || !schoolCrossingEvent.getTimerStarted())) {
 
             manageMessage("Brakes applied incorrectly. Score: -300");
             Score score = new Score("failedAttempt", -300);
             scoringOps.add(score);
-
         }
 
         // If crash event occuring
         if (events.contains("crashEvent")) {
+
             if (crashEvent.getTimerStarted()) {
+
                 crashEvent.stopEventTimer();
                 System.out.println("---------Crash event timer stopped---------");
                 crashEvent.setTimerStopped(true);
@@ -837,12 +874,40 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                 }
 
                 crashEvent = new EventHandler();
+
+            }
+        }
+
+        // If schoolCrossingEvent occuring
+        if (events.contains("schoolCrossingEvent")) {
+
+            if (schoolCrossingEvent.getTimerStarted()) {
+                tempDisableBrakeButton();
+                schoolCrossingEvent.stopEventTimer();
+                System.out.println("---------School crossing event timer stopped---------");
+                appliedBrakeAtSchoolCrossing = true;
+                schoolCrossingEvent.setTimerStopped(true);
+
+                Score score = new Score("schoolCrossingEvent", schoolCrossingEvent.getTimerStartedTime(),
+                        schoolCrossingEvent.getTimerStoppedTime());
+                scoringOps.add(score);
+
+                if (score.getScore() != 0) {
+                    manageMessage("Brakes applied correctly.  Score: " + score.getScore());
+                } else {
+                    manageMessage("Brakes applied correctly but too slow to react.");
+                }
+
+                schoolCrossingEvent = new EventHandler();
+
             }
         }
 
         // If speeding event occuring
         if (events.contains("speedingEvent")) {
+
             if (speedingEvent.getTimerStarted()) {
+
                 speedingEvent.stopEventTimer();
                 System.out.println("---------Speeding event timer stopped---------");
                 speedingEvent.setTimerStopped(true);
@@ -858,12 +923,14 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                 }
 
                 speedingEvent = new EventHandler();
+
             }
         }
+        endOldEvent();
 
         // Event removed on request
-		/*
-		 * // if giveway event occuring if (events.contains("givewayEvent")) { if
+        /*
+         * // if giveway event occuring if (events.contains("givewayEvent")) { if
 		 * (givewayEvent.getTimerStarted()) { givewayEvent.stopEventTimer();
 		 * System.out.println("---------Giveway event timer stopped---------");
 		 * givewayEvent.setTimerStopped(true);
@@ -881,7 +948,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 		 * 
 		 * } }
 		 */
-        endOldEvent();
+
     }
 
     /**
@@ -910,6 +977,32 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
         t.start();
     }
 
+    /**
+     * Disables the brake button for a period of time
+     */
+    private void tempDisableBrakeButtonFail() {
+
+        final Thread t = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                brakeButton.setDisable(true);
+
+                try {
+                    // Disable break button for 3 seconds
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                brakeButton.setDisable(false);
+
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
     private void assignRandomEventTime() {
         // Wait minimum of 5 seconds between events starting and max of 15
         int eventBreak = rand.nextInt(10000) + 5000;
@@ -918,6 +1011,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
 
             @Override
             public void run() {
+
                 while (!testHalt) {
                     try {
                         Thread.sleep(eventBreak);
@@ -925,6 +1019,8 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+
+
                     System.out.println("Choosing event");
 
                     int eventType = -1;
@@ -935,7 +1031,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                     }
 
                     if (eventRunning) {
-
+                        System.out.println("event is running");
                         if (eventType != -1) {
                             // Start Crash event
                             if (events.get(eventType).equals("crashEvent")) {
@@ -972,22 +1068,25 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
                             }
 
                             // Event removed on request
-					/*
-					 * else if (events.get(eventType).equals("givewayEvent")) {
+                    /*
+                     * else if (events.get(eventType).equals("givewayEvent")) {
 					 * System.out.println("givewayEvent started"); EventHandler givewayEvent = new
 					 * EventHandler(); int posOfGiveway = givewayEvent.startGivewayEvent(userCar);
 					 * // givewayGroup = createGivewayEvent(posOfGiveway); }
 					 */
                         }
                     }
+
                 }
             }
         });
+
         t.setDaemon(true);
         t.start();
     }
+
 /*
-	/**
+    /**
 	 * Creates a giveway event, draws a giveway sign and horizontal road. User must
 	 * apply brakes before the sign
 	 * 
@@ -1039,6 +1138,7 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
     /**
      * Resets everything back to initial values ready for a new event
      */
+
     private void endOldEvent() {
 
         final Thread t = new Thread(new Runnable() {
@@ -1046,24 +1146,30 @@ private ArrayList<Car> extraCarList = new ArrayList<>();
             @Override
             public void run() {
                 System.out.println("Ending old event");
+                eventNotRestarting = false;
                 eventRunning = false;
                 userSpeeding = false;
 
                 speedingEvent = new EventHandler();
                 crashEvent = new EventHandler();
                 givewayEvent = new EventHandler();
+                schoolCrossingEvent = new EventHandler();
 
+                System.out.println("Speeding up cars");
                 // Move cars away from user (Crash event)
+
                 aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
                 aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
 
                 try {
-                    // Sleep for 2 seconds
+                    System.out.println("sleeping for 1");
+                    // Sleep for 2 second
                     Thread.sleep(2000);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
+                System.out.println("restoring cars speed");
                 // Restore cars (Crash event)
                 aiCar1.setSpeed(SPEED_LIMIT);
                 aiCar2.setSpeed(SPEED_LIMIT);
