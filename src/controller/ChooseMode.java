@@ -16,8 +16,10 @@
 
 package controller;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,6 +29,7 @@ import javafx.scene.transform.Rotate;
 import javafx.stage.Stage;
 import simulation.Car;
 
+import javafx.scene.control.Label;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -39,6 +42,14 @@ import java.util.Random;
  *
  */
 public class ChooseMode {
+
+    private int remainingDemoAttempts = 3;
+
+    @FXML
+    private Label remainingAttempts;
+    @FXML
+    private JFXButton startDemo;
+
 
     @FXML
     private void startDemo(ActionEvent event) throws IOException {
@@ -57,6 +68,7 @@ public class ChooseMode {
         demoControl.setUserChosenCarString("mini-aws.3DS");
         demoControl.setEvents(hazardsList);
         demoControl.setUserView("first");
+        demoControl.setRemainingDemoAttempts(--remainingDemoAttempts);
 
         Parent p = loader.getRoot();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -79,4 +91,16 @@ public class ChooseMode {
         stage.show();
     }
 
+    public void setRemainingDemoAttempts(int remainingDemoAttempts) {
+        this.remainingDemoAttempts = remainingDemoAttempts;
+        setRemainingAttemptsString("Remaining Attempts: " + remainingDemoAttempts);
+
+        if (remainingDemoAttempts == 0) {
+            startDemo.setDisable(true);
+        }
+    }
+
+    public void setRemainingAttemptsString(String remainingAttemptsString) {
+        remainingAttempts.setText(remainingAttemptsString);
+    }
 }
