@@ -38,7 +38,7 @@
                   <Font name="Segoe UI Bold" size="24.0" />
                </font>
             </Label>
-            <JFXButton id="saveCSV" fx:id="saveCSV" layoutX="488.0" layoutY="620.0" onAction="#saveCSV" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Save to CSV" textFill="WHITE">
+            <JFXButton id="saveCSV" fx:id="saveCSV" layoutX="488.0" layoutY="620.0" onAction="#saveCSV" prefHeight="72.0" prefWidth="334.0" ripplerFill="WHITE" style="-fx-background-color: #34495e;" text="Save to XML" textFill="WHITE">
                <font>
                   <Font size="17.0" />
                </font>

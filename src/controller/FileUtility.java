@@ -24,7 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
- * The File Utility class is used to write results to a .csv file
+ * The File Utility class is used to write results to a .xml file
  *
  * @author John Humphrys
  *
@@ -42,7 +42,7 @@ public class FileUtility {
         FileWriter fileWriter = null;
 
         try {
-            fileWriter = new FileWriter("SDS_results.csv");
+            fileWriter = new FileWriter("SDS_results.xml");
         } catch (IOException e1) {
             System.out.println("Unable to write to file");
             e1.printStackTrace();
@@ -52,18 +52,22 @@ public class FileUtility {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSSS");
 
         try {
-
+            fileWriter.append("<results>");
             // Write to file
             for (Score s : scoreList) {
+                fileWriter.append("<score>");
                 if (s.getEvent().equals("Failed Braking Attempt")) {
-                    fileWriter.append(s.getEvent().toString() + "," + "N/A" + "," + "N/A" + "," + "N/A" + ","
-                            + String.valueOf(s.getScore()).toString() + "," + "N/A" + "\n");
+                    fileWriter.append("<event>" + s.getEvent().toString() + "</event>" + "<optimalTime>" + "N/A" + "</optimalTime>" + "<yourTime>" + "N/A" + "</yourTime>" + "<difference>" + "N/A" + "</difference>"
+                            + "<score>" + String.valueOf(s.getScore()).toString() + "</score>" + "<scorePercentage>" + "N/A" +  "</scorePercentage>" + "\n");
                 } else {
-                    fileWriter.append(s.getEvent() + "," + sdf.format(s.getOptimalTime()) + ","
-                            + sdf.format(s.getYourTime()) + "," + String.valueOf(s.getDiff()) + "ms" + ","
-                            + String.valueOf(s.getScore()) + "," + String.valueOf(s.getScorePercentage()) + "%" + "\n");
+                    fileWriter.append("<event>" + s.getEvent() + "</event>" + "<optimalTime>" + sdf.format(s.getOptimalTime()) + "</optimalTime>"
+                            + "<yourTime>" + sdf.format(s.getYourTime()) + "</yourTime>" + "<difference>" + String.valueOf(s.getDiff())  + "ms" + "</difference>"
+                            + "<score>" + String.valueOf(s.getScore()) + "</score>" + "<scorePercentage>" + String.valueOf(s.getScorePercentage()) + "%" + "</scorePercentage>" + "\n");
                 }
+                fileWriter.append("</score>");
             }
+
+            fileWriter.append("</results>");
         } catch (IOException e) {
             e.printStackTrace();
         }
