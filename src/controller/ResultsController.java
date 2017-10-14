@@ -26,8 +26,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.layout.AnchorPane;
 import javafx.util.Callback;
 import simulation.Score;
 
@@ -47,6 +50,9 @@ public class ResultsController {
 
     @FXML
     JFXTreeTableView<RowProp> resultsTable;
+
+    @FXML
+    AnchorPane pieChartPane;
 
     /**
      * The load table method is used to create the table and columns
@@ -114,12 +120,34 @@ public class ResultsController {
                     }
                 });
 
+        JFXTreeTableColumn<RowProp, String> rating = new JFXTreeTableColumn<>("Rating");
+        rating.setId("idGroup");
+        rating.setPrefWidth(186);
+        rating.setCellValueFactory(
+                new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(TreeTableColumn.CellDataFeatures<RowProp, String> param) {
+                        if(Integer.parseInt(param.getValue().getValue().score.get()) <= 999) {
+                            ObservableValue<String> returnVal = new SimpleStringProperty("★");
+                            return returnVal;
+                        } else if(Integer.parseInt(param.getValue().getValue().score.get()) <= 1999) {
+                            ObservableValue<String> returnVal = new SimpleStringProperty("★★");
+                            return returnVal;
+                        } else if(Integer.parseInt(param.getValue().getValue().score.get()) <= 3000) {
+                            ObservableValue<String> returnVal = new SimpleStringProperty("★★★");
+                            return returnVal;
+                        } else {
+                            return null;
+                        }
+                    }
+                });
+
         ObservableList<RowProp> rows = FXCollections.observableArrayList();
 
         ObservableList<RowProp> updatedRows = loadResults(rows);
 
         final TreeItem<RowProp> root = new RecursiveTreeItem<RowProp>(updatedRows, RecursiveTreeObject::getChildren);
-        resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol);
+        resultsTable.getColumns().setAll(eventCol, optTimeCol, yourTimeCol, diffCol, scoreCol, scorePercentCol, rating);
         resultsTable.setRoot(root);
         resultsTable.setShowRoot(false);
     }
@@ -168,7 +196,35 @@ public class ResultsController {
             this.score = new SimpleStringProperty(score);
             this.scorePercent = new SimpleStringProperty(scorePercent);
         }
+    }
 
+    public void loadPieChart() {
+        int crashEvents = 0;
+        int failedAttempt = 0;
+        int speedingEvent = 0;
+
+        for (Score s : scoringOps) {
+            if(s.getEvent().equals("Crash Event")) {
+                crashEvents ++;
+            } else if(s.getEvent().equals("Failed Braking Attempt")) {
+                failedAttempt ++;
+            } else if(s.getEvent().equals("Speeding Event")) {
+                speedingEvent ++;
+            }
+        }
+
+
+        ObservableList<PieChart.Data> pieChartData =
+                FXCollections.observableArrayList(
+                        new PieChart.Data("Crash Event", crashEvents),
+                        new PieChart.Data("Failed Braking Attempt", failedAttempt),
+                        new PieChart.Data("Speeding Event", speedingEvent));
+        final PieChart chart = new PieChart(pieChartData);
+        chart.setTitle("Event Results");
+        //chart.setLabelLineLength(10);
+        //chart.setLegendSide(Side.LEFT);
+
+        pieChartPane.getChildren().add(chart);
     }
 
     /**
@@ -178,6 +234,7 @@ public class ResultsController {
     public void setScoringOps(ArrayList<Score> scoringOps) {
         this.scoringOps = scoringOps;
         loadTable();
+        loadPieChart();
     }
 
     /**

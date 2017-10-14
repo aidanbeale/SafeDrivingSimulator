@@ -1,4 +1,7 @@
-
+#idGroup {
+    color: green;
+    -fx-text-fill: rgb(0, 128, 0);
+}
 .tree-table-view{
     -fx-tree-table-color: rgba(52,73,94, 0.8);
     -fx-tree-table-rippler-color : rgba(52,73,94, 0.9);

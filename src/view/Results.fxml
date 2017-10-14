@@ -53,7 +53,8 @@
                   <Font name="Segoe UI Bold" size="24.0" />
                </font>
             </Label>
-            <JFXTreeTableView id="resultsTable" fx:id="resultsTable" layoutX="32.0" layoutY="84.0" prefHeight="516.0" prefWidth="1249.0" stylesheets="@table.css" />
+            <JFXTreeTableView id="resultsTable" fx:id="resultsTable" layoutX="32.0" layoutY="84.0" prefHeight="516.0" prefWidth="621.0" stylesheets="@table.css" />
+            <AnchorPane fx:id="pieChartPane" layoutX="770.0" layoutY="84.0" prefHeight="516.0" prefWidth="510.0" />
          </children>
       </AnchorPane>
    </children>
