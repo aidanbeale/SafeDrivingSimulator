@@ -78,10 +78,17 @@ public class DemoController {
     private Car aiCar2;
     private Car aiCar3;
 
+    private SimObject person;
+    private SimObject person2;
+    private int personIncrement = 13;
+
     private ArrayList<Car> extraCarList = new ArrayList<>();
     private ArrayList<String> aiColours;
     private int aiCount;
-    private int simTime;
+    private int simTime = 300;
+
+    private int schoolCrossingLocation = -25000;
+    private boolean appliedBrakeAtSchoolCrossing = false;
 
     private Group roadGroup;
     private PerspectiveCamera camera;
@@ -102,12 +109,14 @@ public class DemoController {
     private EventHandler crashEvent;
     private EventHandler speedingEvent;
     private EventHandler givewayEvent;
+    private EventHandler schoolCrossingEvent;
+
     private final int SPEED_LIMIT = 40;
     private boolean braking = false;
     private boolean accelerating = true;
     private boolean acceleratingBreak = false;
     private int minute;
-    private int simulationTime = 100;
+    private int simulationTime;
     private ArrayList<Score> scoringOps = new ArrayList<>();
 
     private int randomiseCarSpeedCounter = 0;
@@ -125,6 +134,7 @@ public class DemoController {
      */
     @FXML
     private void handleSimBegin(ActionEvent event) {
+        simulationTime = simTime;
         if (simButtonLabel.equals("begin")) {
             initialize();
             beginSimButton.setText("Cancel Demo");
@@ -164,6 +174,7 @@ public class DemoController {
         carColourList.add("mini-aws.3DS");
 
 /*
+        carColourList = aiColours;
         for (String c : carColourList) {
             if (c.equals(userChoice)) {
                 carColourList.remove(c);
@@ -177,16 +188,16 @@ public class DemoController {
         rootGroup.getChildren().add(userCar.getCarGroup());
 
         // Create ai cars
-        int i = 1;
+
         ArrayList<Car> aiCarList = new ArrayList<>();
 
 
         // Create the other cars
-        for (String c : carColourList) {
-            Car newCar = new Car(40, -3700 * i, c, false, SPEED_LIMIT);
+        for (int i = 1; i < 4; i++) {
+            Car newCar = new Car(40, -3700 * i, carColourList.get(rand.nextInt(carColourList.size())), false, SPEED_LIMIT);
             rootGroup.getChildren().add(newCar.getCarGroup());
             aiCarList.add(newCar);
-            i++;
+            
         }
 
         // Assign cars as global
@@ -196,13 +207,13 @@ public class DemoController {
 
         // Create car coming opposite direction
         aiCar3 = aiCarList.get(2);
-        aiCar3.setxPos(-60000);
+        aiCar3.setxPos(-40000);
         aiCar3.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
         aiCar3.getCarGroup().setRotate(180.0);
         aiCar3.getCarGroup().setTranslateZ(550);
 
-        for (int j =0; j < carCount; j++) {
-            Car c = new Car(40, aiCar3.getxPos() * (j+2), carColourList.get(rand.nextInt(carColourList.size())), false, SPEED_LIMIT);
+        for (int j = 1; j < aiCount + 1; j++) {
+            Car c = new Car(40, aiCar3.getxPos() * j, aiColours.get(rand.nextInt(aiColours.size())), false, SPEED_LIMIT);
             rootGroup.getChildren().add(c.getCarGroup());
 
             c.getCarGroup().setRotationAxis(Rotate.Y_AXIS);
@@ -252,7 +263,7 @@ public class DemoController {
     }
 
     private void createSchool(int xCoord) {
-        SimObject person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
+        person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
         rootGroup.getChildren().add(person.getObjGroup());
         person.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
         person.getObjGroup().setScaleX(1.3);
@@ -260,7 +271,7 @@ public class DemoController {
         person.getObjGroup().setScaleZ(1.3);
 
 
-        SimObject person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
+        person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
         rootGroup.getChildren().add(person2.getObjGroup());
         person2.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
         person2.getObjGroup().setScaleX(60.0);
@@ -300,7 +311,10 @@ public class DemoController {
     private void initialize() {
         // Create cars
         createCars(userChosenCarString);
-        createSchool(-25000);
+
+        if (events.contains("schoolCrossingEvent")) {
+            createSchool(schoolCrossingLocation);
+        }
         // Create road
         roadGroup = createRoad();
         rootGroup.getChildren().add(roadGroup);
@@ -498,6 +512,8 @@ public class DemoController {
 
         crashEvent = new EventHandler();
         speedingEvent = new EventHandler();
+        schoolCrossingEvent = new EventHandler();
+
         // Event removed on request
         // givewayEvent = new EventHandler();
 
@@ -599,9 +615,20 @@ public class DemoController {
                                 c.getCarGroup().setTranslateX(c.getxPos());
                             }
 
-                            // check if should apply brake now
-                            checkBrakeRequired();
+                            if (events.contains("schoolCrossingEvent")) {
+                                if (userCar.getxPos() < schoolCrossingLocation + 5000) {
+                                    person.setzPos(person.getzPos() + personIncrement);
+                                    person.getObjGroup().setTranslateZ(person.getzPos());
 
+                                    person2.setzPos(person2.getzPos() + personIncrement);
+                                    person2.getObjGroup().setTranslateZ(person2.getzPos());
+                                }
+                            }
+
+                            // check if should apply brake now
+                              if (userCar.getxPos() % 2 == 0) {
+                                checkBrakeRequired();
+                            }
                         }
 
 
@@ -648,9 +675,43 @@ public class DemoController {
                     }
                 });
             }
+        }).start();
+    }
 
+    /**
+     * Creates a message to display to the user
+     *
+     * @param message The message to display
+     */
+    private void manageMessage(String message, Color color) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        failureScreen.setText(message);
+                        failureScreen.setTextFill(color);
+                    }
+                });
 
+                try {
+                    // Display for 3.2 seconds
+                    Thread.sleep(3200);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                Platform.runLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        failureScreen.setText("");
+                    }
+                });
+            }
         }).start();
     }
 
@@ -681,6 +742,28 @@ public class DemoController {
                     testHalt = true;
                 }
             }
+
+            // if school crossing event
+            if (events.contains("schoolCrossingEvent")) {
+                if ((userCar.getxPos() < schoolCrossingLocation + 5000) && (!schoolCrossingEvent.getTimerStarted()) && (failureScreen.getText() == "") && (userCar.getxPos() > schoolCrossingLocation) && !appliedBrakeAtSchoolCrossing) {
+                    System.out.println("---------School crossing event timer started---------");
+                    schoolCrossingEvent.startEventTimer();
+                    //manageMessage("Apply the brakes! You are close to the crossing!", Color.GREEN);
+
+                    // Failure
+                } else if ((userCar.getxPos() < schoolCrossingLocation + 100) && !appliedBrakeAtSchoolCrossing) {
+
+                    if (!schoolCrossingEvent.isTimerStopped()) {
+                        schoolCrossingEvent.stopEventTimer();
+                        System.out.println("---------School crossing event timer stopped---------");
+                        schoolCrossingEvent.setTimerStopped(true);
+                        manageMessage("You almost hit the people!");
+                        displayResultsNotification("You have failed the test...");
+                        testHalt = true;
+                    }
+                }
+            }
+
             //}
 
 			/*
@@ -782,7 +865,8 @@ public class DemoController {
         // Check if events have started or exist
         if ((crashEvent == null || !crashEvent.getTimerStarted())
                 && (speedingEvent == null || !speedingEvent.getTimerStarted())
-                && (givewayEvent == null || !givewayEvent.getTimerStarted())) {
+                && (givewayEvent == null || !givewayEvent.getTimerStarted())
+                && (schoolCrossingEvent == null || !schoolCrossingEvent.getTimerStarted())) {
 
             manageMessage("Brakes applied incorrectly. Score: -300");
             Score score = new Score("failedAttempt", -300);
@@ -802,12 +886,38 @@ public class DemoController {
                 scoringOps.add(score);
 
                 if (score.getScore() != 0) {
-                    manageMessage("Brakes applied correctly.  Score: " + score.getScore());
+                    manageMessage("Brakes applied to avoid crash.");
                 } else {
                     manageMessage("Brakes applied correctly but too slow to react.");
                 }
 
                 crashEvent = new EventHandler();
+                //endOldEvent();
+            }
+        }
+
+        // If schoolCrossingEvent occuring
+        if (events.contains("schoolCrossingEvent")) {
+
+            if (schoolCrossingEvent.getTimerStarted()) {
+                tempDisableBrakeButton();
+                schoolCrossingEvent.stopEventTimer();
+                System.out.println("---------School crossing event timer stopped---------");
+                appliedBrakeAtSchoolCrossing = true;
+                schoolCrossingEvent.setTimerStopped(true);
+
+                Score score = new Score("schoolCrossingEvent", schoolCrossingEvent.getTimerStartedTime(),
+                        schoolCrossingEvent.getTimerStoppedTime());
+                scoringOps.add(score);
+
+                if (score.getScore() != 0) {
+                    manageMessage("Brakes applied at school crossing");
+                } else {
+                    manageMessage("Brakes applied correctly but too slow to react.");
+                }
+
+                schoolCrossingEvent = new EventHandler();
+                endOldEvent();
             }
         }
 
@@ -823,7 +933,7 @@ public class DemoController {
                 scoringOps.add(score);
 
                 if (score.getScore() != 0) {
-                    manageMessage("Brakes applied correctly.  Score: " + score.getScore());
+                    manageMessage("Brakes applied to go under speed limit");
                 } else {
                     manageMessage("Brakes applied correctly but too slow to react.");
                 }
@@ -892,6 +1002,14 @@ public class DemoController {
             public void run() {
                 while (!testHalt) {
                 try {
+
+                    if (events.contains("schoolCrossingEvent")) {
+                        if (!appliedBrakeAtSchoolCrossing) {
+                            System.out.println("Sleeping before crossing");
+                            Thread.sleep(18000);
+                        }
+                    }
+
                     Thread.sleep(eventBreak);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
@@ -1017,7 +1135,7 @@ public class DemoController {
             public void run() {
                 try {
                     while (!testHalt) {
-                        if (crashEvent.getTimerStarted() || speedingEvent.getTimerStarted()) {
+                        if (crashEvent.getTimerStarted() || speedingEvent.getTimerStarted() || schoolCrossingEvent.getTimerStarted()) {
                             Thread.sleep(500);
                             brakeButtonPressed();
                         }
@@ -1046,6 +1164,7 @@ public class DemoController {
                 speedingEvent = new EventHandler();
                 crashEvent = new EventHandler();
                 givewayEvent = new EventHandler();
+                schoolCrossingEvent = new EventHandler();
 
                 // Move cars away from user (Crash event)
                 aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));

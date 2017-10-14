@@ -1013,7 +1013,16 @@ public class SimulationController {
             public void run() {
 
                 while (!testHalt) {
+
+
                     try {
+                        if (events.contains("schoolCrossingEvent")) {
+                            if (!appliedBrakeAtSchoolCrossing) {
+                                System.out.println("Sleeping before crossing");
+                                Thread.sleep(18000);
+                            }
+                        }
+
                         Thread.sleep(eventBreak);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block

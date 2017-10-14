@@ -62,6 +62,7 @@ public class ChooseMode {
         ArrayList<String> hazardsList = new ArrayList<>();
             hazardsList.add("speedingEvent");
             hazardsList.add("crashEvent");
+            hazardsList.add("schoolCrossingEvent");
 
 
         // Pass all values to the next controller
