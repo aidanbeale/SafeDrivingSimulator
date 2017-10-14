@@ -35,6 +35,7 @@ import javafx.stage.Stage;
 import simulation.Car;
 import simulation.EventHandler;
 import simulation.Score;
+import simulation.SimObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -221,6 +222,34 @@ public class SimulationController {
         }
     }
 
+    private void createSchool(int xCoord) {
+        SimObject person = new SimObject("people/Boy N110512.3DS", xCoord, -40, -800);
+        rootGroup.getChildren().add(person.getObjGroup());
+        person.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        person.getObjGroup().setScaleX(1.3);
+        person.getObjGroup().setScaleY(1.3);
+        person.getObjGroup().setScaleZ(1.3);
+
+
+        SimObject person2 = new SimObject("people/Boy N311013.3DS", xCoord, -100, -1000);
+        rootGroup.getChildren().add(person2.getObjGroup());
+        person2.getObjGroup().getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        person2.getObjGroup().setScaleX(60.0);
+        person2.getObjGroup().setScaleY(60.0);
+        person2.getObjGroup().setScaleZ(60.0);
+
+
+        PhongMaterial crossingMat = new PhongMaterial();
+        crossingMat.setDiffuseMap(new Image("crossing.png"));
+        Box crossing = new Box(1624, 1, 1000);
+        crossing.setMaterial(crossingMat);
+        crossing.setTranslateY(90);
+        crossing.setTranslateZ(360);
+        crossing.setTranslateX(xCoord);
+        crossing.getTransforms().add((new Rotate(90.0, Rotate.Y_AXIS)));
+        rootGroup.getChildren().add(crossing);
+    }
+
     private Group createObjects(int startOfBox, int boxLength) {
         Group objGroup = new Group();
 
@@ -242,7 +271,7 @@ public class SimulationController {
     private void initialize() {
         // Create cars
         createCars(userChosenCarString);
-
+        createSchool(-25000);
         // Create road
         roadGroup = createRoad();
         rootGroup.getChildren().add(roadGroup);
@@ -344,7 +373,6 @@ public class SimulationController {
                 }
 
             }
-
             ;
 
         }).start();
@@ -811,7 +839,6 @@ public class SimulationController {
     }
 
     private void assignRandomEventTime() {
-
         // Wait minimum of 5 seconds between events starting and max of 15
         int eventBreak = rand.nextInt(10000) + 5000;
 
