@@ -61,7 +61,7 @@ public class ResultsController {
      */
     private void loadTable() {
         JFXTreeTableColumn<RowProp, String> eventCol = new JFXTreeTableColumn<>("Event");
-        eventCol.setPrefWidth(187);
+        eventCol.setPrefWidth(150);
         eventCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -71,7 +71,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> optTimeCol = new JFXTreeTableColumn<>("Optimal Time");
-        optTimeCol.setPrefWidth(250);
+        optTimeCol.setPrefWidth(120);
         optTimeCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -81,7 +81,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> yourTimeCol = new JFXTreeTableColumn<>("Your Time");
-        yourTimeCol.setPrefWidth(250);
+        yourTimeCol.setPrefWidth(120);
         yourTimeCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -91,7 +91,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> diffCol = new JFXTreeTableColumn<>("Difference");
-        diffCol.setPrefWidth(187);
+        diffCol.setPrefWidth(120);
         diffCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -101,7 +101,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> scoreCol = new JFXTreeTableColumn<>("Raw Score");
-        scoreCol.setPrefWidth(187);
+        scoreCol.setPrefWidth(120);
         scoreCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -111,7 +111,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> scorePercentCol = new JFXTreeTableColumn<>("Score Percentage");
-        scorePercentCol.setPrefWidth(186);
+        scorePercentCol.setPrefWidth(120);
         scorePercentCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -122,7 +122,7 @@ public class ResultsController {
 
         JFXTreeTableColumn<RowProp, String> rating = new JFXTreeTableColumn<>("Rating");
         rating.setId("idGroup");
-        rating.setPrefWidth(186);
+        rating.setPrefWidth(80);
         rating.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
