@@ -1169,7 +1169,7 @@ public class SimulationController {
                 // Move cars away from user (Crash event)
 
                 aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.05));
-                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.05));
+                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.08));
 
                 try {
                     System.out.println("sleeping for 1");

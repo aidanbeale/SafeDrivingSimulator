@@ -61,7 +61,7 @@ public class ResultsController {
      */
     private void loadTable() {
         JFXTreeTableColumn<RowProp, String> eventCol = new JFXTreeTableColumn<>("Event");
-        eventCol.setPrefWidth(150);
+        eventCol.setPrefWidth(140);
         eventCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -71,7 +71,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> optTimeCol = new JFXTreeTableColumn<>("Optimal Time");
-        optTimeCol.setPrefWidth(120);
+        optTimeCol.setPrefWidth(130);
         optTimeCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -81,7 +81,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> yourTimeCol = new JFXTreeTableColumn<>("Your Time");
-        yourTimeCol.setPrefWidth(120);
+        yourTimeCol.setPrefWidth(130);
         yourTimeCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -91,7 +91,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> diffCol = new JFXTreeTableColumn<>("Difference");
-        diffCol.setPrefWidth(120);
+        diffCol.setPrefWidth(80);
         diffCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -101,7 +101,7 @@ public class ResultsController {
                 });
 
         JFXTreeTableColumn<RowProp, String> scoreCol = new JFXTreeTableColumn<>("Raw Score");
-        scoreCol.setPrefWidth(120);
+        scoreCol.setPrefWidth(80);
         scoreCol.setCellValueFactory(
                 new Callback<TreeTableColumn.CellDataFeatures<RowProp, String>, ObservableValue<String>>() {
                     @Override
@@ -202,6 +202,7 @@ public class ResultsController {
         int crashEvents = 0;
         int failedAttempt = 0;
         int speedingEvent = 0;
+        int schoolCrossingEvent = 0;
 
         for (Score s : scoringOps) {
             if(s.getEvent().equals("Crash Event")) {
@@ -210,6 +211,8 @@ public class ResultsController {
                 failedAttempt ++;
             } else if(s.getEvent().equals("Speeding Event")) {
                 speedingEvent ++;
+            } else if(s.getEvent().equals("School Crossing Event")) {
+                schoolCrossingEvent ++;
             }
         }
 
@@ -218,7 +221,9 @@ public class ResultsController {
                 FXCollections.observableArrayList(
                         new PieChart.Data("Crash Event", crashEvents),
                         new PieChart.Data("Failed Braking Attempt", failedAttempt),
-                        new PieChart.Data("Speeding Event", speedingEvent));
+                        new PieChart.Data("Speeding Event", speedingEvent),
+                        new PieChart.Data("School Crossing Event", schoolCrossingEvent)
+                        );
         final PieChart chart = new PieChart(pieChartData);
         chart.setTitle("Event Results");
         //chart.setLabelLineLength(10);
