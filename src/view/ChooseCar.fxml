@@ -87,8 +87,8 @@
                   <ToggleGroup fx:id="viewGroup" />
                </toggleGroup></JFXRadioButton>
             <JFXRadioButton id="thirdPersonRadio" fx:id="thirdPersonRadio" layoutX="662.0" layoutY="226.0" text="Third-Person" toggleGroup="$viewGroup" />
-            <JFXCheckBox fx:id="aiRed" checkedColor="#e10000" layoutX="826.0" layoutY="170.0" selected="true" text="Red" />
-            <JFXCheckBox fx:id="aiGreen" layoutX="826.0" layoutY="197.0" selected="true" text="Green" />
+            <JFXCheckBox fx:id="aiRed" checkedColor="#e10000" layoutX="826.0" layoutY="185.0" selected="true" text="Red" />
+            <JFXCheckBox fx:id="aiGreen" layoutX="826.0" layoutY="212.0" selected="true" text="Green" />
             <Label layoutX="826.0" layoutY="120.0" text="AI Car Colours" textFill="#43515e">
                <font>
                   <Font name="System Bold" size="20.0" />
@@ -99,8 +99,8 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <JFXCheckBox fx:id="aiBlue" checkedColor="#0084ff" layoutX="826.0" layoutY="226.0" selected="true" text="Blue" />
-            <JFXCheckBox fx:id="aiOrange" checkedColor="#ff7700" layoutX="826.0" layoutY="252.0" selected="true" text="Orange" />
+            <JFXCheckBox fx:id="aiBlue" checkedColor="#0084ff" layoutX="826.0" layoutY="241.0" selected="true" text="Blue" />
+            <JFXCheckBox fx:id="aiOrange" checkedColor="#ff7700" layoutX="826.0" layoutY="267.0" selected="true" text="Orange" />
             <JFXSlider fx:id="aiCount" layoutX="1035.0" layoutY="184.0" max="10.0" min="4.0" prefHeight="14.0" prefWidth="175.0" showTickLabels="true" value="4.0" />
             <Label layoutX="542.0" layoutY="355.0" text="Simulation Time" textFill="#43515e">
                <font>

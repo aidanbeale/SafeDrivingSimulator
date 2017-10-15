@@ -446,7 +446,7 @@ public class DemoController {
         roadGroup = new Group();
         int roadDistance = 1624;
         int boxSize = 1624;
-        int numberOfBoxes = 85;
+        int numberOfBoxes = 255;
 
         // Read in required material
         PhongMaterial roadSurface = new PhongMaterial();
@@ -1167,8 +1167,8 @@ public class DemoController {
                 schoolCrossingEvent = new EventHandler();
 
                 // Move cars away from user (Crash event)
-                aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
-                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
+                aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.05));
+                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.08));
 
                 try {
                     // Sleep for 2 seconds
@@ -1198,8 +1198,18 @@ public class DemoController {
      */
     @FXML
     private void displayScores(ActionEvent event) throws IOException {
-
+        System.out.println("TRYING TO REMOVE STUFF");
         eventRunning = false;
+
+        roadGroup.getChildren().removeAll();
+        rootGroup.getChildren().removeAll();
+        simGroup.getChildren().removeAll();
+
+        rootGroup.getChildren().remove(0, 8);
+
+        roadGroup.getChildren().clear();
+        rootGroup.getChildren().clear();
+        simGroup.getChildren().clear();
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/ChooseMode.fxml"));
         Parent root = (Parent) loader.load();

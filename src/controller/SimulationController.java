@@ -431,8 +431,9 @@ public class SimulationController {
         roadGroup = new Group();
         int roadDistance = 1624;
         int boxSize = 1624;
-        int numberOfBoxes = 85;
+        int numberOfBoxes = (int)(simTime * 0.89);
 
+        System.out.print("Total number of boxes for road: " + numberOfBoxes);
         // Read in required material
         PhongMaterial roadSurface = new PhongMaterial();
         roadSurface.setDiffuseMap(new Image("asphalt.jpg"));
