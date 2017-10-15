@@ -82,11 +82,11 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <JFXRadioButton id="firstPersonRadio" fx:id="firstPersonRadio" layoutX="662.0" layoutY="183.0" selected="true" text="First-Person">
+            <JFXRadioButton id="firstPersonRadio" fx:id="firstPersonRadio" layoutX="662.0" layoutY="188.0" selected="true" text="First-Person">
                <toggleGroup>
                   <ToggleGroup fx:id="viewGroup" />
                </toggleGroup></JFXRadioButton>
-            <JFXRadioButton id="thirdPersonRadio" fx:id="thirdPersonRadio" layoutX="659.0" layoutY="256.0" text="Third-Person" toggleGroup="$viewGroup" />
+            <JFXRadioButton id="thirdPersonRadio" fx:id="thirdPersonRadio" layoutX="662.0" layoutY="226.0" text="Third-Person" toggleGroup="$viewGroup" />
             <JFXCheckBox fx:id="aiRed" checkedColor="#e10000" layoutX="826.0" layoutY="170.0" selected="true" text="Red" />
             <JFXCheckBox fx:id="aiGreen" layoutX="826.0" layoutY="197.0" selected="true" text="Green" />
             <Label layoutX="826.0" layoutY="120.0" text="AI Car Colours" textFill="#43515e">
@@ -108,7 +108,7 @@
                </font>
             </Label>
             <JFXSlider fx:id="simulationTime" layoutX="494.0" layoutY="409.0" max="500.0" min="100.0" prefHeight="33.0" prefWidth="243.0" showTickLabels="true" value="3.0" />
-            <JFXCheckBox fx:id="schoolCrossing" checkedColor="#34495e" layoutX="530.0" layoutY="273.0" text="School Crossing" />
+            <JFXCheckBox fx:id="schoolCrossing" checkedColor="#34495e" layoutX="530.0" layoutY="260.0" text="School Crossing" />
          </children>
       </AnchorPane>
    </children>
