@@ -186,6 +186,13 @@ public class ChooseCarController {
         if (aiOrange.isSelected()) {
             aiColours.add("mini-aws.3DS");
         }
+
+        if(aiColours.isEmpty()) {
+            aiColours.add("mini-red.3DS");
+            aiColours.add("mini-green.3DS");
+            aiColours.add("mini-blue.3DS");
+            aiColours.add("mini-aws.3DS");
+        }
     }
 
 
