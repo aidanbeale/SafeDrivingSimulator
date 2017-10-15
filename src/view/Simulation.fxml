@@ -102,7 +102,7 @@
                      </font></Label>
                </children>
             </Pane>
-            <Pane fx:id="pane" layoutX="393.0" layoutY="309.0" prefHeight="152.0" prefWidth="242.0">
+            <Pane fx:id="pane" layoutX="393.0" layoutY="309.0" prefHeight="152.0" prefWidth="242.0" visible="false">
                <children>
                   <JFXButton id="displayScore" fx:id="displayScore" layoutX="75.0" layoutY="101.0" onAction="#displayScores" textFill="WHITE" />
                   <Label fx:id="heading" layoutX="13.0" layoutY="14.0" prefHeight="79.0" prefWidth="216.0" textAlignment="CENTER" wrapText="true">

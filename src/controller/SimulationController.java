@@ -413,6 +413,7 @@ public class SimulationController {
      * @param result The result of the notification appearing
      */
     private void displayResultsNotification(String result) {
+        pane.setVisible(true);
         pane.setStyle("-fx-background-color: #F4F4F4;");
         displayScore.setStyle("-fx-background-color:  #34495e;");
         heading.setText(result);
@@ -1167,8 +1168,8 @@ public class SimulationController {
                 System.out.println("Speeding up cars");
                 // Move cars away from user (Crash event)
 
-                aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
-                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.2));
+                aiCar1.setCarSpeedLimit((int) (SPEED_LIMIT * 1.05));
+                aiCar2.setCarSpeedLimit((int) (SPEED_LIMIT * 1.05));
 
                 try {
                     System.out.println("sleeping for 1");
