@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 John Humphrys
+ * Copyright 2017 John Humphrys, Aidan Beale
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class Main extends Application {
 
         // Display initial login screen
         primaryStage.setTitle("Safe Driving Simulator");
-        Parent root = FXMLLoader.load(getClass().getResource("../view/TermsConditions.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../view/Login.fxml"));
 
         Scene scene = new Scene(root);
 
